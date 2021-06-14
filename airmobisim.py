@@ -4,6 +4,7 @@ import argparse
 
 from src import Simulation
 from src.utils import Jsonparser
+from src.uav.app.simpleapp import Simpleapp
 
 
 simulation: Simulation
