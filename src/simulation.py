@@ -27,7 +27,7 @@ class Simulation:
 
     def processNextStep(self):
         self._currentSimStep += 1
-        print("Processing " + str(self._currentSimStep))
+        print("Processing step " + str(self._currentSimStep))
         if self._currentSimStep == self._simulationSteps:
             self.finishSimulation()
         else:
