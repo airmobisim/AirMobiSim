@@ -1,8 +1,9 @@
 from abc import ABC, abstractmethod
-
+from .movement import Movement
 class Basemobility(ABC):
     
     def __init__(self):
+        self.move = Movement
         pass
 
     def get_x(self):
@@ -16,6 +17,7 @@ class Basemobility(ABC):
 
     def set_x(self, posY):
         self._posY = posY
-    
+
+    @abstractmethod
     def makeMove():
         pass
