@@ -3,8 +3,8 @@ import sys
 import argparse
 
 from src import Simulation
-from src.utils import Jsonparser
-from src.uav.app.simpleapp import Simpleapp
+from src.jsonparser import Jsonparser
+from src.simpleapp import Simpleapp
 
 
 simulation: Simulation
@@ -19,16 +19,17 @@ def main():
     
     p = Jsonparser(args.configuration)
     config = p.readConfig()
-    
     initializeSimulation(config)
     simulation.startSimulation()
-def initializeSimulation( config):
+
+def initializeSimulation(config):
     global simulation
     simulation = Simulation(config['stepLength'],
             config['simTimeLimit'],
             config['playgroundSizeX'],
             config['playgroundSizeY'],
             config['playgroundSizeZ'],
+            config['uavs'],
     )
 
     

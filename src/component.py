@@ -7,8 +7,8 @@ from dataclasses import dataclass, field
 from functools import reduce
 from typing import Any, Callable, Dict, NewType, Optional, Set, Tuple
 
-from srcc.base.unit import Unit
-from src.base.event import Event
+from .unit import Unit
+from .event import Event
 
 @dataclass(frozen=True, order=True)
 class ComponentScopedEvent(Event):
