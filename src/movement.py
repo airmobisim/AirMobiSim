@@ -42,16 +42,19 @@ class Movement:
         self._currentDirection = currentDirection
     
     def setDirectionByTarget(self, target):
+        '''
         print("Target.x: " + str(target.x))
         print("Target.y: " + str(target.y))
         print("Target.z: " + str(target.z))
         print("Start.x: " + str(self._startPos.x))
         print("Start.y: " + str(self._startPos.y))
         print("Start.z: " + str(self._startPos.z))
+        '''
         direction = Point(target.x - self._startPos.x, target.y - self._startPos.y, target.z - self._startPos.z)
         distance = math.sqrt((target.x - self._startPos.x)**2 + (target.y - self._startPos.y)**2 + (target.z - self._startPos.z)**2)
-        print("Direction: " + str(direction))
-        self.setCurrentDirection(np.divide(direction,distance))
+        newDirection = np.divide(direction, distance)
+        #print("old direction: " + str(direction) + " new direction " + str(newDirection))
+        self.setCurrentDirection(newDirection)
     
 
 

@@ -24,21 +24,23 @@ class Basemobility(ABC):
     def getCurrentPos(self):
         passedTime = (Simulationparameter.currentSimStep * Simulationparameter.stepLength) - self.getMove().getStartTime() 
         currentDirection = self.getMove().getCurrentDirection()
-        #x = self.getMove().getStartPos().x + (currentDirection.x * self.getMove().getSpeed() * passedTime)
-        #y = self.getMove().getStartPos().y + (currentDirection.y * self.getMove().getSpeed() * passedTime)
-        #z = self.getMove().getStartPos().z + (currentDirection.z * self.getMove().getSpeed() * passedTime)
-        #print("Speed: " + str(self.getMove().getSpeed()))
-        #print("CurrentDirection.x: " + str(currentDirection.x))
-        #print("CurrentDirection.y: " + str(currentDirection.y))
-        #print("CurrentDirection.z: " + str(currentDirection.z))
-        #print("Passed Time: " + str(passedTime))
-        #currentPos = Point(x, y, z)
-        return -1#currentPos
+        x = self.getMove().getStartPos().x + (currentDirection[0] * self.getMove().getSpeed() * passedTime)
+        y = self.getMove().getStartPos().y + (currentDirection[1] * self.getMove().getSpeed() * passedTime)
+        z = self.getMove().getStartPos().z + (currentDirection[2] * self.getMove().getSpeed() * passedTime)
+        '''
+        print("Speed: " + str(self.getMove().getSpeed()))
+        print("CurrentDirection.x: " + str(currentDirection[0]))
+        print("CurrentDirection.y: " + str(currentDirection[1]))
+        print("CurrentDirection.z: " + str(currentDirection[2]))
+        print("Passed Time: " + str(passedTime))
+        '''
+        currentPos = Point(x, y, z)
+        return currentPos
 
     def makeMove(self):
         self.doLog()
 
     def doLog(self):
-        print("do log")
+        #print("do log")
         self._resultcollection.logCurrentPosition(self._uid,self.getCurrentPos())
         pass

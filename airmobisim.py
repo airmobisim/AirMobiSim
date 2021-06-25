@@ -1,6 +1,7 @@
 #!/usr/local/bin/python3
 import sys
 import argparse
+import pathlib
 
 from src import Simulation
 from src.jsonparser import Jsonparser
@@ -19,10 +20,11 @@ def main():
     
     p = Jsonparser(args.configuration)
     config = p.readConfig()
-    initializeSimulation(config)
+    directory = pathlib.Path(args.configuration).parent.resolve()
+    initializeSimulation(config, directory)
     simulation.startSimulation()
 
-def initializeSimulation(config):
+def initializeSimulation(config, directory):
     global simulation
     simulation = Simulation(config['stepLength'],
             config['simTimeLimit'],
@@ -30,6 +32,7 @@ def initializeSimulation(config):
             config['playgroundSizeY'],
             config['playgroundSizeZ'],
             config['uavs'],
+            directory,
     )
 
     
