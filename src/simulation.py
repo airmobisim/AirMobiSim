@@ -53,7 +53,6 @@ class Simulation:
         self.finishSimulation()
 
     def initializeNodes(self):
-        len(self._startUavs)
         for uav in self._startUavs:
             self._managedNodes.append(
                 Uav(self.getNextUid(), Point(uav['startPosX'], uav['startPosY'], uav['startPosZ']),

@@ -3,7 +3,7 @@ import sys
 import argparse
 import pathlib
 
-from src import Simulation
+from src.simulation import Simulation
 from src.jsonparser import Jsonparser
 from src.simpleapp import Simpleapp
 
@@ -34,9 +34,6 @@ def initializeSimulation(config, directory):
             config['uavs'],
             directory,
     )
-
-    
-
 if __name__ == "__main__":
     main()
 
