@@ -1,6 +1,6 @@
 Initial README 
 
-run ```python3 setup.py install ``` for the installation
+run ```pipenv install ``` for the installation
 
 ## launch basic simulation:
 ```
