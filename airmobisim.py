@@ -7,18 +7,21 @@ from src.simulation import Simulation
 from src.jsonparser import Jsonparser
 from src.simpleapp import Simpleapp
 
+from src.yamlparser import Yamlparser
+
 
 simulation: Simulation
 
 def main():
     global simulation
-    parser = argparse.ArgumentParser(description='Nobody needs this right now')
-    parser.add_argument('configuration',  action='store', type=str, default="examples/simpleSimulation/simulation.config", help='an integer for the accumulator')
+    parser = argparse.ArgumentParser(description='Importing configuration-file')
+    parser.add_argument('configuration', action='store', type=str, default="examples/simpleSimulation/simulation.configuration", help='configuration')
     print("""AirMobiSim Simulation  (C) 2021 Chair of Networked Systems Modelling TU Dresden.\nVersion: 0.0.1\nSee the license for distribution terms and warranty disclaimer""")
 
     args = parser.parse_args()
     
-    p = Jsonparser(args.configuration)
+    #p = Jsonparser(args.configuration)
+    p = Yamlparser(args.configuration)
     config = p.readConfig()
     directory = pathlib.Path(args.configuration).parent.resolve()
     initializeSimulation(config, directory)
@@ -26,12 +29,12 @@ def main():
 
 def initializeSimulation(config, directory):
     global simulation
-    simulation = Simulation(config['stepLength'],
-            config['simTimeLimit'],
-            config['playgroundSizeX'],
-            config['playgroundSizeY'],
-            config['playgroundSizeZ'],
-            config['uavs'],
+    simulation = Simulation(config['simulation']['stepLength'],
+            config['simulation']['simTimeLimit'],
+            config['simulation']['playgroundSizeX'],
+            config['simulation']['playgroundSizeY'],
+            config['simulation']['playgroundSizeZ'],
+            config['uav'],
             directory,
     )
 if __name__ == "__main__":
