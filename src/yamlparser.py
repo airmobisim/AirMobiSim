@@ -1,5 +1,7 @@
-import json
-class Jsonparser:
+import yaml
+from yaml.loader import FullLoader
+
+class Yamlparser:
     first = 0
     second = 0
     answer = 0
@@ -10,5 +12,5 @@ class Jsonparser:
 
 
     def readConfig(self):
-        with open(self._filename) as json_file:
-            return json.load(json_file)
+        with open(self._filename) as yaml_file:
+            return yaml.load(yaml_file, Loader=FullLoader)
