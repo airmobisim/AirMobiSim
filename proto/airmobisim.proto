@@ -1,0 +1,55 @@
+
+syntax = "proto3";
+
+import "google/protobuf/empty.proto";
+
+package airmobisim;
+
+service AirMobiSim{
+    
+    rpc Start (google.protobuf.Empty) returns (Response);
+
+    rpc ExecuteOneTimeStep (google.protobuf.Empty) returns (SimulationValue);
+    
+    rpc Finish (google.protobuf.Empty) returns (Response);
+}
+
+
+message Response{
+
+    string message = 1;
+}
+
+
+message List {
+    repeated Value elements = 1;
+}
+  
+message Tuple {
+    repeated Value elements = 1;
+}
+  
+message DataObject {
+    string type = 1;
+    map<string, Value> members = 2;
+}
+
+message Vector {
+    repeated double elements = 1;
+}
+
+message Value {
+    oneof value {
+      double doubleValue = 1;
+      Vector vectorValue = 2;
+      DataObject dataObjectValue = 3;
+      Tuple tupleValue = 4;
+      int32 intValue = 5;
+      List listValue = 6;
+    }
+  }
+  
+  message SimulationValue {
+    string path = 1;
+    Value value = 2;
+  }
