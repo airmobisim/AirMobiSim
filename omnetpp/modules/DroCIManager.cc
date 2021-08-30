@@ -1,27 +1,9 @@
-#include "airmobisim.pb.h"
 
-#//include "DroCIManager.h"
-
-#include <string.h>
-
-
-#include <cstdlib>
-#include <iostream>
-#include <regex>
-#include <sstream>
-
-#include <boost/process.hpp>
+#include "DroCIManager.h"
 #include <google/protobuf/empty.pb.h>
 #include <grpcpp/grpcpp.h>
 
-#include <omnetpp.h>
-
-#include <common/InitStages.h>
-#include <common/scenario/ScenarioManager.h>
-
-
-
-namespace bp = boost::process;
+#include <string.h>
 
 using namespace omnetpp;
 
@@ -30,27 +12,28 @@ Define_Module(DroCIManager);
 
 void DroCIManager::initialize(int stage)
 {
-    if (stage == inet::INITSTAGE_LOCAL) {
-        moduleType = par("moduleType").stdstringValue();
-        moduleName = par("moduleName").stdstringValue();
+ 
 
-        updateInterval = par("updateInterval")
+    updateInterval = 1.0;
+    stepLength = 0.01;
+    simTimeLimit = 50;
+    totalsteps = simTimeLimit/stepLength;
+    count = 0;
 
-        //Create a connection with AirMobiSim Server
-        launchSimulator();
 
-        // Do not create children here since OMNeT++ will try to initialize them again
-        initMsg = new cMessage("init");
+    //Create a connection with AirMobiSim Server
 
-        scheduleAt(simTime(), initMsg);
+    // Do not create children here since OMNeT++ will try to initialize them again
+    initMsg = new cMessage("init");
 
-        executeOneTimestepTrigger = new cMessage("step")
+    scheduleAt(simTime(), initMsg);
 
-    }
+    executeOneTimestepTrigger = new cMessage("step");
+
+    
 }
 
-
-void DroCIManager::handleSelfMsg(cMessage* msg)
+void DroCIManager::handleMessage(cMessage* msg)
 {
     if (msg == initMsg) {
 
@@ -70,56 +53,48 @@ void DroCIManager::handleSelfMsg(cMessage* msg)
 void DroCIManager::launchSimulator()
 {
 
-    _simulatorChannel = grpc::CreateChannel("localhost:50051", grpc::InsecureChannelCredentials());
-    if (!_simulatorChannel->WaitForConnected(
-            gpr_time_add(gpr_now(GPR_CLOCK_REALTIME), gpr_time_from_seconds(3, GPR_TIMESPAN)))) {
-        throw cRuntimeError("Failed to connect to AirMobiSim");
-    }
-
-    _simulatorStub = airmobsim::AirMobiSim::NewStub(_simulatorChannel);
-
-    google::protobuf::Empty empty;
-    grpc::ClientContext clientContext;
-    grpc::Status status = _simulatorStub->Start(&clientContext, empty, &empty);
-    if (!status.ok()) {
-        throw cRuntimeError("Failed to initialize simulation");
-    }
-
-    executeOneTimestamp();
+    channel = CreateChannel("localhost:50051", grpc::InsecureChannelCredentials());
+    stub = airmobisim::AirMobiSim::NewStub(channel);
+    executeOneTimestep();
 
 }
-
 
 void DroCIManager::executeOneTimestep()
 {
     EV_DEBUG << "Triggering AirMobiSim simulator advance to t=" << simTime() << endl;
 
-    simtime_t targetTime = simTime();
-
-
-    airmobisim::Response response;
+    airmobisim::ResponseQuery response;
     google::protobuf::Empty empty;
     grpc::ClientContext clientContext;
-    grpc::Status status = _simulatorStub->ExecuteOneTimeStamp(&clientContext, empty, &response);
+    grpc::Status status = stub->ExecuteOneTimeStep(&clientContext, empty, &response);
 
 
     if(status.ok()){
 
-        
-        //for (uint32_t i = 0; i < count; ++i) 
-        //{
-        EV_DEBUG << "Getting " << response.message() << " subscription results" << endl;
-        //}
-
-    //else {
-        //std::cout << status.error_code() << ": " << status.error_message() << std::endl;
-        //return -1;
-        //}    
+        for (uint32_t i = 0; i < response.responses_size(); i++) 
+        {
+        EV << "Getting for " << response.responses(i).id() << " subscription results" << endl;
+        EV <<  "Position" << response.responses(i).x() << endl;
+        }
 
     }
 
-    scheduleAt(simtime() + updateInterval, executeOneTimestepTrigger)
+    else 
+        {
+        std::cout << status.error_code() << ": " << status.error_message() << std::endl;
+        }    
+
     
+    count = count + 1;
+
+    if(count < totalsteps)
+    {
+        scheduleAt(simTime() + updateInterval, executeOneTimestepTrigger);
+    }
+    else
+    {
+        EV << "End" << endl;
+    }
 }
 
 
