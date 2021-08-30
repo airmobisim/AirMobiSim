@@ -7,49 +7,23 @@ package airmobisim;
 
 service AirMobiSim{
     
-    rpc Start (google.protobuf.Empty) returns (Response);
+    rpc Start (google.protobuf.Empty) returns (google.protobuf.Empty);
 
-    rpc ExecuteOneTimeStep (google.protobuf.Empty) returns (SimulationValue);
+    rpc ExecuteOneTimeStep (google.protobuf.Empty) returns (ResponseQuery);
     
-    rpc Finish (google.protobuf.Empty) returns (Response);
+    rpc Finish (google.protobuf.Empty) returns (google.protobuf.Empty);
 }
 
 
 message Response{
 
-    string message = 1;
+    int32 id = 1;
+    float x = 2;
+    float y = 3;
+    float z = 4;
 }
 
 
-message List {
-    repeated Value elements = 1;
+message ResponseQuery{
+    repeated Response responses = 1;
 }
-  
-message Tuple {
-    repeated Value elements = 1;
-}
-  
-message DataObject {
-    string type = 1;
-    map<string, Value> members = 2;
-}
-
-message Vector {
-    repeated double elements = 1;
-}
-
-message Value {
-    oneof value {
-      double doubleValue = 1;
-      Vector vectorValue = 2;
-      DataObject dataObjectValue = 3;
-      Tuple tupleValue = 4;
-      int32 intValue = 5;
-      List listValue = 6;
-    }
-  }
-  
-  message SimulationValue {
-    string path = 1;
-    Value value = 2;
-  }

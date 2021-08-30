@@ -13,6 +13,7 @@ class Linearmobility(Basemobility):
         self._move.setStart(startPos, 0)
         self._move.setSpeed(1)
         self._uid = uid
+        self._stepTarget = ""
     def makeMove(self):
         move = self.getMove()
         '''
@@ -30,6 +31,7 @@ class Linearmobility(Basemobility):
         print("stepTargetY: " + str(stepTargetY))
         '''
         stepTarget = Point(stepTargetX, stepTargetY, self._startPos.z)
+        self._stepTarget = stepTarget
         move.setDirectionByTarget(stepTarget)
 
         newSpeed = move.getSpeed() + self._acceleration * Simulationparameter.stepLength

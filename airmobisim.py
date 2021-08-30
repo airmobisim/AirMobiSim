@@ -8,6 +8,7 @@ from src.simpleapp import Simpleapp
 
 from src.yamlparser import Yamlparser
 
+from proto.DroCIBridge import startServer
 
 simulation: Simulation
 
@@ -21,14 +22,18 @@ def main():
     args = parser.parse_args()
     
     # Start the DroCI Bridge - Listen to OmNet++ incomes
-    if  args.omnetpp:
-        print("Start the DroCI Bridge.")
+  
 
     p = Yamlparser(args.configuration)
     config = p.readConfig()
     directory = pathlib.Path(args.configuration).parent.resolve()
     initializeSimulation(config, directory)
-    simulation.startSimulation()
+
+    if  args.omnetpp:
+        print("Start the AirMobiSim Server.....")
+        startServer(simulation)
+    else:
+        simulation.startSimulation()
 
 def initializeSimulation(config, directory):
     global simulation

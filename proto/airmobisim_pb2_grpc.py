@@ -2,7 +2,7 @@
 """Client and server classes corresponding to protobuf-defined services."""
 import grpc
 
-import airmobisim_pb2 as airmobisim__pb2
+from proto import airmobisim_pb2 as airmobisim__pb2
 from google.protobuf import empty_pb2 as google_dot_protobuf_dot_empty__pb2
 
 
@@ -18,17 +18,17 @@ class AirMobiSimStub(object):
         self.Start = channel.unary_unary(
                 '/airmobisim.AirMobiSim/Start',
                 request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
-                response_deserializer=airmobisim__pb2.Response.FromString,
+                response_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
                 )
         self.ExecuteOneTimeStep = channel.unary_unary(
                 '/airmobisim.AirMobiSim/ExecuteOneTimeStep',
                 request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
-                response_deserializer=airmobisim__pb2.Response.FromString,
+                response_deserializer=airmobisim__pb2.ResponseQuery.FromString,
                 )
         self.Finish = channel.unary_unary(
                 '/airmobisim.AirMobiSim/Finish',
                 request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
-                response_deserializer=airmobisim__pb2.Response.FromString,
+                response_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
                 )
 
 
@@ -59,17 +59,17 @@ def add_AirMobiSimServicer_to_server(servicer, server):
             'Start': grpc.unary_unary_rpc_method_handler(
                     servicer.Start,
                     request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
-                    response_serializer=airmobisim__pb2.Response.SerializeToString,
+                    response_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
             ),
             'ExecuteOneTimeStep': grpc.unary_unary_rpc_method_handler(
                     servicer.ExecuteOneTimeStep,
                     request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
-                    response_serializer=airmobisim__pb2.Response.SerializeToString,
+                    response_serializer=airmobisim__pb2.ResponseQuery.SerializeToString,
             ),
             'Finish': grpc.unary_unary_rpc_method_handler(
                     servicer.Finish,
                     request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
-                    response_serializer=airmobisim__pb2.Response.SerializeToString,
+                    response_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -94,7 +94,7 @@ class AirMobiSim(object):
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/airmobisim.AirMobiSim/Start',
             google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
-            airmobisim__pb2.Response.FromString,
+            google_dot_protobuf_dot_empty__pb2.Empty.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
@@ -111,7 +111,7 @@ class AirMobiSim(object):
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/airmobisim.AirMobiSim/ExecuteOneTimeStep',
             google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
-            airmobisim__pb2.Response.FromString,
+            airmobisim__pb2.ResponseQuery.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
@@ -128,6 +128,6 @@ class AirMobiSim(object):
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/airmobisim.AirMobiSim/Finish',
             google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
-            airmobisim__pb2.Response.FromString,
+            google_dot_protobuf_dot_empty__pb2.Empty.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
