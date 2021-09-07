@@ -74,7 +74,7 @@ void DroCIManager::executeOneTimestep()
         for (uint32_t i = 0; i < response.responses_size(); i++) 
         {
         EV << "Getting for " << response.responses(i).id() << " subscription results" << endl;
-        EV <<  "Position" << response.responses(i).x() << endl;
+        EV <<  "Position" << response.responses(i).y() << endl;
         }
 
     }

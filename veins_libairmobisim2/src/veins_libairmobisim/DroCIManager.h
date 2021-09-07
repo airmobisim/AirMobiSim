@@ -11,7 +11,9 @@
 
 #include <google/protobuf/empty.pb.h>
 #include <grpcpp/grpcpp.h>
-#include "airmobisim.grpc.pb.h"
+#include "../proto/airmobisim.grpc.pb.h"
+
+
 
 class DroCIManager : public omnetpp::cSimpleModule
 {

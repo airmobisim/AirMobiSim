@@ -1,3 +1,8 @@
+package veins_libairmobisim2.examples.veins_libairmobisim;
+
+
+import veins_libairmobisim.DroCIManager;
+
 simple DroCIManager
 {
     gates:
