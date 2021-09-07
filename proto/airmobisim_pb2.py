@@ -20,7 +20,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto3',
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\x10\x61irmobisim.proto\x12\nairmobisim\x1a\x1bgoogle/protobuf/empty.proto\"7\n\x08Response\x12\n\n\x02id\x18\x01 \x01(\x05\x12\t\n\x01x\x18\x02 \x01(\x02\x12\t\n\x01y\x18\x03 \x01(\x02\x12\t\n\x01z\x18\x04 \x01(\x02\"8\n\rResponseQuery\x12\'\n\tresponses\x18\x01 \x03(\x0b\x32\x14.airmobisim.Response2\xc8\x01\n\nAirMobiSim\x12\x37\n\x05Start\x12\x16.google.protobuf.Empty\x1a\x16.google.protobuf.Empty\x12G\n\x12\x45xecuteOneTimeStep\x12\x16.google.protobuf.Empty\x1a\x19.airmobisim.ResponseQuery\x12\x38\n\x06\x46inish\x12\x16.google.protobuf.Empty\x1a\x16.google.protobuf.Emptyb\x06proto3'
+  serialized_pb=b'\n\x10\x61irmobisim.proto\x12\nairmobisim\x1a\x1bgoogle/protobuf/empty.proto\"7\n\x08Response\x12\n\n\x02id\x18\x01 \x01(\x05\x12\t\n\x01x\x18\x02 \x01(\x01\x12\t\n\x01y\x18\x03 \x01(\x01\x12\t\n\x01z\x18\x04 \x01(\x01\"8\n\rResponseQuery\x12\'\n\tresponses\x18\x01 \x03(\x0b\x32\x14.airmobisim.Response2\xc8\x01\n\nAirMobiSim\x12\x37\n\x05Start\x12\x16.google.protobuf.Empty\x1a\x16.google.protobuf.Empty\x12G\n\x12\x45xecuteOneTimeStep\x12\x16.google.protobuf.Empty\x1a\x19.airmobisim.ResponseQuery\x12\x38\n\x06\x46inish\x12\x16.google.protobuf.Empty\x1a\x16.google.protobuf.Emptyb\x06proto3'
   ,
   dependencies=[google_dot_protobuf_dot_empty__pb2.DESCRIPTOR,])
 
@@ -44,21 +44,21 @@ _RESPONSE = _descriptor.Descriptor(
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='x', full_name='airmobisim.Response.x', index=1,
-      number=2, type=2, cpp_type=6, label=1,
+      number=2, type=1, cpp_type=5, label=1,
       has_default_value=False, default_value=float(0),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='y', full_name='airmobisim.Response.y', index=2,
-      number=3, type=2, cpp_type=6, label=1,
+      number=3, type=1, cpp_type=5, label=1,
       has_default_value=False, default_value=float(0),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='z', full_name='airmobisim.Response.z', index=3,
-      number=4, type=2, cpp_type=6, label=1,
+      number=4, type=1, cpp_type=5, label=1,
       has_default_value=False, default_value=float(0),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,

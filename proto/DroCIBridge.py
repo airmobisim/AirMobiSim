@@ -30,10 +30,12 @@ class AirMobiSim(airmobisim_pb2_grpc.AirMobiSimServicer):
             self._isRunning = True 
 
             for node in self.simulation_obj._managedNodes:
-                startPos = node._mobility.getCurrentPos()
+                startPos = node._mobility._startPos
 
                 uav = airmobisim_pb2.Response(id=node._uid,x=startPos.x, y=startPos.y, z=startPos.z)
                 responseQuery.responses.append(uav)
+
+            Simulationparameter.incrementCurrentSimStep()
 
             return responseQuery
         else:
