@@ -184,11 +184,38 @@ class Response PROTOBUF_FINAL :
   // accessors -------------------------------------------------------
 
   enum : int {
-    kIdFieldNumber = 1,
     kXFieldNumber = 2,
     kYFieldNumber = 3,
     kZFieldNumber = 4,
+    kIdFieldNumber = 1,
   };
+  // double x = 2;
+  void clear_x();
+  double x() const;
+  void set_x(double value);
+  private:
+  double _internal_x() const;
+  void _internal_set_x(double value);
+  public:
+
+  // double y = 3;
+  void clear_y();
+  double y() const;
+  void set_y(double value);
+  private:
+  double _internal_y() const;
+  void _internal_set_y(double value);
+  public:
+
+  // double z = 4;
+  void clear_z();
+  double z() const;
+  void set_z(double value);
+  private:
+  double _internal_z() const;
+  void _internal_set_z(double value);
+  public:
+
   // int32 id = 1;
   void clear_id();
   ::PROTOBUF_NAMESPACE_ID::int32 id() const;
@@ -198,33 +225,6 @@ class Response PROTOBUF_FINAL :
   void _internal_set_id(::PROTOBUF_NAMESPACE_ID::int32 value);
   public:
 
-  // float x = 2;
-  void clear_x();
-  float x() const;
-  void set_x(float value);
-  private:
-  float _internal_x() const;
-  void _internal_set_x(float value);
-  public:
-
-  // float y = 3;
-  void clear_y();
-  float y() const;
-  void set_y(float value);
-  private:
-  float _internal_y() const;
-  void _internal_set_y(float value);
-  public:
-
-  // float z = 4;
-  void clear_z();
-  float z() const;
-  void set_z(float value);
-  private:
-  float _internal_z() const;
-  void _internal_set_z(float value);
-  public:
-
   // @@protoc_insertion_point(class_scope:airmobisim.Response)
  private:
   class _Internal;
@@ -232,10 +232,10 @@ class Response PROTOBUF_FINAL :
   template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
+  double x_;
+  double y_;
+  double z_;
   ::PROTOBUF_NAMESPACE_ID::int32 id_;
-  float x_;
-  float y_;
-  float z_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_airmobisim_2eproto;
 };
@@ -416,62 +416,62 @@ inline void Response::set_id(::PROTOBUF_NAMESPACE_ID::int32 value) {
   // @@protoc_insertion_point(field_set:airmobisim.Response.id)
 }
 
-// float x = 2;
+// double x = 2;
 inline void Response::clear_x() {
   x_ = 0;
 }
-inline float Response::_internal_x() const {
+inline double Response::_internal_x() const {
   return x_;
 }
-inline float Response::x() const {
+inline double Response::x() const {
   // @@protoc_insertion_point(field_get:airmobisim.Response.x)
   return _internal_x();
 }
-inline void Response::_internal_set_x(float value) {
+inline void Response::_internal_set_x(double value) {
   
   x_ = value;
 }
-inline void Response::set_x(float value) {
+inline void Response::set_x(double value) {
   _internal_set_x(value);
   // @@protoc_insertion_point(field_set:airmobisim.Response.x)
 }
 
-// float y = 3;
+// double y = 3;
 inline void Response::clear_y() {
   y_ = 0;
 }
-inline float Response::_internal_y() const {
+inline double Response::_internal_y() const {
   return y_;
 }
-inline float Response::y() const {
+inline double Response::y() const {
   // @@protoc_insertion_point(field_get:airmobisim.Response.y)
   return _internal_y();
 }
-inline void Response::_internal_set_y(float value) {
+inline void Response::_internal_set_y(double value) {
   
   y_ = value;
 }
-inline void Response::set_y(float value) {
+inline void Response::set_y(double value) {
   _internal_set_y(value);
   // @@protoc_insertion_point(field_set:airmobisim.Response.y)
 }
 
-// float z = 4;
+// double z = 4;
 inline void Response::clear_z() {
   z_ = 0;
 }
-inline float Response::_internal_z() const {
+inline double Response::_internal_z() const {
   return z_;
 }
-inline float Response::z() const {
+inline double Response::z() const {
   // @@protoc_insertion_point(field_get:airmobisim.Response.z)
   return _internal_z();
 }
-inline void Response::_internal_set_z(float value) {
+inline void Response::_internal_set_z(double value) {
   
   z_ = value;
 }
-inline void Response::set_z(float value) {
+inline void Response::set_z(double value) {
   _internal_set_z(value);
   // @@protoc_insertion_point(field_set:airmobisim.Response.z)
 }
