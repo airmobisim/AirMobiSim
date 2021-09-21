@@ -71,3 +71,6 @@ class Simulation:
     def getNextUid(self):
         self._highestUid += 1
         return self._highestUid
+
+    def getManagedNodes(self):
+        return self._managedNodes
