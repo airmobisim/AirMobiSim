@@ -12,17 +12,29 @@ service AirMobiSim{
     rpc ExecuteOneTimeStep (google.protobuf.Empty) returns (ResponseQuery);
     
     rpc Finish (google.protobuf.Empty) returns (google.protobuf.Empty);
+
+    rpc GetManagedHosts(google.protobuf.Empty) returns (UavList);
 }
 
+message UavList {
+    repeated Uav uavs = 1;
+}
 
-message Response{
-
+message Uav {
     int32 id = 1;
     double x = 2;
     double y = 3;
     double z = 4;
+    double speed = 5;
 }
 
+message Response{
+    int32 id = 1;
+    double x = 2;
+    double y = 3;
+    double z = 4;
+    double speed = 5;
+}
 
 message ResponseQuery{
     repeated Response responses = 1;
