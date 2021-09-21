@@ -1,10 +1,8 @@
-import math 
+import math
 
-from .simpleapp import Simpleapp
-from .simplemissioncontrol import Simplemissioncontrol 
-from .simplemobility import Simplemobility
-from .linearmobility import Linearmobility
 from .basemobility import Basemobility
+from .linearmobility import Linearmobility
+
 
 class Uav:
     _uid = -1
