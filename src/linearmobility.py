@@ -11,7 +11,7 @@ class Linearmobility(Basemobility):
         self._angle = angle
         self._acceleration = 1 #acceleration not considered yet
         self._move.setStart(startPos, 0)
-        self._move.setSpeed(1)
+        self._move.setSpeed(10)
         self._uid = uid
         self._stepTarget = ""
     def makeMove(self):

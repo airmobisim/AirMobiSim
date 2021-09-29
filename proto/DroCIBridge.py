@@ -81,7 +81,7 @@ class AirMobiSim(airmobisim_pb2_grpc.AirMobiSimServicer):
                 self._isInitialized = True
             currentPos = node._mobility.getCurrentPos()
             uav = airmobisim_pb2.Response(id=node._uid, x=currentPos.x, y=currentPos.y, z=currentPos.z,
-                                          speed=1)  # TODO: Make speed a correct parameter
+                                          speed=10)  # TODO: Make speed a correct parameter
             responseQuery.responses.append(uav)
         return responseQuery
 
