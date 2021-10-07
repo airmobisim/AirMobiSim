@@ -8,12 +8,15 @@ from .movement import Movement
 from .resultcollection import Resultcollection
 from .simulationparameter import Simulationparameter
 
+from .baseenergy import Baseenergy 
+
 class Basemobility(ABC):
     
     def __init__(self, uid,  startPos, endPos):
         self._uid = uid
         self._move = Movement()
         self._resultcollection =  Resultcollection()
+        self._baseenergy = Baseenergy()
         self._startPos = startPos
         self._endPos = endPos 
         pass
@@ -37,10 +40,15 @@ class Basemobility(ABC):
         currentPos = Point(x, y, z)
         return currentPos
 
+
     def makeMove(self):
         self.doLog()
 
     def doLog(self):
         #print("do log")
-        self._resultcollection.logCurrentPosition(self._uid,self.getCurrentPos())
+        self._resultcollection.logCurrentPosition(self._uid, self.getCurrentPos())
+        currentEnergy = self._baseenergy.getcurrentEnergy(self.getMove().getSpeed(), (Simulationparameter.currentSimStep * Simulationparameter.stepLength) - self.getMove().getStartTime())
+
+        self._resultcollection.logCurrentEnergy(self._uid,currentEnergy[0], currentEnergy[1])
+
         pass
