@@ -8,6 +8,9 @@ from src.simpleapp import Simpleapp
 
 from src.yamlparser import Yamlparser
 
+from src.resultcollection import Resultcollection
+
+
 from proto.DroCIBridge import startServer
 
 simulation: Simulation
@@ -19,6 +22,11 @@ def main():
     parser.add_argument('--configuration', action='store', type=str,
                         default="examples/simpleSimulation/simulation.config", help='configuration')
     parser.add_argument('--omnetpp', action='store_true', help='Start the OmNet++ simulator')
+
+    parser.add_argument('--show', action='store_true', help='Show the Energy as Plot')
+
+
+
     print(
         """AirMobiSim Simulation  (C) 2021 Chair of Networked Systems Modelling TU Dresden.\nVersion: 0.0.1\nSee the license for distribution terms and warranty disclaimer""")
 
@@ -31,11 +39,15 @@ def main():
     directory = pathlib.Path(args.configuration).parent.resolve()
     initializeSimulation(config, directory)
 
-    if args.omnetpp:
-        print("Start the AirMobiSim Server.....")
-        startServer(simulation)
+    if args.show:
+        hello = Resultcollection()
+        hello.showEnergy()
     else:
-        simulation.startSimulation()
+        if args.omnetpp:
+            print("Start the AirMobiSim Server.....")
+            startServer(simulation)
+        else:
+            simulation.startSimulation()
 
 
 def initializeSimulation(config, directory):
