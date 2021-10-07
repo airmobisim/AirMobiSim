@@ -40,8 +40,8 @@ def main():
     initializeSimulation(config, directory)
 
     if args.show:
-        hello = Resultcollection()
-        hello.showEnergy()
+        result = Resultcollection()
+        result.showEnergy()
     else:
         if args.omnetpp:
             print("Start the AirMobiSim Server.....")
