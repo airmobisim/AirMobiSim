@@ -2,6 +2,7 @@ import os
 import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
+import os.path
 
 from .singleton import Singleton
 from .simulationparameter import Simulationparameter
@@ -47,18 +48,15 @@ class Resultcollection(metaclass=Singleton):
         """
             Show the data of the energy as a plot
         """
-        energyData = pd.read_csv(self._logDir + "energyResults.csv", sep=self._logDelimiter)
-        #distanceData = list(energyData['travelled distance'])
-        #energy = list(energyData['energy'])
+        if os.path.isfile(self._logDir + "energyResults.csv"):
+            energyData = pd.read_csv(self._logDir + "energyResults.csv", sep=self._logDelimiter)
+            energyData.set_index("travelled distance", inplace=True)
+            energyData.groupby("uid")["energy"].plot(legend=True, xlabel="Distance (m)", ylabel= "Energy (Joules)")
+            plt.show()
+        else:
+            print("There is no such file called 'energyResults.csv'")
 
-        energyData.set_index("travelled distance", inplace=True)
-        energyData.groupby("uid")["energy"].plot(legend=True, xlabel="Distance (m)", ylabel= "Energy (Joules)")
-        ##k = energyData.groupby("uid")["energy"].apply(list)
 
-        #energyData.plot(x='travelled distance', y='energy')
-
-        #print (k)
-        plt.show()
 
 
         
