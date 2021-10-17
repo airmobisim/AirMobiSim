@@ -26,7 +26,7 @@ class Basemobility(ABC):
 
     def getCurrentPos(self):
         passedTime = (Simulationparameter.currentSimStep * Simulationparameter.stepLength) - self.getMove().getStartTime()
-        print('laura')
+
         if self.getMove().getLinearMobilitySpFlag():
 
             currentPos = self.getMove().getNextCoordinate()
@@ -36,7 +36,7 @@ class Basemobility(ABC):
 
             return currentPos
 
-            # print('bara')
+
 
 
         elif self.getMove().getFinalFlag():

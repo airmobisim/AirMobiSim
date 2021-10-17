@@ -28,11 +28,9 @@ class Splinemobility(Basemobility):
 
         # calculate the time elapsed
         passedTime = (Simulationparameter.currentSimStep * Simulationparameter.stepLength) - self.getMove().getStartTime()
-        # print('mike testing ')
+
         # for linear mobility with cubic spline
         if move.getLinearMobilitySpFlag():
-            # print('yooooooooooo')
-
 
             if 0.0<= passedTime < self._totalFlightTime :
                 spl_x = CubicSpline(self._waypointTime, self._waypointX)

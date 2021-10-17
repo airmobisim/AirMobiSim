@@ -173,7 +173,7 @@ def load_Data(path):
     # df_position.timestamp = np.subtract(df_position['timestamp'], float(takeoff_time))
     # print(df_position.head())
     df_position['timestamp'] = [x - float(takeoff_time) for x in df_position['timestamp']]
-    print(df_position)
+    # print(df_position)
 
 # time list start, 1/4, 1/2, 3/4, end, 1/4, 1/2. 3/4, end
 #     print(['start', '1/4', '1/2', '3/4', 'end', '1/4', '1/2', '3/4', 'end'])
@@ -183,22 +183,6 @@ def load_Data(path):
     time=np.subtract(time, takeoff_time)
     # print(time)
     totalFlightTime=time[-1] #last time element
-    # print('total time', totalFlightTime)
-    # hola= df_position.index[float(x)- start_first_straight_time <= 0.01 for x in df_position['timestamp'].tolist() ]
-    # df.index[df['BoolCol'] == True].tolist()
-    # idd=df_position.index[abs(df_position['timestamp']-time[0]) <= 0.005].tolist()[0]
-    # print('index we  want',idd)
-    # print('bal')
-    # print((df_position.loc[idd]['timestamp']))
-    # print('actual',time[0])
-    # print((df_position.loc[idd]['stateEstimate.x']))
-    # print((df_position.loc[idd]['stateEstimate.y']))
-
-    # idd = df_position.index[abs(df_position['timestamp'] - time[4]) <= 0.005].tolist()[0]
-    # print('index we  want', idd)
-    # print(df_position.loc[idd]['timestamp'])
-    # print(time[4])
-
 
     waypoint_index=[df_position.index[abs(df_position['timestamp'] - times) <= 0.005 ].tolist()[0] for times in time]
 
@@ -207,90 +191,14 @@ def load_Data(path):
     y=[(df_position.loc[ids]['stateEstimate.y']) for ids in waypoint_index]
     # print(x)
 
-    print('whole story')
-    print(waypoint_index)
-    print(time)
-    print(x)
-    print(y)
+    # print('whole story')
+    # print(waypoint_index)
+    # print(time)
+    # print(x)
+    # print(y)
 
 
     return uavStartPos, uavEndPos, totalFlightTime, time, x,y
-
-
-# for plotting
-# def make_plot():
-#
-#     current_file = os.path.abspath(os.path.dirname(__file__))
-#     csv_filename = os.path.join(current_file, '../examples/simpleSimulation/results/positionResults.csv')
-#
-#     df_simulation = pd.read_csv(csv_filename, sep=r'\t', skipinitialspace=True, engine='python')
-#
-#     #print(df_simulation.iloc[2]['posX'])
-#     #print(df_position_reference.['/tposX'])
-#     fig = go.Figure()
-#     # fig = make_subplots(rows=1, cols=2)
-#
-#     fig.add_trace(
-#         go.Scatter3d(x=df_position['stateEstimate.x'], y=df_position['stateEstimate.y'], z=df_position['stateEstimate.z'], mode= "lines",
-#                      line = {"color":'red'}, name='reference'),
-#
-#     )
-#     fig.add_trace(
-#          go.Scatter3d(x=df_simulation['posX'], y=df_simulation['posY'], z=df_simulation['posZ'], mode= "lines",
-#                       line = {"color":'blue'}, name='simulation'),
-#      )
-#
-#     # fig.add_trace(
-#     #     go.Scatter(x=[20, 30, 40], y=[50, 60, 70]),
-#     #     row=1, col=2
-#     # )
-#
-
-#
-#
-#
-#     fig.update_layout(scene = dict(
-#                         xaxis_title='X (m)',
-#                         yaxis_title='Y (m)',
-#                         zaxis_title='Z (m)',
-#                         aspectratio=dict(x=1, y=1, z=0.95),
-#                         xaxis_tickmode='linear',
-#                         xaxis_nticks=5,
-#                         xaxis_range=[0,-.4],
-#
-#                         xaxis_dtick=0.1,
-#                         # yaxis_tickmode='linear',
-#                         # yaxis_dtick=0.01,
-#     ),
-#                         # width=700,
-#                         # height=700,
-#
-#                         # xaxis_tickmode='linear',
-#                         # xaxis_dtick=0.1,
-#                         # yaxis_tickmode='linear',
-#                         # yaxis_dtick=0.1,
-#                         # xaxis=dict(
-#                         #         tickmode = 'linear',
-#                         #         tick0 = -0.04,
-#                         #         dtick = -0.75,
-#                         #         scaleratio = 1
-#                         #
-#                         #
-#                         #     ),
-#                         # yaxis = dict(
-#                         #         tickmode = 'linear',
-#                         #         tick0 = 0.0,
-#                         #         dtick = -0.75,
-#                         #         scaleratio = 1
-#                         #     ),
-#                         # margin=dict(r=20, b=10, l=10, t=25)
-#     )
-#
-#     fig.show()
-
-
-# Experimentingggggggg
-
 
 def make_plot():
     current_file = os.path.abspath(os.path.dirname(__file__))
@@ -369,17 +277,7 @@ def make_plot():
     fig.update_xaxes(title='t(s)', row=3, col=2)
     fig.update_yaxes(title='z(m)', row=3, col=2)
 
-    # fig.update_layout(
-    #     title="Uav Position Plot",
-    #     xaxis_title="X Axis Title",
-    #     yaxis_title="Y Axis Title",
-    #     legend_title="Legend Title",
-    #     # font=dict(
-    #     #     family="Courier New, monospace",
-    #     #     size=14,
-    #     #     color="RebeccaPurple"
-    #     # )
-    # )
+
 
     fig.update_layout(scene=dict(
         xaxis_title='X (m)',
@@ -402,12 +300,7 @@ def make_plot():
 
 
 def getCentreRight(a: Point, b: Point, r: float):
-    # if (b.y - a.y)==0:
-    #     print('1st')
-    #     return Point(b.x, b.y+r, b.z)
-    # elif b.x-a.x==0:
-    #     return Point(b.x+r, b.y, b.z)
-    # print('hello')
+
     gradient_ab = (b.y - a.y) / (b.x - a.x)
 
     gradient_ab_perp = (-1 / gradient_ab) if gradient_ab else 0
