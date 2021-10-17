@@ -25,19 +25,25 @@ class Basemobility(ABC):
         return self._move
 
     def getCurrentPos(self):
-        passedTime = (Simulationparameter.currentSimStep * Simulationparameter.stepLength) - self.getMove().getStartTime() 
-        currentDirection = self.getMove().getCurrentDirection()
-        x = self.getMove().getStartPos().x + (currentDirection[0] * self.getMove().getSpeed() * passedTime)
-        y = self.getMove().getStartPos().y + (currentDirection[1] * self.getMove().getSpeed() * passedTime)
-        z = self.getMove().getStartPos().z + (currentDirection[2] * self.getMove().getSpeed() * passedTime)
-        '''
-        print("Speed: " + str(self.getMove().getSpeed()))
-        print("CurrentDirection.x: " + str(currentDirection[0]))
-        print("CurrentDirection.y: " + str(currentDirection[1]))
-        print("CurrentDirection.z: " + str(currentDirection[2]))
-        print("Passed Time: " + str(passedTime))
-        '''
-        currentPos = Point(x, y, z)
+        passedTime = (Simulationparameter.currentSimStep * Simulationparameter.stepLength) - self.getMove().getStartTime()
+        print('laura')
+        if self.getMove().getLinearMobilitySpFlag():
+
+            currentPos = self.getMove().getNextCoordinate()
+
+            if (self.getMove().getFinalFlag()):
+                currentPos = self.getMove().getNextCoordinate()
+
+            return currentPos
+
+            # print('bara')
+
+
+        elif self.getMove().getFinalFlag():
+            # currentPos=Point(self.getMove().getTempStartPos().x, self.getMove().getTempStartPos().y, 0.0)
+            # currentPos=Point(self.getMove().getNextCoordinate().x, self.getMove().getNextCoordinate().x, 0.0)
+            currentPos = self.getMove().getNextCoordinate()
+
         return currentPos
 
 
@@ -46,7 +52,7 @@ class Basemobility(ABC):
 
     def doLog(self):
         #print("do log")
-        self._resultcollection.logCurrentPosition(self._uid, self.getCurrentPos())
+        self._resultcollection.logCurrentPosition(self._uid, self.getCurrentPos(), self.getMove())
         currentEnergy = self._baseenergy.getcurrentEnergy(self.getMove().getSpeed(), (Simulationparameter.currentSimStep * Simulationparameter.stepLength) - self.getMove().getStartTime())
 
         self._resultcollection.logCurrentEnergy(self._uid,currentEnergy[0], currentEnergy[1])

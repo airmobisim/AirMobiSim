@@ -14,7 +14,24 @@ class Movement:
         self._orientationZ = 0
         self._currentDirection = Point(0, 0, 0)
         self._speed = 0
-        pass
+        self._passedTime = 0
+
+        self._nextCoordinate = Point(0, 0, 0)
+        self._startPosCircle = Point(0, 0, 0)
+        self._finalFlag = False
+        self._linear_mobility_sp = False
+
+    def setFinalFlag(self, flag):
+        self._finalFlag = flag
+
+    def getFinalFlag(self):
+        return self._finalFlag
+
+    def setLinearMobilitySpFlag(self, flag):
+        self._linear_mobility_sp = flag
+
+    def getLinearMobilitySpFlag(self):
+        return self._linear_mobility_sp
 
     def setStart(self, startPos, startTime):
         self._startPos = startPos
@@ -28,6 +45,30 @@ class Movement:
 
     def setStartPos(self, startPos):
         self._startPos = startPos
+
+    def getLastPos(self):
+        return self._lastPos
+
+    def setLastPos(self, lastPos):
+        self._lastPos = lastPos
+
+    def getTempStartPos(self):
+        return self._tempStartPos
+
+    def setTempStartPos(self, tempStartPos):
+        self._tempStartPos = tempStartPos
+
+    def setNextCoordinate(self, nc):
+        self._nextCoordinate = nc
+
+    def getNextCoordinate(self):
+        return self._nextCoordinate
+
+    def setPassedTime(self, passedTime):
+        self._passedTime = passedTime
+
+    def getPassedTime(self):
+        return self._passedTime
 
     def setSpeed(self, speed):
         self._speed = speed
