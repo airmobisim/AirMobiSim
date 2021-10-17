@@ -101,26 +101,6 @@ def load_Data(path):
     half_circle_time = start_circle_time + (end_circle_time - start_circle_time) / 2
     threeFourth_circle_time = start_circle_time + (end_circle_time - start_circle_time) * 3 / 4
 
-
-
-
-
-
-    # print(df_position.head)
-    index=df_position.index[df_position['timestamp'] == start_first_straight_time].tolist()
-    print(index)
-    straight_point=Point()
-
-    print('hmm')
-    print(idx)
-    print('take off',takeoff_time)
-    print('landing',landing_time)
-    print('start straight:', start_first_straight_time )
-    print('end straight:', end_first_straight_time)
-    print('start circle:', start_circle_time)
-    print('end circle:', end_circle_time)
-
-
     flight_time_considered = float(landing_time) - float(takeoff_time)
 
     # dropping data on a separate dataframe preserving for future
@@ -144,30 +124,9 @@ def load_Data(path):
                       df_position.iloc[-1]['stateEstimate.z'])
     totalFlightTime = df_position.iloc[-1]['timestamp'] - df_position.iloc[0]['timestamp']
 
-    # data for circle circle
-    #  starts from start position because this was considered only for circular data chage when needed
-    uavStartPosCircle = uavStartPos
-    # centre_circle = Point(uavStartPosCircle.x + radius_circle, uavStartPosCircle.y, uavStartPosCircle.z)
-    # centre_circle = Point(uavStartPosCircle.x + math.sqrt(radius_circle**2/2), uavStartPosCircle.y + math.sqrt(radius_circle**2/2), uavStartPosCircle.z)
-    centre_circle = Point(uavStartPosCircle.x - radius_circle * math.cos(math.pi * 80 / 180),
-                          uavStartPosCircle.y - radius_circle * math.sin(math.pi * 80 / 180), uavStartPosCircle.z)
 
 
 
-
-
-    maxSpeed = -1
-    # maximum speed find
-    for i in range(len(df_position.index) - 1):
-        distanceX = (df_position.iloc[i + 1]['stateEstimate.x']) - (df_position.iloc[i]['stateEstimate.x'])
-        distanceY = (df_position.iloc[i + 1]['stateEstimate.y']) - (df_position.iloc[i]['stateEstimate.y'])
-
-        totalDistance = math.sqrt(distanceX ** 2 + distanceY ** 2)
-        timeDifference = (df_position.iloc[i + 1]['timestamp']) - (df_position.iloc[i]['timestamp'])
-        speed = totalDistance / timeDifference
-
-        if speed < 1:
-            maxSpeed = max(maxSpeed, speed)
 
     # making position data time start from 0 to compare time axis with simulation data and plotting
     # df_position.timestamp = np.subtract(df_position['timestamp'], float(takeoff_time))
@@ -207,14 +166,13 @@ def make_plot():
     df_simulation = pd.read_csv(csv_filename, sep=r'\t', skipinitialspace=True, engine='python')
     # copy of df_simulation dataframe without affecting the df_simulation
     df_simulation_trimmed = df_simulation.copy(deep=True)
-    print(df_simulation)
-    print('hello bhai')
-    print(df_simulation_trimmed.head)
+    # print(df_simulation)
+    # print('hello bhai')
+    # print(df_simulation_trimmed.head)
     df_simulation_trimmed = df_simulation_trimmed.drop(
         df_simulation_trimmed[df_simulation_trimmed.passedTime >= float(flight_time_considered)].index)
 
-    # fig = go.Figure()
-    # fig = make_subplots(rows=1, cols=2)
+
     fig = make_subplots(
         rows=3, cols=2,
         specs=[[{'type': 'scene', 'rowspan': 3}, {'type': 'xy'}],
@@ -299,79 +257,3 @@ def make_plot():
     fig.show()
 
 
-def getCentreRight(a: Point, b: Point, r: float):
-
-    gradient_ab = (b.y - a.y) / (b.x - a.x)
-
-    gradient_ab_perp = (-1 / gradient_ab) if gradient_ab else 0
-    # print(gradient_ab)
-    # print('check')
-    # print(gradient_ab_perp)
-    constant_c=0.0
-
-    if gradient_ab !=0:
-        constant_c = b.y - gradient_ab_perp * b.x
-    # perp(AB) line equation
-    y_by_x = lambda x: gradient_ab_perp * x + constant_c
-
-    # taking arbitary values of x
-    x_assumed_right = b.x + r / 2
-    point_assumed_right = Point(x_assumed_right, y_by_x(x_assumed_right), b.z)
-    x_assumed_left = b.x - r / 2
-    point_assumed_left = Point(x_assumed_left, y_by_x(x_assumed_left), b.z)
-
-    direction_b_to_assumed_right = Point(point_assumed_right.x - b.x, point_assumed_right.y - b.y,
-                                         point_assumed_right.z - b.z)
-    distance = math.sqrt((point_assumed_right.x - b.x) ** 2 + (point_assumed_right.y - b.y) ** 2 + (
-            point_assumed_right.z - b.z) ** 2)
-    # print(distance)
-
-    unit_vector_b_to_right = np.divide(direction_b_to_assumed_right, distance, out=np.zeros_like(direction_b_to_assumed_right),
-                             where=distance != 0)
-
-    # for left side
-
-    direction_b_to_assumed_left = Point(point_assumed_left.x - b.x, point_assumed_left.y - b.y,
-                                         point_assumed_left.z - b.z)
-    distance = math.sqrt((point_assumed_left.x - b.x) ** 2 + (point_assumed_left.y - b.y) ** 2 + (
-            point_assumed_left.z - b.z) ** 2)
-
-    # print(distance)
-
-    unit_vector_b_to_left = np.divide(direction_b_to_assumed_left, distance,
-                                       out=np.zeros_like(direction_b_to_assumed_right),
-                                       where=distance != 0)
-
-    b_r_right_vector = np.multiply( unit_vector_b_to_right, r)
-    b_r_left_vector = np.multiply( unit_vector_b_to_left, r)
-    centre_assumed_right = Point(b.x+b_r_right_vector[0],b.y+b_r_right_vector[1], b.z+b_r_right_vector[2])
-    centre_assumed_left = Point(b.x+b_r_left_vector[0],b.y+b_r_left_vector[1], b.z+b_r_left_vector[2])
-    if (b.y - a.y)==0:
-        centre_assumed_right=Point(b.x, b.y+r, b.z)
-        centre_assumed_left=Point(b.x, b.y-r, b.z)
-    elif b.x-a.x==0:
-        centre_assumed_right = Point(b.x+r, b.y, b.z)
-        centre_assumed_left = Point(b.x-r, b.y, b.z)
-
-    # print(centre_assumed_right)
-    # print(centre_assumed_left)
-    '''
-    to understand what position_r does: 
-    https://stackoverflow.com/questions/1560492/how-to-tell-whether-a-point-is-to-the-right-or-left-side-of-a-line#
-    '''
-    position_r = (b.x - a.x) * (centre_assumed_right.y - a.y) - (b.y - a.y) * (centre_assumed_right.x - a.x)
-    position_l = (b.x - a.x) * (centre_assumed_left.y - a.y) - (b.y - a.y) * (centre_assumed_left.x - a.x)
-
-    if position_r<0:
-        return centre_assumed_right
-
-    else:
-        return centre_assumed_left
-
-
-    # print(position_r)
-    # print(position_l)
-    #
-    # print("hello hello")
-
-    pass
