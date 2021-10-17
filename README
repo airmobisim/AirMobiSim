@@ -6,3 +6,18 @@ run ```pipenv install ``` for the installation
 ```
 ./airmobisim.py "examples/simpleSimulation/simulation.config
 ```
+
+Updated README:
+
+# AirmobiSim Project
+
+## Dependencies
+To install the dependencies associated with the project run the following command:
+```Bash
+pipenv install
+```
+## Run AirmobiSim
+To run the project use the following command from terminal(or PyCharm terminal):
+```Bash
+./airmobisim.py  --path `absolute_folder_path_to_data`
+```
