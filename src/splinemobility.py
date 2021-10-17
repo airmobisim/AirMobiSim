@@ -33,21 +33,25 @@ class Splinemobility(Basemobility):
         if move.getLinearMobilitySpFlag():
 
             if 0.0<= passedTime < self._totalFlightTime :
+                '''
+                reduce computation by passing the following lines in constructor
+                '''
+
                 spl_x = CubicSpline(self._waypointTime, self._waypointX)
                 spl_y = CubicSpline(self._waypointTime, self._waypointY)
                 nextCoordinate= Point(spl_x(passedTime), spl_y(passedTime), move.getStartPos().z)
                 move.setNextCoordinate(nextCoordinate)
 
-                # print('bara')
+
                 pass
 
             elif passedTime>= self._totalFlightTime :
                 move.setFinalFlag(True)
-                move.getLinearMobilitySpFlag()
+                move.setLinearMobilitySpFlag(False)
                 # move.setSpeed(0.0)
 
 
-            # print("jabara goal")
+
             pass
         move.setPassedTime(passedTime)
         super().makeMove()
