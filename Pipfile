@@ -13,6 +13,9 @@ Shapely = "==1.7.1"
 Fiona = "==1.8.20"
 matplotlib = "*"
 plotly = "*"
+spicy = "*"
+pyyaml = "*"
+google-api-python-client = "==2.21.0"
 
 [dev-packages]
 
