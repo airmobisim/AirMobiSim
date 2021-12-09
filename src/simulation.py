@@ -2,7 +2,6 @@ import geopandas
 from shapely.geometry import Point
 import threading
 import time
-import sys
 
 from .uav import Uav
 from .simulationparameter import Simulationparameter
@@ -16,10 +15,7 @@ class Simulation:
     _startUavs = []
     _highestUid = -1
 
-    def __init__(self, stepLength, simTimeLimit, playgroundSizeX, playgroundSizeY, playgroundSizeZ,
-                 uavs, uavStartPos, uavEndPos, totalFlightTime, waypointTime, waypointX, waypointY,
-                 directory):
-
+    def __init__(self, stepLength, simTimeLimit, playgroundSizeX, playgroundSizeY, playgroundSizeZ, uavs, directory):
         print("Initializing...")
         Simulationparameter.stepLength = stepLength
         Simulationparameter.directory = directory
@@ -30,12 +26,6 @@ class Simulation:
         self._playgroundSizeZ = playgroundSizeZ
         self._simulationSteps = simTimeLimit / Simulationparameter.stepLength
         self._startUavs = uavs
-        self._uavStartPos = uavStartPos
-        self._uavEndPos = uavEndPos
-        self._totalFlightTime = totalFlightTime
-        self._waypointTime = waypointTime
-        self._waypointX = waypointX
-        self._waypointY = waypointY
 
     def startSimulation(self):
         if self._isRunnig == True or Simulationparameter.currentSimStep != -1:
@@ -65,7 +55,8 @@ class Simulation:
     def initializeNodes(self):
         for uav in self._startUavs:
             self._managedNodes.append(
-                Uav(self.getNextUid(), self._uavStartPos, self._uavEndPos, self._totalFlightTime, self._waypointTime, self._waypointX, self._waypointY))
+                Uav(self.getNextUid(), Point(uav['startPosX'], uav['startPosY'], uav['startPosZ']),
+                    Point(uav['endPosX'], uav['endPosY'], uav['endPosZ'])))
 
     def processNextStep(self):
         Simulationparameter.incrementCurrentSimStep()

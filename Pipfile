@@ -18,7 +18,8 @@ spicy = "*"
 pyyaml = "*"
 google-api-python-client = "==2.21.0"
 conan = "==1.43.0"
+
 [dev-packages]
 
 [requires]
-python_version = "3.9"
+python_version = "3.8.9"
