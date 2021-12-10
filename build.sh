@@ -68,17 +68,17 @@ fi
 echo "Installing required Python packages..."
 
 pip3 install --user --upgrade pipenv
-if !(pyenv install 3.8.9); then
-	echo "Python 3.8.9 will not be installed by this setup. Proceed with the setup.."
+if !(pyenv install 3.9); then
+	echo "Python 3.9 will not be installed by this setup. Proceed with the setup.."
 fi
 
-pyenv local 3.8.9
+pyenv local 3.9
 PYTHON_BIN_PATH="$(python3 -m site --user-base)/bin"
 PATH="$PATH:$PYTHON_BIN_PATH"
 pip3 install --user --upgrade pipenv
 
-pipenv install
-pipenv run python -m grpc_tools.protoc --python_out=. --grpc_python_out=. proto/airmobisim.proto -I .
+poetry install
+poetry run python -m grpc_tools.protoc --python_out=. --grpc_python_out=. proto/airmobisim.proto -I .
 
 
 ################################################################
