@@ -51,19 +51,10 @@ read -p "Continue?"
 #|_|    |___/                 
 #
 ##################################
-#if ! command -v pyenv &> /dev/null
-#then
-#	echo "Installing pyenv..."
-#	$(curl -L https://raw.githubusercontent.com/pyenv/pyenv-installer/master/bin/pyenv-installer | bash)
-#
-#	echo -e 'export PYENV_ROOT="$HOME/.pyenv"
-#	export PATH="$PYENV_ROOT/bin:$PATH"
-#	if command -v pyenv 1>/dev/null 2>&1; then
-#	 eval "$(pyenv init -)"
-#	fi' >> ~/.bashrc
-#
-#	source ~/.bashrc
-#	pyenv -v
+if ! command -v pyenv &> /dev/null
+then
+	echo "Installing pyenv..."
+	curl https://pyenv.run | bash
 #fi
 #
 ################################################################
@@ -82,6 +73,10 @@ if !(pyenv install 3.8.9); then
 fi
 
 pyenv local 3.8.9
+PYTHON_BIN_PATH="$(python3 -m site --user-base)/bin"
+PATH="$PATH:$PYTHON_BIN_PATH"
+pip3 install --user --upgrade pipenv
+
 pipenv install
 pipenv run python -m grpc_tools.protoc --python_out=. --grpc_python_out=. proto/airmobisim.proto -I .
 
