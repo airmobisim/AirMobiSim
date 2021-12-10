@@ -83,7 +83,7 @@ fi
 
 pyenv local 3.8.9
 pipenv install
-python -m grpc_tools.protoc --python_out=. --grpc_python_out=. proto/airmobisim.proto -I .
+pipenv run python -m grpc_tools.protoc --python_out=. --grpc_python_out=. proto/airmobisim.proto -I .
 
 
 ################################################################
@@ -96,7 +96,9 @@ python -m grpc_tools.protoc --python_out=. --grpc_python_out=. proto/airmobisim.
 ################################################################
 
 cd ..
-git clone https://git.cms-labs.org/git/hardes/airmobisimVeins
+if ![ -d "airmobisimVeins" ]; then
+  git clone https://git.cms-labs.org/git/hardes/airmobisimVeins
+fi
 cd airmobisimVeins
 ./configure
 make -j$(nproc)
