@@ -55,7 +55,7 @@ if ! command -v pyenv &> /dev/null
 then
 	echo "Installing pyenv..."
 	curl https://pyenv.run | bash
-#fi
+fi
 #
 ################################################################
 # ____        _   _                   ____       _               
