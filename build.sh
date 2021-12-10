@@ -42,7 +42,6 @@ The complete source code is compiled afterwards.
 "
 read -p "Continue?" 
 
-source ~/.bashrc
 ###################################
 #                           
 # _ __  _   _  ___ _ ____   __
@@ -52,21 +51,21 @@ source ~/.bashrc
 #|_|    |___/                 
 #
 ##################################
-if ! command -v pyenv &> /dev/null
-then
-	echo "Installing pyenv..."
-	$(curl -L https://raw.githubusercontent.com/pyenv/pyenv-installer/master/bin/pyenv-installer | bash)
-
-	echo -e 'export PYENV_ROOT="$HOME/.pyenv"
-	export PATH="$PYENV_ROOT/bin:$PATH"
-	if command -v pyenv 1>/dev/null 2>&1; then
-	 eval "$(pyenv init -)"
-	fi' >> ~/.bashrc
-
-	source ~/.bashrc
-	pyenv -v
-fi
-
+#if ! command -v pyenv &> /dev/null
+#then
+#	echo "Installing pyenv..."
+#	$(curl -L https://raw.githubusercontent.com/pyenv/pyenv-installer/master/bin/pyenv-installer | bash)
+#
+#	echo -e 'export PYENV_ROOT="$HOME/.pyenv"
+#	export PATH="$PYENV_ROOT/bin:$PATH"
+#	if command -v pyenv 1>/dev/null 2>&1; then
+#	 eval "$(pyenv init -)"
+#	fi' >> ~/.bashrc
+#
+#	source ~/.bashrc
+#	pyenv -v
+#fi
+#
 ################################################################
 # ____        _   _                   ____       _               
 #|  _ \ _   _| |_| |__   ___  _ __   / ___|  ___| |_ _   _ _ __  
@@ -76,7 +75,10 @@ fi
 #       |___/                                             |_|    
 ################################################################
 echo "Installing required Python packages..."
-pip install --user --upgrade pipenv
+
+pip3 install --user --upgrade pipenv
+pyenv install 3.8.9
+pyenv local 3.8.9
 pipenv install
 python -m grpc_tools.protoc --python_out=. --grpc_python_out=. proto/airmobisim.proto -I .
 
@@ -104,17 +106,20 @@ cd .conan/data
 
 basePath=$(pwd)
 
-grpc_cpp_plugin=$(find . -type f -name "grpc_cpp_plugin" 2>/dev/null | grep -aE $GRPC_VERSION)
+grpc_cpp_plugin=$(find . -type f -name "grpc_cpp_plugin" 2>/dev/null | grep -aE "$GRPC_VERSION.*package")
 grpc_cpp_plugin="${grpc_cpp_plugin:1}"
 grpc_cpp_plugin=$basePath$grpc_cpp_plugin
 
-DUMMYTEXT="(standard input):."
-protoc=$(find . -name "protoc" | grep -HF $PROTOC_VERSION)
-protoc=${protoc//$DUMMYTEXT/}
+echo $grpc_cpp_plugin
+
+protoc=$(find . -name "protoc" | grep  "$PROTOC_VERSION.*package")
+protoc="${protoc:1}"
 protoc=$basePath$protoc
 
 cd $cwd
+
 $protoc airmobisim.proto --cpp_out=src/veins_libairmobisim/proto
+
 $protoc airmobisim.proto --grpc_out=src/veins_libairmobisim/proto/ --plugin=protoc-gen-grpc=$grpc_cpp_plugin
 
 
