@@ -35,7 +35,7 @@ ICB8X3xcX19fL3xfLl9fL3xffF9fX18vfF98X3wgfF98IHxffA=="
 echo -e "\n=====================================================================
 The open-source unmanned aerial vehicle simulation framework
 ====================================================================="
-echo "AirMobiSim requires pyenv. This setup is installing pyenv in case it is not available yet."
+echo "AirMobiSim requires pyenv and OMNeT++ 6 Pre 10. Both must be installed before the setup can be started."
 echo "It furthermore installes all required Python packages, loads the AirMobiSim extension from Veins, installs native binaries and libs from GRPC (version $GRPC_VERSION) and Protobuf ($PROTOC_VERSION) using conan.io.
 
 The complete source code is compiled afterwards.
