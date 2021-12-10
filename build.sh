@@ -77,7 +77,10 @@ read -p "Continue?"
 echo "Installing required Python packages..."
 
 pip3 install --user --upgrade pipenv
-pyenv install 3.8.9
+if !(pyenv install 3.8.9); then
+	echo "Python 3.8.9 will not be installed by this setup. Proceed with the setup.."
+fi
+
 pyenv local 3.8.9
 pipenv install
 python -m grpc_tools.protoc --python_out=. --grpc_python_out=. proto/airmobisim.proto -I .
