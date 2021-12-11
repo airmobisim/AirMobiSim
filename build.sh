@@ -51,11 +51,11 @@ read -p "Continue?"
 #|_|    |___/                 
 #
 ##################################
-if ! command -v pyenv &> /dev/null
-then
-	echo "Installing pyenv..."
-	curl https://pyenv.run | bash
-fi
+#if ! command -v pyenv &> /dev/null
+#then
+#	echo "Installing pyenv..."
+#	curl https://pyenv.run | bash
+#fi
 #
 ################################################################
 # ____        _   _                   ____       _               
@@ -68,14 +68,13 @@ fi
 echo "Installing required Python packages..."
 
 pip3 install --user --upgrade pipenv
-if !(pyenv install 3.9); then
-	echo "Python 3.9 will not be installed by this setup. Proceed with the setup.."
-fi
+#if !(pyenv install 3.9.0); then
+#	echo "Python 3.9 will not be installed by this setup. Proceed with the setup.."
+#fi
 
-pyenv local 3.9
-PYTHON_BIN_PATH="$(python3 -m site --user-base)/bin"
-PATH="$PATH:$PYTHON_BIN_PATH"
-pip3 install --user --upgrade pipenv
+#pyenv local 3.9.0
+#PYTHON_BIN_PATH="$(python3 -m site --user-base)/bin"
+#PATH="$PATH:$PYTHON_BIN_PATH"
 
 poetry install
 poetry run python -m grpc_tools.protoc --python_out=. --grpc_python_out=. proto/airmobisim.proto -I .
