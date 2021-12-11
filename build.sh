@@ -70,10 +70,7 @@ then
 	echo "Installing poetry"
 	curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python -
 
-	echo "##########"
-	echo "Please restart the build process"
-	echo "##########"
-	exit
+	source $HOME/.poetry/env
 fi
 ################################################################
 # ____        _   _                   ____       _               
@@ -96,7 +93,7 @@ pip3 install --user --upgrade pipenv
 
 poetry install
 poetry run python -m grpc_tools.protoc --python_out=. --grpc_python_out=. proto/airmobisim.proto -I .
-
+source ~/.profile
 
 ################################################################
 #__     __   _             ____       _               
@@ -108,7 +105,8 @@ poetry run python -m grpc_tools.protoc --python_out=. --grpc_python_out=. proto/
 ################################################################
 
 cd ..
-if [  ! -f "airmobisimVeins" ]; then
+echo $(pwd)
+if [  ! -d "airmobisimVeins" ]; then
   git clone https://git.cms-labs.org/git/hardes/airmobisimVeins
 fi
 cd airmobisimVeins
