@@ -36,7 +36,7 @@ echo -e "\n=====================================================================
 The open-source unmanned aerial vehicle simulation framework
 ====================================================================="
 echo "AirMobiSim requires pyenv and OMNeT++ 6 Pre 10. Both must be installed before the setup can be started."
-echo "It furthermore installes all required Python packages, loads the AirMobiSim extension from Veins, installs native binaries and libs from GRPC (version $GRPC_VERSION) and Protobuf ($PROTOC_VERSION) using conan.io.
+echo "It furthermore installes all required Python  packages (and poetry), loads the AirMobiSim extension from Veins, installs native binaries and libs from GRPC (version $GRPC_VERSION) and Protobuf ($PROTOC_VERSION) using conan.io.
 
 The complete source code is compiled afterwards.
 "
@@ -57,6 +57,24 @@ read -p "Continue?"
 #	curl https://pyenv.run | bash
 #fi
 #
+##################################
+#                  _              
+# _ __   ___   ___| |_ _ __ _   _ 
+#| '_ \ / _ \ / _ \ __| '__| | | |
+#| |_) | (_) |  __/ |_| |  | |_| |
+#| .__/ \___/ \___|\__|_|   \__, |
+#|_|                        |___/ 
+##################################
+if ! command -v poetry &> /dev/null
+then
+	echo "Installing poetry"
+	curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python -
+
+	echo "##########"
+	echo "Please restart the build process"
+	echo "##########"
+	exit
+fi
 ################################################################
 # ____        _   _                   ____       _               
 #|  _ \ _   _| |_| |__   ___  _ __   / ___|  ___| |_ _   _ _ __  
