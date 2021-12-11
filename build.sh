@@ -91,7 +91,7 @@ poetry run python -m grpc_tools.protoc --python_out=. --grpc_python_out=. proto/
 ################################################################
 
 cd ..
-if ![ -d "airmobisimVeins" ]; then
+if [  ! -f "airmobisimVeins" ]; then
   git clone https://git.cms-labs.org/git/hardes/airmobisimVeins
 fi
 cd airmobisimVeins
@@ -99,6 +99,7 @@ cd airmobisimVeins
 make -j$(nproc)
 
 cd subprojects/veins_libairmobisim2/
+conan profile update settings.compiler.libcxx=libstdc++11 default
 conan install .
 cwd=$(pwd)
 cd
