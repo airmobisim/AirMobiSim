@@ -95,6 +95,7 @@ poetry install
 poetry run python -m grpc_tools.protoc --python_out=. --grpc_python_out=. proto/airmobisim.proto -I .
 source ~/.profile
 
+pip3 install --user conan # We need a lokal installation outside poetry, since conan is required for the OMNeT++ part
 ################################################################
 #__     __   _             ____       _               
 #\ \   / /__(_)_ __  ___  / ___|  ___| |_ _   _ _ __  
@@ -114,6 +115,10 @@ cd airmobisimVeins
 make -j$(nproc)
 
 cd subprojects/veins_libairmobisim2/
+if [  ! -f "$HOME/.conan/profiles/default" ]; then
+	echo "Create new default conan profile"
+	conan profile new default --detect #Create new default profile
+fi
 conan profile update settings.compiler.libcxx=libstdc++11 default
 conan install .
 cwd=$(pwd)
