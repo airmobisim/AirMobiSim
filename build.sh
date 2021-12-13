@@ -26,7 +26,6 @@ set -e
 
 GRPC_VERSION=1.38.1
 PROTOC_VERSION=3.17.1
-
 base64 -d <<< "ICAgIF8gICAgXyAgICAgIF9fICBfXyAgICAgICBfICAgICBfIF9fX18gIF8KICAgLyBcICAoXylf
 IF9ffCAgXC8gIHwgX19fIHwgfF9fIChfKSBfX198KF8pXyBfXyBfX18KICAvIF8gXCB8IHwgJ19f
 fCB8XC98IHwvIF8gXHwgJ18gXHwgXF9fXyBcfCB8ICdfIGAgXyBcCiAvIF9fXyBcfCB8IHwgIHwg
@@ -96,6 +95,7 @@ poetry run python -m grpc_tools.protoc --python_out=. --grpc_python_out=. proto/
 source ~/.profile
 
 pip3 install --user conan # We need a lokal installation outside poetry, since conan is required for the OMNeT++ part
+AIRMOBISIMDIR=$(pwd)
 ################################################################
 #__     __   _             ____       _               
 #\ \   / /__(_)_ __  ___  / ___|  ___| |_ _   _ _ __  
@@ -106,22 +106,25 @@ pip3 install --user conan # We need a lokal installation outside poetry, since c
 ################################################################
 
 cd ..
-echo $(pwd)
 if [  ! -d "airmobisimVeins" ]; then
   git clone https://git.cms-labs.org/git/hardes/airmobisimVeins
 fi
 cd airmobisimVeins
+AIRMOBISIMVEINS_PATH="$(pwd)/subprojects/veins_libairmobisim2"
+
 ./configure
 make -j$(nproc)
 
-cd subprojects/veins_libairmobisim2/
+cd $AIRMOBISIMDIR
+
 if [  ! -f "$HOME/.conan/profiles/default" ]; then
 	echo "Create new default conan profile"
 	conan profile new default --detect #Create new default profile
 fi
-conan profile update settings.compiler.libcxx=libstdc++11 default
-conan install .
-cwd=$(pwd)
+
+poetry run bash -c "conan profile update settings.compiler.libcxx=libstdc++11 default"
+poetry run bash -c "cd $AIRMOBISIMVEINS_PATH && conan install ."
+
 cd
 cd .conan/data
 
@@ -137,7 +140,7 @@ protoc=$(find . -name "protoc" | grep  "$PROTOC_VERSION.*package")
 protoc="${protoc:1}"
 protoc=$basePath$protoc
 
-cd $cwd
+cd $AIRMOBISIMVEINS_PATH 
 
 $protoc airmobisim.proto --cpp_out=src/veins_libairmobisim/proto
 
@@ -147,4 +150,8 @@ $protoc airmobisim.proto --grpc_out=src/veins_libairmobisim/proto/ --plugin=prot
 ./configure
 make -j$(nproc)
 
-
+echo "Everything worked"
+echo ""
+echo "Your PATH does not contain \"\$HOME/.poetry/bin:\$PATH\""
+echo "Please run      'export PATH="\$HOME/.poetry/bin:\$PATH"'      or      'source ~/.profile'"
+echo "You can run AirMobiSim with the command 'poetry run ./airmobisim.py'"
