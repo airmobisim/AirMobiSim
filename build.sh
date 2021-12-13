@@ -34,8 +34,8 @@ ICB8X3xcX19fL3xfLl9fL3xffF9fX18vfF98X3wgfF98IHxffA=="
 echo -e "\n=====================================================================
 The open-source unmanned aerial vehicle simulation framework
 ====================================================================="
-echo "AirMobiSim requires pyenv and OMNeT++ 6 Pre 10. Both must be installed before the setup can be started."
-echo "It furthermore installes all required Python  packages (and poetry), loads the AirMobiSim extension from Veins, installs native binaries and libs from GRPC (version $GRPC_VERSION) and Protobuf ($PROTOC_VERSION) using conan.io.
+echo "AirMobiSim requires OMNeT++ 6 Pre 10 to be installed and part of your PATH."
+echo "This setup installs all required Python  packages (and poetry), loads the AirMobiSim extension from Veins, installs native binaries and libs from GRPC (version $GRPC_VERSION) and Protobuf ($PROTOC_VERSION) using conan.io.
 
 The complete source code is compiled afterwards.
 "
@@ -50,12 +50,23 @@ read -p "Continue?"
 #|_|    |___/                 
 #
 ##################################
-#if ! command -v pyenv &> /dev/null
-#then
-#	echo "Installing pyenv..."
-#	curl https://pyenv.run | bash
-#fi
-#
+export PYENV_ROOT="$HOME/.pyenv"
+export PATH="$PYENV_ROOT/bin:$PATH"
+export PATH="$PYENV_ROOT/shims:$PATH"
+if ! command -v pyenv &> /dev/null
+then
+	echo "Installing pyenv..."
+	curl https://pyenv.run | bash
+	export PYENV_ROOT="$HOME/.pyenv"
+	export PATH="$PYENV_ROOT/bin:$PATH"
+	export PATH="$PYENV_ROOT/shims:$PATH"
+	eval "$(pyenv virtualenv-init -)"
+fi
+if !(pyenv install 3.9.0); then
+	echo "Python 3.9.0 will not be installed by this setup. Proceed with the setup.."
+fi
+pyenv global 3.9.0
+
 ##################################
 #                  _              
 # _ __   ___   ___| |_ _ __ _   _ 
