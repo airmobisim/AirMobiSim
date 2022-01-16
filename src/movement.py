@@ -93,7 +93,8 @@ class Movement:
         '''
         direction = Point(target.x - self._startPos.x, target.y - self._startPos.y, target.z - self._startPos.z)
         distance = math.sqrt((target.x - self._startPos.x)**2 + (target.y - self._startPos.y)**2 + (target.z - self._startPos.z)**2)
-        newDirection = np.divide(direction, distance)
+        array = np.divide(direction, distance)
+        newDirection = Point(array[0], array[1], array[2])
         #print("old direction: " + str(direction) + " new direction " + str(newDirection))
         self.setCurrentDirection(newDirection)
     

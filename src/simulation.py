@@ -57,6 +57,7 @@ class Simulation:
             self._managedNodes.append(
                 Uav(self.getNextUid(), Point(uav['startPosX'], uav['startPosY'], uav['startPosZ']),
                     Point(uav['endPosX'], uav['endPosY'], uav['endPosZ'])))
+            print(len(self._managedNodes))
 
     def processNextStep(self):
         Simulationparameter.incrementCurrentSimStep()

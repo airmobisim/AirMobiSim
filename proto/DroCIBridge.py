@@ -12,13 +12,14 @@ class AirMobiSim(airmobisim_pb2_grpc.AirMobiSimServicer):
 
     def __init__(self, simulation_obj):
         self._isRunning = False
+        self.allIsWrong = False
         self._isInitialized = True
         self.simulation_obj = simulation_obj
         self._lastUavReport = []
 
     def startSimulation(self):
         self.simulation_obj.initializeNodes()
-        self._isRunning = True
+        self.allIsWrong = True
 
     def Start(self, request, context):
         pass
@@ -33,12 +34,11 @@ class AirMobiSim(airmobisim_pb2_grpc.AirMobiSimServicer):
         """
         responseQuery = airmobisim_pb2.ResponseQuery()
 
-        if not self._isRunning:
+        if not self.allIsWrong:
             self.startSimulation()
 
             for node in self.simulation_obj._managedNodes:
                 startPos = node._mobility._startPos
-
                 uav = airmobisim_pb2.Response(id=node._uid, x=startPos.x, y=startPos.y, z=startPos.z)
                 responseQuery.responses.append(uav)
 
@@ -47,14 +47,12 @@ class AirMobiSim(airmobisim_pb2_grpc.AirMobiSimServicer):
             return responseQuery
         else:
             # rt = Repeatedtimer(1, self.printStatus, "World")
-
             if Simulationparameter.currentSimStep < self.simulation_obj._simulationSteps:
                 self._lastUavReport = []
                 for node in self.simulation_obj._managedNodes:
-                    node._mobility.makeMove()
+                    node.getMobility().makeMove()
                     self._isInitialized = True
-                    currentPos = node._mobility.getCurrentPos()
-
+                    currentPos = node.getMobility().getCurrentPos()
                     uav = airmobisim_pb2.Response(id=node._uid, x=currentPos.x, y=currentPos.y, z=currentPos.z)
                     self._lastUavReport.append(uav)
                     responseQuery.responses.append(uav)
@@ -64,15 +62,18 @@ class AirMobiSim(airmobisim_pb2_grpc.AirMobiSimServicer):
 
             else:
                 # rt.stop()
+                print("I finished simulation.")
                 self.simulation_obj.finishSimulation()
 
     def Finish(self, request, context):
         pass
 
     def GetManagedHosts(self, request, context):
+
+        print("GetManagesHosts gets called!")
         responseQuery = airmobisim_pb2.ResponseQuery()
 
-        if not self._isRunning:
+        if not self.allIsWrong:
             self.startSimulation()
 
         for node in self.simulation_obj._managedNodes:
@@ -81,12 +82,39 @@ class AirMobiSim(airmobisim_pb2_grpc.AirMobiSimServicer):
                 self._isInitialized = True
             currentPos = node._mobility.getCurrentPos()
             uav = airmobisim_pb2.Response(id=node._uid, x=currentPos.x, y=currentPos.y, z=currentPos.z,
-                                          speed=10)  # TODO: Make speed a correct parameter
+                                          speed=node.getMobility()._move.getSpeed())  # TODO: Make speed a correct parameter
             responseQuery.responses.append(uav)
         return responseQuery
 
+    def InsertUAV(self, request, context):
+        """
+        Method inserts an UAV in simulation
+        In the next timestep makeMove()
+        """
+        print("InsertUAV  gets called!")
+        self.simulation_obj.managedNodes.append(Uav(request.id, Point(request.coordinates[0].x, request.coordinates[0].y, request.coordinates[0].z), Point(request.coordinates[1].x, request.coordinates[1].y, request.coordinates[1].z), angle=request.angle, speed=request.speed))
 
+    def InsertWaypoints(self, request, context):
+        pass
 
+    def DeleteUAV(self, request, context):
+       """
+       Delete UAV with the given Id
+       """
+       print("DeleteUAV gets called")
+       for node in range(len(self.simulation_obj.managedNodes)):
+           if self.simulation_obj.managesNodes[node].id == request.num:
+                self.simulation_obj.managedNodes.pop(node)
+
+    def getNumberCurrentUAV(self, request, context):
+      """
+       Return the number for current UAVs
+      """
+     
+      print("getNumberCurrentUAV gets called")
+      currentUAV = len(self.simulation_obj._managedNodes) 
+
+      return airmobisim_pb2.Number(num=currentUAV)
 
 def startServer(simulation_object):
     """
