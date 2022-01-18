@@ -103,7 +103,7 @@ pip3 install --user --upgrade pipenv
 
 poetry install
 poetry run python -m grpc_tools.protoc --python_out=. --grpc_python_out=. proto/airmobisim.proto -I .
-source ~/.profile
+#source ~/.profile
 
 pip3 install --user conan # We need a lokal installation outside poetry, since conan is required for the OMNeT++ part
 AIRMOBISIMDIR=$(pwd)
@@ -130,7 +130,8 @@ cd $AIRMOBISIMDIR
 
 if [  ! -f "$HOME/.conan/profiles/default" ]; then
 	echo "Create new default conan profile"
-	conan profile new default --detect #Create new default profile
+	poetry run bash -c "conan profile new default --detect" #Create new default profile
+	poetry run bash -c "conan profile update settings.compiler.libcxx=libstdc++11 default"
 fi
 
 poetry run bash -c "conan profile update settings.compiler.libcxx=libstdc++11 default"
