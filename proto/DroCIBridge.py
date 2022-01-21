@@ -2,7 +2,8 @@ import grpc
 from src.simulation import Simulation
 from concurrent import futures
 from src.simulationparameter import Simulationparameter
-
+from shapely.geometry import Point
+from src.uav import Uav
 import time
 from proto import airmobisim_pb2_grpc
 from proto import airmobisim_pb2
@@ -92,7 +93,7 @@ class AirMobiSim(airmobisim_pb2_grpc.AirMobiSimServicer):
         In the next timestep makeMove()
         """
         print("InsertUAV  gets called!")
-        self.simulation_obj.managedNodes.append(Uav(request.id, Point(request.coordinates[0].x, request.coordinates[0].y, request.coordinates[0].z), Point(request.coordinates[1].x, request.coordinates[1].y, request.coordinates[1].z), angle=request.angle, speed=request.speed))
+        self.simulation_obj._managedNodes.append(Uav(request.id, Point(request.coordinates[0].x, request.coordinates[0].y, request.coordinates[0].z), Point(request.coordinates[1].x, request.coordinates[1].y, request.coordinates[1].z), angle=request.angle, speed=request.speed))
 
     def InsertWaypoints(self, request, context):
         pass
