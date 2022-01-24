@@ -20,6 +20,7 @@ class Movement:
         self._startPosCircle = Point(0, 0, 0)
         self._finalFlag = False
         self._linear_mobility_sp = False
+        self._waypointsInsertedFlag=False
 
     def setFinalFlag(self, flag):
         self._finalFlag = flag
@@ -32,6 +33,12 @@ class Movement:
 
     def getLinearMobilitySpFlag(self):
         return self._linear_mobility_sp
+
+    def setWaypointsInsertedFlag(self, flag):
+        self._waypointsInsertedFlag = flag
+
+    def getWaypointsInsertedFlag(self):
+        return self._waypointsInsertedFlag
 
     def setStart(self, startPos, startTime):
         self._startPos = startPos
