@@ -176,9 +176,9 @@ def load_Data():
     # z1 = np.empty(13)  # numpy arrat size 12
     # z1.fill(2)    # list filled with 1
     time1 = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
-    x1 = np.linspace(-1.5, 1.5, num=10 )
+    x1 = np.linspace(-1.5, 1.5, num=10 )             #sine wave
     y1 = np.linspace(-1.5, 1.5, num=10 )
-    z1=[1, 1.3, 1, 0.7, 1, 1.3, 1, 0.7, 1, 1.3]
+    z1=[1, 1.1, 1, 0.9, 1, 1.1, 1, 0.9, 1, 1.1]
 
     totalFlightTime1 = time1[-1]
 
@@ -199,16 +199,22 @@ def load_Data():
     # y=np.add(y,3)
     # print("printing x")
     # print(x)
-    uavStartPos=[uavStartPos1, uavEndPos2]
-    uavEndPos= [uavEndPos1, uavEndPos2]
-    totalFlightTime=[totalFlightTime1, totalFlightTime2]
-    time=[time1, time2]
-    x=[x1, x2]
-    y=[y1,y2]
-    z=[z1, z2]
-    # print("hello")
-    # print(time1)
-    # print(z1)
+
+    # uavStartPos=[uavStartPos1, uavEndPos2]
+    # uavEndPos= [uavEndPos1, uavEndPos2]
+    # totalFlightTime=[totalFlightTime1, totalFlightTime2]
+    # time=[time1, time2]
+    # x=[x1, x2]
+    # y=[y1,y2]
+    # z=[z1, z2]
+    uavStartPos = [uavStartPos1]
+    uavEndPos = [uavEndPos1]
+    totalFlightTime = [totalFlightTime1]
+    time = [time1]
+    x = [x1]
+    y = [y1]
+    z = [z1]
+
 
 
 
