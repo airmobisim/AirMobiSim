@@ -8,14 +8,15 @@ from .simulationparameter import Simulationparameter
 
 
 class Splinemobility(Basemobility):
-    def __init__(self, uid, startPos, endPos, totalFlightTime, waypointTime, waypointX, waypointY):
+    def __init__(self, uid, startPos, endPos, totalFlightTime, waypointTime, waypointX, waypointY, waypointZ):
         super().__init__(uid, startPos, endPos)
         self._move.setStart(startPos, 0)
         self._move.setLastPos(endPos)
         self._move.setTempStartPos(startPos) # holds each intermediate points of linear in each iteration
-        self._waypointTime=waypointTime
-        self._waypointX=waypointX
-        self._waypointY=waypointY
+        self._waypointTime = waypointTime
+        self._waypointX = waypointX
+        self._waypointY = waypointY
+        self._waypointZ = waypointZ
         self._uid = uid
         self._totalFlightTime=totalFlightTime
         # only for testing spline mobility fixing to true
@@ -32,14 +33,15 @@ class Splinemobility(Basemobility):
         # for linear mobility with cubic spline
         if move.getLinearMobilitySpFlag():
 
-            if 0.0<= passedTime < self._totalFlightTime :
+            if 0.0 <= passedTime < self._totalFlightTime :
                 '''
                 reduce computation by passing the following lines in constructor
                 '''
 
                 spl_x = CubicSpline(self._waypointTime, self._waypointX)
                 spl_y = CubicSpline(self._waypointTime, self._waypointY)
-                nextCoordinate= Point(spl_x(passedTime), spl_y(passedTime), move.getStartPos().z)
+                spl_z = CubicSpline(self._waypointTime, self._waypointZ)
+                nextCoordinate= Point(spl_x(passedTime), spl_y(passedTime), spl_z(passedTime))
                 move.setNextCoordinate(nextCoordinate)
 
 

@@ -22,10 +22,10 @@ flight_time_considered = 0.0
 
 
 # data being loaded to dataframe and variables to be passed to the simulator
-def load_Data(path):
+def load_Data():
     global df_position
     global flight_time_considered
-
+    '''
     folder_path = Path(path)
     csv_position = glob.glob(os.path.join(folder_path, "position*.csv"))
     csv_command = glob.glob(os.path.join(folder_path, "command*.csv"))
@@ -145,7 +145,7 @@ def load_Data(path):
 
     waypoint_index=[df_position.index[abs(df_position['timestamp'] - times) <= 0.005 ].tolist()[0] for times in time]
 
-    #x coordinate or waypoints
+    #x and y coordinate or waypoints
     x=[(df_position.loc[ids]['stateEstimate.x']) for ids in waypoint_index]
     y=[(df_position.loc[ids]['stateEstimate.y']) for ids in waypoint_index]
     # print(x)
@@ -156,8 +156,63 @@ def load_Data(path):
     # print(x)
     # print(y)
 
+#for fancy waypoints for two uavs
+    #find distance of the mid point of one triangle side to the origin
+    distance= math.sqrt(0.5 ** 2 + (math.sqrt(3) / 2) ** 2)
+    #add radius
+    distance += 1
+    angle =math.atan((math.sqrt(3)/2)/0.5)
+    x_cord= distance * math.cos(math.radians(45))
+    y_cord= distance * math.sin(math.radians(45))
+    # x_cord = distance * math.cos(angle)
+    # y_cord = distance * math.sin(angle) # not better
+    '''
 
-    return uavStartPos, uavEndPos, totalFlightTime, time, x,y
+    uavStartPos1=Point(0, math.sqrt(3), 1)
+    uavEndPos1=Point(0, math.sqrt(3), 1)
+    # time1 = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+    # x1=     [0, -0.5, -1, 0.0, 1, 0.5, 0, -x_cord, -1, 0, 1, x_cord, 0]    #equilateral triangle and semi circle
+    # y1=     [math.sqrt(3), math.sqrt(3)/2, 0, 0, 0, math.sqrt(3)/2, math.sqrt(3), y_cord, 0, -1, 0, y_cord, math.sqrt(3)]
+    # z1 = np.empty(13)  # numpy arrat size 12
+    # z1.fill(2)    # list filled with 1
+    time1 = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+    x1 = np.linspace(-1.5, 1.5, num=10 )
+    y1 = np.linspace(-1.5, 1.5, num=10 )
+    z1=[1, 1.3, 1, 0.7, 1, 1.3, 1, 0.7, 1, 1.3]
+
+    totalFlightTime1 = time1[-1]
+
+    #waypoint for 2nd uav
+
+    time2=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+    x2= [-1, 0, 1, 0, -1, 0, 1, 0, -1, 0, 1, 0, -1]      #right ahnd grip shape
+    y2= [0, 1, 0, -1, 0, 1, 0, -1, 0,  1, 0, -1, 0]
+    z2=np.linspace(3, 0.5, num=13)
+    # z2.fill(1)
+
+    uavStartPos2 = Point(x2[0], y2[0], z2[0])
+    uavEndPos2 = Point(x2[-1], y2[-1], z2[-1])
+
+    totalFlightTime2=time2[-1]
+
+    # x=np.add(x,3)
+    # y=np.add(y,3)
+    # print("printing x")
+    # print(x)
+    uavStartPos=[uavStartPos1, uavEndPos2]
+    uavEndPos= [uavEndPos1, uavEndPos2]
+    totalFlightTime=[totalFlightTime1, totalFlightTime2]
+    time=[time1, time2]
+    x=[x1, x2]
+    y=[y1,y2]
+    z=[z1, z2]
+    # print("hello")
+    # print(time1)
+    # print(z1)
+
+
+
+    return uavStartPos, uavEndPos, totalFlightTime, time, x,y,z
 
 def make_plot():
     current_file = os.path.abspath(os.path.dirname(__file__))
@@ -165,12 +220,20 @@ def make_plot():
 
     df_simulation = pd.read_csv(csv_filename, sep=r'\t', skipinitialspace=True, engine='python')
     # copy of df_simulation dataframe without affecting the df_simulation
-    df_simulation_trimmed = df_simulation.copy(deep=True)
+    # df_simulation_trimmed = df_simulation.copy(deep=True)
+    df_simulation_uav0 = df_simulation.loc[df_simulation['uid'] == 0]
+    df_simulation_uav1 = df_simulation.loc[df_simulation['uid'] == 1]
     # print(df_simulation)
     # print('hello bhai')
     # print(df_simulation_trimmed.head)
-    df_simulation_trimmed = df_simulation_trimmed.drop(
-        df_simulation_trimmed[df_simulation_trimmed.passedTime >= float(flight_time_considered)].index)
+    # print(flight_time_considered)
+    # print(df_simulation_uav0.head())
+    # print(df_simulation_uav1.head())
+
+    # be careful with below line print the value of flight_time_considered and rethink.
+
+    # df_simulation_trimmed = df_simulation_trimmed.drop(
+    #     df_simulation_trimmed[df_simulation_trimmed.passedTime >= float(flight_time_considered)].index)
 
 
     fig = make_subplots(
@@ -182,56 +245,63 @@ def make_plot():
     )
 
     # print(df_position.columns)
+    # fig.add_trace(
+    #     go.Scatter3d(x=df_position['stateEstimate.x'].to_numpy(), y=df_position['stateEstimate.y'].to_numpy(),
+    #                  z=df_position['stateEstimate.z'].to_numpy(), mode="lines",
+    #                  line={"color": 'red'}, name='reference'), row=1, col=1
+    #
+    # )
+    #uav 0
     fig.add_trace(
-        go.Scatter3d(x=df_position['stateEstimate.x'].to_numpy(), y=df_position['stateEstimate.y'].to_numpy(),
-                     z=df_position['stateEstimate.z'].to_numpy(), mode="lines",
-                     line={"color": 'red'}, name='reference'), row=1, col=1
-
+        go.Scatter3d(x=df_simulation_uav0['posX'].to_numpy(), y=df_simulation_uav0['posY'].to_numpy(),
+                     z=df_simulation_uav0['posZ'].to_numpy(), mode="lines",
+                     line={"color": 'blue'}, name='simulation uav0'), row=1, col=1
     )
+    #uav1
     fig.add_trace(
-        go.Scatter3d(x=df_simulation['posX'].to_numpy(), y=df_simulation['posY'].to_numpy(),
-                     z=df_simulation['posZ'].to_numpy(), mode="lines",
-                     line={"color": 'blue'}, name='simulation'), row=1, col=1
+        go.Scatter3d(x=df_simulation_uav1['posX'].to_numpy(), y=df_simulation_uav1['posY'].to_numpy(),
+                     z=df_simulation_uav1['posZ'].to_numpy(), mode="lines",
+                     line={"color": 'green'}, name='simulation uav1'), row=1, col=1
     )
 
     fig.add_trace(
-        go.Scatter(x=df_simulation_trimmed['passedTime'].to_numpy(), y=df_simulation_trimmed['posX'].to_numpy(),
+        go.Scatter(x=df_simulation_uav0['passedTime'].to_numpy(), y=df_simulation_uav0['posX'].to_numpy(),
                    mode="lines",
                    line={"color": 'blue'}, name='simulation', showlegend=False), row=1, col=2,
 
     )
 
-    fig.add_trace(
-        go.Scatter(x=df_position['timestamp'].to_numpy(), y=df_position['stateEstimate.x'].to_numpy(), mode="lines",
-                   line={"color": 'red'}, name='simulation', showlegend=False), row=1, col=2
-    )
+    # fig.add_trace(
+    #     go.Scatter(x=df_position['timestamp'].to_numpy(), y=df_position['stateEstimate.x'].to_numpy(), mode="lines",
+    #                line={"color": 'red'}, name='simulation', showlegend=False), row=1, col=2
+    # )
     fig.update_xaxes(title='t(s)', row=1, col=2)
     fig.update_yaxes(title='x(m)', row=1, col=2)
 
     fig.add_trace(
-        go.Scatter(x=df_simulation_trimmed['passedTime'].to_numpy(), y=df_simulation_trimmed['posY'].to_numpy(),
+        go.Scatter(x=df_simulation_uav0['passedTime'].to_numpy(), y=df_simulation_uav0['posY'].to_numpy(),
                    mode="lines",
-                   line={"color": 'blue'}, name='simulation', showlegend=False), row=2, col=2
+                   line={"color": 'blue'}, name='simulation uav0', showlegend=False), row=2, col=2
     )
 
-    fig.add_trace(
-        go.Scatter(x=df_position['timestamp'].to_numpy(), y=df_position['stateEstimate.y'].to_numpy(), mode="lines",
-                   line={"color": 'red'}, name='simulation', showlegend=False), row=2, col=2
-    )
+    # fig.add_trace(
+    #     go.Scatter(x=df_position['timestamp'].to_numpy(), y=df_position['stateEstimate.y'].to_numpy(), mode="lines",
+    #                line={"color": 'red'}, name='simulation', showlegend=False), row=2, col=2
+    # )
 
     fig.update_xaxes(title='t(s)', row=2, col=2)
     fig.update_yaxes(title='y(m)', row=2, col=2)
 
     fig.add_trace(
-        go.Scatter(x=df_simulation_trimmed['passedTime'].to_numpy(), y=df_simulation_trimmed['posZ'].to_numpy(),
+        go.Scatter(x=df_simulation_uav0['passedTime'].to_numpy(), y=df_simulation_uav0['posZ'].to_numpy(),
                    mode="lines",
-                   line={"color": 'blue'}, name='simulation', showlegend=False), row=3, col=2
+                   line={"color": 'blue'}, name='simulation uav0', showlegend=False), row=3, col=2
     )
 
-    fig.add_trace(
-        go.Scatter(x=df_position['timestamp'].to_numpy(), y=df_position['stateEstimate.z'].to_numpy(), mode="lines",
-                   line={"color": 'red'}, name='simulation', showlegend=False), row=3, col=2
-    )
+    # fig.add_trace(
+    #     go.Scatter(x=df_position['timestamp'].to_numpy(), y=df_position['stateEstimate.z'].to_numpy(), mode="lines",
+    #                line={"color": 'red'}, name='simulation', showlegend=False), row=3, col=2
+    # )
     fig.update_xaxes(title='t(s)', row=3, col=2)
     fig.update_yaxes(title='z(m)', row=3, col=2)
 
@@ -246,9 +316,9 @@ def make_plot():
          xaxis_nticks=10,
          yaxis_nticks=10,
         # xaxis_range=[0,-.4],
-        xaxis_range=[-.6,.5],
+        # xaxis_range=[-.6,.5],
         # xaxis_range=[-.8,.8],
-        zaxis_range=[0.0, .33],
+        # zaxis_range=[0.0, .33],
         #
         # xaxis_dtick=0.1,
     ),

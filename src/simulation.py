@@ -2,6 +2,7 @@ import geopandas
 from shapely.geometry import Point
 import threading
 import time
+import sys
 
 from .uav import Uav
 from .simulationparameter import Simulationparameter
@@ -15,7 +16,10 @@ class Simulation:
     _startUavs = []
     _highestUid = -1
 
-    def __init__(self, stepLength, simTimeLimit, playgroundSizeX, playgroundSizeY, playgroundSizeZ, uavs, directory):
+    def __init__(self, stepLength, simTimeLimit, playgroundSizeX, playgroundSizeY, playgroundSizeZ,
+                 uavs, uavStartPos, uavEndPos, totalFlightTime, waypointTime, waypointX, waypointY, waypointZ,
+                 directory):
+
         print("Initializing...")
         Simulationparameter.stepLength = stepLength
         Simulationparameter.directory = directory
@@ -26,6 +30,13 @@ class Simulation:
         self._playgroundSizeZ = playgroundSizeZ
         self._simulationSteps = simTimeLimit / Simulationparameter.stepLength
         self._startUavs = uavs
+        self._uavStartPos = uavStartPos
+        self._uavEndPos = uavEndPos
+        self._totalFlightTime = totalFlightTime
+        self._waypointTime = waypointTime
+        self._waypointX = waypointX
+        self._waypointY = waypointY
+        self._waypointZ = waypointZ
 
     def startSimulation(self):
         if self._isRunnig == True or Simulationparameter.currentSimStep != -1:
@@ -53,10 +64,13 @@ class Simulation:
         self.finishSimulation()
 
     def initializeNodes(self):
+        print("just outside of the main loop")
         for uav in self._startUavs:
+            # print(type(self.getNextUid()))
+            nextUid= self.getNextUid()
             self._managedNodes.append(
-                Uav(self.getNextUid(), Point(uav['startPosX'], uav['startPosY'], uav['startPosZ']),
-                    Point(uav['endPosX'], uav['endPosY'], uav['endPosZ'])))
+                Uav(nextUid, self._uavStartPos[nextUid], self._uavEndPos[nextUid], self._totalFlightTime[nextUid],
+                    self._waypointTime[nextUid], self._waypointX[nextUid], self._waypointY[nextUid], self._waypointZ[nextUid]))
 
     def processNextStep(self):
         Simulationparameter.incrementCurrentSimStep()
