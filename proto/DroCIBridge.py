@@ -110,9 +110,18 @@ class AirMobiSim(airmobisim_pb2_grpc.AirMobiSimServicer):
        Delete UAV with the given Id
        """
        print("DeleteUAV gets called")
-       for node in range(len(self.simulation_obj.managedNodes)):
-           if self.simulation_obj.managesNodes[node].id == request.num:
-                self.simulation_obj.managedNodes.pop(node)
+       print(request.num)
+       for node in range(len(self.simulation_obj._managedNodes)):
+           print(node)
+           print("Before IF")
+           if self.simulation_obj._managedNodes[node]._uid == request.num + 10000:
+                self.simulation_obj._managedNodes.pop(node)
+       print("I am done.")
+
+       for node in range(len(self.simulation_obj._managedNodes)):
+           print(self.simulation_obj._managedNodes[node]._uid)
+
+       return struct_pb2.Value()
 
     def getNumberCurrentUAV(self, request, context):
       """
