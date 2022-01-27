@@ -64,13 +64,13 @@ class Simulation:
         self.finishSimulation()
 
     def initializeNodes(self):
-        print("just outside of the main loop")
         for uav in self._startUavs:
             # print(type(self.getNextUid()))
             nextUid= self.getNextUid()
-            self._managedNodes.append(
-                Uav(nextUid, self._uavStartPos[nextUid], self._uavEndPos[nextUid], self._totalFlightTime[nextUid],
-                    self._waypointTime[nextUid], self._waypointX[nextUid], self._waypointY[nextUid], self._waypointZ[nextUid]))
+           #self._managedNodes.append(
+               # Uav(nextUid, self._uavStartPos[nextUid], self._uavEndPos[nextUid], self._totalFlightTime[nextUid],
+                   # self._waypointTime[nextUid], self._waypointX[nextUid], self._waypointY[nextUid], self._waypointZ[nextUid]))
+            self._managedNodes.append(Uav(nextUid, Point(uav['startPosX'], uav['startPosY'], uav['startPosZ']), Point(uav['endPosX'], uav['endPosY'], uav['endPosZ'])))
 
     def processNextStep(self):
         Simulationparameter.incrementCurrentSimStep()

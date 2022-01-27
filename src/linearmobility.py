@@ -24,8 +24,8 @@ class Linearmobility(Basemobility):
         print("move.getStartPos().z: " + str(move.getStartPos().z))
         print("angle: " + str(self._angle))
         '''
-        stepTargetX = move.getStartPos().x + move.getSpeed() * math.cos( math.pi * self._angle  / 180) * Simulationparameter.stepLength
-        stepTargetY = move.getStartPos().y + move.getSpeed() * math.sin( math.pi * self._angle  / 180) * Simulationparameter.stepLength
+        stepTargetX = move.getStartPos().x + move.getSpeed() * math.cos(math.pi * (self._angle/180)) * Simulationparameter.stepLength
+        stepTargetY = move.getStartPos().y + move.getSpeed() * math.sin(math.pi * (self._angle/180)) * Simulationparameter.stepLength
         ''' 
         print("stepTargetX: " + str(stepTargetX))
         print("stepTargetY: " + str(stepTargetY))

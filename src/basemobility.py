@@ -26,20 +26,28 @@ class Basemobility(ABC):
 
     def getCurrentPos(self):
         passedTime = (Simulationparameter.currentSimStep * Simulationparameter.stepLength) - self.getMove().getStartTime()
+        currentDirection = self.getMove().getCurrentDirection()
+        #if self.getMove().getLinearMobilitySpFlag():
 
-        if self.getMove().getLinearMobilitySpFlag():
-
-            currentPos = self.getMove().getNextCoordinate()
+            #currentPos = self.getMove().getNextCoordinate()
             # if (self.getMove().getFinalFlag()):
             #     currentPos = self.getMove().getNextCoordinate()
 
-            return currentPos
+            #return currentPos
 
-        elif self.getMove().getFinalFlag():
+        #elif self.getMove().getFinalFlag():
             # currentPos=Point(self.getMove().getTempStartPos().x, self.getMove().getTempStartPos().y, 0.0)
-            currentPos=Point(self.getMove().getNextCoordinate().x, self.getMove().getNextCoordinate().y, 0.0)
+            #currentPos=Point(self.getMove().getNextCoordinate().x, self.getMove().getNextCoordinate().y, 0.0)
             # currentPos = self.getMove().getNextCoordinate()
 
+        currenPos = Point(0,0,0)
+
+        x = self.getMove().getStartPos().x + (currentDirection.x*self.getMove().getSpeed()*passedTime)
+        y = self.getMove().getStartPos().y + (currentDirection.y*self.getMove().getSpeed()*passedTime)
+        z = self.getMove().getStartPos().z + (currentDirection.z*self.getMove().getSpeed()*passedTime)
+        
+        currentPos = Point(x,y,z)
+        
         return currentPos
 
 
