@@ -59,7 +59,7 @@ class AirMobiSim(airmobisim_pb2_grpc.AirMobiSimServicer):
                     node.getMobility().makeMove()
                     self._isInitialized = True
                     currentPos = node.getMobility().getCurrentPos()
-                    uav = airmobisim_pb2.Response(id=node._uid, x=currentPos.x, y=currentPos.y, z=currentPos.z)
+                    uav = airmobisim_pb2.Response(id=node._uid, x=currentPos.x, y=currentPos.y, z=currentPos.z, speed=node.getMobility()._move.getSpeed(), angle=node.getMobility()._angle)
                     self._lastUavReport.append(uav)
                     responseQuery.responses.append(uav)
 
@@ -88,7 +88,7 @@ class AirMobiSim(airmobisim_pb2_grpc.AirMobiSimServicer):
                 self._isInitialized = True
             currentPos = node._mobility.getCurrentPos()
             uav = airmobisim_pb2.Response(id=node._uid, x=currentPos.x, y=currentPos.y, z=currentPos.z,
-                                          speed=node.getMobility()._move.getSpeed())  # TODO: Make speed a correct parameter
+                                          speed=node.getMobility()._move.getSpeed(), angle=node.getMobility()._angle)  # TODO: Make speed a correct parameter
             responseQuery.responses.append(uav)
         return responseQuery
 

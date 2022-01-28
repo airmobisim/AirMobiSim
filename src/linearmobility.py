@@ -16,7 +16,6 @@ class Linearmobility(Basemobility):
         self._stepTarget = ""
     def makeMove(self):
         move = self.getMove()
-        print("I am here in makeMove()")
         '''
         print("----------------------------------------------------")
         print("move.getSpeed(): "      + str(move.getSpeed()))
@@ -26,14 +25,14 @@ class Linearmobility(Basemobility):
         print("angle: " + str(self._angle))
         '''
         print(move.getStartPos().x)
-        print(move.getStartPos().y)
-        print(self._angle)
+        #print(move.getStartPos().y)
+        #print(self._angle)
 
         stepTargetX = move.getStartPos().x + move.getSpeed() * math.cos(math.pi * (self._angle/180)) * Simulationparameter.stepLength
         stepTargetY = move.getStartPos().y + move.getSpeed() * math.sin(math.pi * (self._angle/180)) * Simulationparameter.stepLength
         
-        print("stepTargetX: " + str(stepTargetX))
-        print("stepTargetY: " + str(stepTargetY))
+        #print("stepTargetX: " + str(stepTargetX))
+        #print("stepTargetY: " + str(stepTargetY))
         
         stepTarget = Point(stepTargetX, stepTargetY, self._startPos.z)
         self._stepTarget = stepTarget

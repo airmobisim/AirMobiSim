@@ -27,7 +27,6 @@ class Basemobility(ABC):
 
 
     def getCurrentPos(self):
-        print("The getCurrentPos is beeing executed.")
         passedTime = (Simulationparameter.currentSimStep * Simulationparameter.stepLength) - self.getMove().getStartTime()
         currentDirection = self.getMove().getCurrentDirection()
         #if self.getMove().getLinearMobilitySpFlag():
@@ -44,17 +43,19 @@ class Basemobility(ABC):
             # currentPos = self.getMove().getNextCoordinate()
         
         #New for FlyByInserterNew
-        print("Basemobility is beeing executed.")
         currentPos = Point(0,0,0)
         x = self.getMove().getStartPos().x + (currentDirection.x*self.getMove().getSpeed()*passedTime)
         y = self.getMove().getStartPos().y + (currentDirection.y*self.getMove().getSpeed()*passedTime)
         z = self.getMove().getStartPos().z + (currentDirection.z*self.getMove().getSpeed()*passedTime)
        
+
+        print("New coordinates are printed")
+        print(x)
+        print(y)
+        print(z)
         
-        
-        currentPos = Point(x,y,z)
-        #print(self._currentPos.x)
-        return currentPos
+        self._currentPos = Point(x,y,z)
+        return self._currentPos
 
 
     def makeMove(self):
