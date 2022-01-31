@@ -47,12 +47,7 @@ class Basemobility(ABC):
         x = self.getMove().getStartPos().x + (currentDirection.x*self.getMove().getSpeed()*passedTime)
         y = self.getMove().getStartPos().y + (currentDirection.y*self.getMove().getSpeed()*passedTime)
         z = self.getMove().getStartPos().z + (currentDirection.z*self.getMove().getSpeed()*passedTime)
-       
-
-        print("New coordinates are printed")
-        print(x)
-        print(y)
-        print(z)
+      
         
         self._currentPos = Point(x,y,z)
         return self._currentPos

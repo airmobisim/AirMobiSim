@@ -18,14 +18,13 @@ class AirMobiSim(airmobisim_pb2_grpc.AirMobiSimServicer):
 
     def __init__(self, simulation_obj):
         self._isRunning = False
-        self.allIsWrong = False
         self._isInitialized = True
         self.simulation_obj = simulation_obj
         self._lastUavReport = []
 
     def startSimulation(self):
         self.simulation_obj.initializeNodes()
-        self.allIsWrong = True
+        self._isRunning = True
 
     def Start(self, request, context):
         pass
@@ -38,11 +37,10 @@ class AirMobiSim(airmobisim_pb2_grpc.AirMobiSimServicer):
         """
             Execute one timestep - Update the values (positions, velocity,...)
         """
+        print("Executing one Timestep")
         responseQuery = airmobisim_pb2.ResponseQuery()
-
-        if not self.allIsWrong:
+        if not self._isRunning:
             self.startSimulation()
-
             for node in self.simulation_obj._managedNodes:
                 startPos = node._mobility._startPos
                 uav = airmobisim_pb2.Response(id=node._uid, x=startPos.x, y=startPos.y, z=startPos.z)
@@ -59,6 +57,10 @@ class AirMobiSim(airmobisim_pb2_grpc.AirMobiSimServicer):
                     node.getMobility().makeMove()
                     self._isInitialized = True
                     currentPos = node.getMobility().getCurrentPos()
+                    print("Current position for uav {}:".format(node._uid))
+                    print(currentPos.x)
+                    print(currentPos.y)
+                    print(currentPos.z)
                     uav = airmobisim_pb2.Response(id=node._uid, x=currentPos.x, y=currentPos.y, z=currentPos.z, speed=node.getMobility()._move.getSpeed(), angle=node.getMobility()._angle)
                     self._lastUavReport.append(uav)
                     responseQuery.responses.append(uav)
@@ -79,8 +81,10 @@ class AirMobiSim(airmobisim_pb2_grpc.AirMobiSimServicer):
         print("GetManagesHosts gets called!")
         responseQuery = airmobisim_pb2.ResponseQuery()
 
-        if not self.allIsWrong:
+        if not self._isRunning:
+            print("GetManaged-StartSimulation is executed")
             self.startSimulation()
+       
 
         for node in self.simulation_obj._managedNodes:
             if self._isInitialized:

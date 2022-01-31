@@ -24,7 +24,6 @@ class Linearmobility(Basemobility):
         print("move.getStartPos().z: " + str(move.getStartPos().z))
         print("angle: " + str(self._angle))
         '''
-        print(move.getStartPos().x)
         #print(move.getStartPos().y)
         #print(self._angle)
 
@@ -39,7 +38,7 @@ class Linearmobility(Basemobility):
         move.setDirectionByTarget(stepTarget)
 
         newSpeed = move.getSpeed() + self._acceleration * Simulationparameter.stepLength
-        print(move.getSpeed()) 
+        #print(move.getSpeed()) 
         move.setSpeed(newSpeed)
         super().makeMove()
         pass

@@ -10,14 +10,9 @@ class Uav:
 
     def __init__(self, uid, startPos, endPos, totalFlightTime=0, waypointTime=0, waypointX=0, waypointY=0, angle=0, speed=20):
         self._uid = uid
-        #This angle calculation overwrites the provided angle!!	
-        #self._angle = math.atan2(endPos.y - startPos.y, endPos.x - startPos.x) * 180 / math.pi
         #self._mobility = Splinemobility(uid, startPos, endPos, totalFlightTime, waypointTime, waypointX, waypointY)
-        print("Printing Angle and Speed")
-        print(angle)
-        print(speed)
-        #self._angle = angle
-        self._mobility  =  Linearmobility(uid, startPos, endPos,angle, speed)
+        self._angle = self.calculateAngle(startPos, endPos)
+        self._mobility  =  Linearmobility(uid, startPos, endPos, self._angle, speed)
     
 
     def getMobility(self):
@@ -26,3 +21,15 @@ class Uav:
     def logPosition(self):
         pass 
 
+    def calculateAngle(self, startPos, endPos):
+        deltaY = endPos.y-startPos.y
+        deltaX = endPos.x-startPos.x
+
+        result = math.atan2(deltaY, deltaX)*180/math.pi
+       
+        if result < 0:
+           result =  360 + result
+        else:
+           pass
+
+        return result
