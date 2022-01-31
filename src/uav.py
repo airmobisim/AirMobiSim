@@ -29,7 +29,5 @@ class Uav:
        
         if result < 0:
            result =  360 + result
-        else:
-           pass
 
         return result

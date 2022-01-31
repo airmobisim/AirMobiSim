@@ -82,7 +82,6 @@ class AirMobiSim(airmobisim_pb2_grpc.AirMobiSimServicer):
         responseQuery = airmobisim_pb2.ResponseQuery()
 
         if not self._isRunning:
-            print("GetManaged-StartSimulation is executed")
             self.startSimulation()
        
 
