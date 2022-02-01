@@ -50,6 +50,7 @@ read -p "Continue?"
 #|_|    |___/                 
 #
 ##################################
+echo "Pyenv"
 export PYENV_ROOT="$HOME/.pyenv"
 export PATH="$PYENV_ROOT/bin:$PATH"
 export PATH="$PYENV_ROOT/shims:$PATH"
@@ -75,6 +76,7 @@ pyenv global 3.9.0
 #| .__/ \___/ \___|\__|_|   \__, |
 #|_|                        |___/ 
 ##################################
+echo "Poetry"
 if ! command -v poetry &> /dev/null
 then
 	echo "Installing poetry"
@@ -92,7 +94,9 @@ fi
 ################################################################
 echo "Installing required Python packages..."
 
-pip3 install --user --upgrade pipenv
+#pip3 install --user --install-option="--prefix=" --upgrade pipenv
+pip3 install --user --prefix=  pipenv
+#pip3 install --user pipenv
 #if !(pyenv install 3.9.0); then
 #	echo "Python 3.9 will not be installed by this setup. Proceed with the setup.."
 #fi
@@ -105,7 +109,7 @@ poetry install
 poetry run python -m grpc_tools.protoc --python_out=. --grpc_python_out=. proto/airmobisim.proto -I .
 #source ~/.profile
 
-pip3 install --user conan # We need a lokal installation outside poetry, since conan is required for the OMNeT++ part
+pip3 install --user --prefix= conan # We need a lokal installation outside poetry, since conan is required for the OMNeT++ part
 AIRMOBISIMDIR=$(pwd)
 ################################################################
 #__     __   _             ____       _               
@@ -115,6 +119,7 @@ AIRMOBISIMDIR=$(pwd)
 #   \_/ \___|_|_| |_|___/ |____/ \___|\__|\__,_| .__/ 
 #                                              |_|    
 ################################################################
+echo "Veins Setup"
 
 cd ..
 if [  ! -d "airmobisimVeins" ]; then
@@ -131,11 +136,26 @@ cd $AIRMOBISIMDIR
 if [  ! -f "$HOME/.conan/profiles/default" ]; then
 	echo "Create new default conan profile"
 	poetry run bash -c "conan profile new default --detect" #Create new default profile
-	poetry run bash -c "conan profile update settings.compiler.libcxx=libstdc++11 default"
+	
+	if [[ $OSTYPE == "darwin"* ]]; then
+		poetry run bash -c "conan profile update settings.compiler.libcxx=libc++ default"
+	else
+		poetry run bash -c "conan profile update settings.compiler.libcxx=libstdc++11 default"
+	fi	
+	
 fi
+#string='My long string'
+#if [[ $string == *"My long"* ]]; then
+ # echo "It's there!"
+#fi
 
-poetry run bash -c "conan profile update settings.compiler.libcxx=libstdc++11 default"
-poetry run bash -c "cd $AIRMOBISIMVEINS_PATH && conan install ."
+if [[ $OSTYPE == "darwin"* ]]; then
+	poetry run bash -c "conan profile update settings.compiler.libcxx=libc++ default"
+	poetry run bash -c "cd $AIRMOBISIMVEINS_PATH && conan install . --build"
+else
+	poetry run bash -c "conan profile update settings.compiler.libcxx=libstdc++11 default"
+	poetry run bash -c "cd $AIRMOBISIMVEINS_PATH && conan install ."
+fi	
 
 cd
 cd .conan/data
