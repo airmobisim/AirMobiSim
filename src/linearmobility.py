@@ -27,8 +27,10 @@ class Linearmobility(Basemobility):
         #print(move.getStartPos().y)
         #print(self._angle)
 
-        stepTargetX = move.getStartPos().x + move.getSpeed() * math.cos(math.pi * (self._angle/180)) * Simulationparameter.stepLength
-        stepTargetY = move.getStartPos().y + move.getSpeed() * math.sin(math.pi * (self._angle/180)) * Simulationparameter.stepLength
+        stepTargetX = move.getLastPos().x + move.getSpeed() * math.cos(math.pi * (self._angle/180)) * Simulationparameter.stepLength
+        stepTargetY = move.getLastPos().y + move.getSpeed() * math.sin(math.pi * (self._angle/180)) * Simulationparameter.stepLength
+#        stepTargetX = move.getStartPos().x + move.getSpeed() * math.cos(math.pi * (self._angle/180)) * Simulationparameter.stepLength
+#        stepTargetY = move.getStartPos().y + move.getSpeed() * math.sin(math.pi * (self._angle/180)) * Simulationparameter.stepLength
         
         #print("stepTargetX: " + str(stepTargetX))
         #print("stepTargetY: " + str(stepTargetY))
@@ -39,6 +41,7 @@ class Linearmobility(Basemobility):
 
         newSpeed = move.getSpeed() + self._acceleration * Simulationparameter.stepLength
         #print(move.getSpeed()) 
+        move.setLastPos(Point(stepTargetX, stepTargetY, move.getStartPos().z))
         move.setSpeed(newSpeed)
         super().makeMove()
         pass
