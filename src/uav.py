@@ -11,7 +11,7 @@ class Uav:
     def __init__(self, uid, startPos, endPos, totalFlightTime=0, waypointTime=0, waypointX=0, waypointY=0, angle=0, speed=20):
         self._uid = uid
         #self._mobility = Splinemobility(uid, startPos, endPos, totalFlightTime, waypointTime, waypointX, waypointY)
-        self._angle = self.calculateAngle(startPos, endPos)
+        self._angle = self.calculateAngle(startPos, endPos) 
         self._mobility  =  Linearmobility(uid, startPos, endPos, self._angle, speed)
     
 
@@ -25,9 +25,9 @@ class Uav:
         deltaY = endPos.y-startPos.y
         deltaX = endPos.x-startPos.x
 
-        result = math.atan2(deltaY, deltaX)*180/math.pi
+        result = math.atan2(deltaY, deltaX)
        
-        if result < 0:
+        if result < 0: 
            result =  360 + result
 
         return result

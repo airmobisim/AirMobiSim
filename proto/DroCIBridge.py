@@ -57,10 +57,12 @@ class AirMobiSim(airmobisim_pb2_grpc.AirMobiSimServicer):
                     node.getMobility().makeMove()
                     self._isInitialized = True
                     currentPos = node.getMobility().getCurrentPos()
-                    print("Current position for uav {}:".format(node._uid))
-                    print(currentPos.x)
-                    print(currentPos.y)
-                    print(currentPos.z)
+                    print("##########################################################")
+                    print("THIS IS WHAT I AM SENDING ON THE INTERFACE")
+                    print("##########################################################")
+                    print("currentPos.x:"  + str(currentPos.x))
+                    print("currentPos.y:"  + str(currentPos.y))
+                    print("currentPos.z:"  + str(currentPos.z))
                     uav = airmobisim_pb2.Response(id=node._uid, x=currentPos.x, y=currentPos.y, z=currentPos.z, speed=node.getMobility()._move.getSpeed(), angle=node.getMobility()._angle)
                     self._lastUavReport.append(uav)
                     responseQuery.responses.append(uav)
@@ -101,6 +103,7 @@ class AirMobiSim(airmobisim_pb2_grpc.AirMobiSimServicer):
         In the next timestep makeMove()
         """
         print("InsertUAV  gets called!")
+        print(request.coordinates[0].x)
         self.simulation_obj._managedNodes.append(Uav(request.id, Point(request.coordinates[0].x, request.coordinates[0].y, request.coordinates[0].z), Point(request.coordinates[1].x, request.coordinates[1].y, request.coordinates[1].z), angle=request.angle, speed=request.speed))
         
         return struct_pb2.Value()
@@ -116,9 +119,13 @@ class AirMobiSim(airmobisim_pb2_grpc.AirMobiSimServicer):
        print(request.num)
        for node in range(len(self.simulation_obj._managedNodes)):
            print(node)
-           print("Before IF")
-           if self.simulation_obj._managedNodes[node]._uid == request.num + 10000:
+           print("I am printing the length of list")
+           print(len(self.simulation_obj._managedNodes))
+           if self.simulation_obj._managedNodes[node]._uid == request.num:
                 self.simulation_obj._managedNodes.pop(node)
+                print("I deleted a Node")
+           print(len(self.simulation_obj._managedNodes))
+
        print("I am done.")
 
        for node in range(len(self.simulation_obj._managedNodes)):
