@@ -17,7 +17,7 @@ class Simulation:
     _highestUid = -1
 
     def __init__(self, stepLength, simTimeLimit, playgroundSizeX, playgroundSizeY, playgroundSizeZ,
-                 uavs, uavStartPos, uavEndPos, totalFlightTime, waypointTime, waypointX, waypointY, waypointZ,
+                 uavs, uavStartPos, uavEndPos, totalFlightTime, waypointTime, waypointX, waypointY, waypointZ,linearMobilityFlag,splineMobilityFlag,
                  directory):
 
         print("Initializing...")
@@ -37,6 +37,8 @@ class Simulation:
         self._waypointX = waypointX
         self._waypointY = waypointY
         self._waypointZ = waypointZ
+        self._linearMobilityFlag=linearMobilityFlag
+        self._splineMobilityFlag=splineMobilityFlag
 
     def startSimulation(self):
         if self._isRunnig == True or Simulationparameter.currentSimStep != -1:
@@ -67,10 +69,16 @@ class Simulation:
         for uav in self._startUavs:
             # print(type(self.getNextUid()))
             nextUid= self.getNextUid()
-           #self._managedNodes.append(
-               # Uav(nextUid, self._uavStartPos[nextUid], self._uavEndPos[nextUid], self._totalFlightTime[nextUid],
-                   # self._waypointTime[nextUid], self._waypointX[nextUid], self._waypointY[nextUid], self._waypointZ[nextUid]))
-            self._managedNodes.append(Uav(nextUid, Point(uav['startPosX'], uav['startPosY'], uav['startPosZ']), Point(uav['endPosX'], uav['endPosY'], uav['endPosZ'])))
+           #for spline mobility
+
+            if self._splineMobilityFlag:
+                self._managedNodes.append(
+                   Uav(nextUid, self._uavStartPos[nextUid], self._uavEndPos[nextUid], self._totalFlightTime[nextUid],
+                       self._waypointTime[nextUid], self._waypointX[nextUid], self._waypointY[nextUid], self._waypointZ[nextUid],self._linearMobilityFlag,self._splineMobilityFlag))
+
+            #for linearmobility
+            else:
+                self._managedNodes.append(Uav(nextUid, Point(uav['startPosX'], uav['startPosY'], uav['startPosZ']), Point(uav['endPosX'], uav['endPosY'], uav['endPosZ']),self._linearMobilityFlag,self._splineMobilityFlag))
 
     def processNextStep(self):
         Simulationparameter.incrementCurrentSimStep()

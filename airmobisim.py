@@ -19,7 +19,8 @@ simulation: Simulation
 
 def main():
     global simulation
-
+    linearMobilityFlag = True
+    splineMobilityFlag = False
     parser = argparse.ArgumentParser(description='Importing configuration-file')
     # parser.add_argument('--path', type=str, required=True, help='reference folder path for waypoints and plotting')
     parser.add_argument('--configuration', action='store', type=str,
@@ -43,7 +44,7 @@ def main():
     p = Yamlparser(args.configuration)
     config = p.readConfig()
     directory = pathlib.Path(args.configuration).parent.resolve()
-    initializeSimulation(config, directory, uavStartPos, uavEndPos, totalFlightTime,waypointTime, waypointX, waypointY, waypointZ)
+    initializeSimulation(config, directory, uavStartPos, uavEndPos, totalFlightTime,waypointTime, waypointX, waypointY, waypointZ,linearMobilityFlag,splineMobilityFlag)
 
 
     if args.show:
@@ -61,7 +62,7 @@ def main():
             make_plot()
 
 
-def initializeSimulation(config, directory, uavStartPos, uavEndPos, totalFlightTime, waypointTime, waypointX, waypointY, waypointZ):
+def initializeSimulation(config, directory, uavStartPos, uavEndPos, totalFlightTime, waypointTime, waypointX, waypointY, waypointZ,linearMobilityFlag,splineMobilityFlag):
 
     global simulation
     simulation = Simulation(config['simulation']['stepLength'],
@@ -77,6 +78,8 @@ def initializeSimulation(config, directory, uavStartPos, uavEndPos, totalFlightT
                             waypointX,
                             waypointY,
                             waypointZ,
+                            linearMobilityFlag,
+                            splineMobilityFlag,
                             directory,
                             )
 
