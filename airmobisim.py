@@ -19,8 +19,8 @@ simulation: Simulation
 
 def main():
     global simulation
-    linearMobilityFlag = True
-    splineMobilityFlag = False
+    linearMobilityFlag = False
+    splineMobilityFlag = True
     parser = argparse.ArgumentParser(description='Importing configuration-file')
     # parser.add_argument('--path', type=str, required=True, help='reference folder path for waypoints and plotting')
     parser.add_argument('--configuration', action='store', type=str,

@@ -34,7 +34,7 @@ pip-delete-this-directory.txt
 examples/simpleSimulation/results/energyResults.csv
 examples/simpleSimulation/results/positionResults.csv
 
-
+src/trial.py
 
 # MAC
 .DS_Store
