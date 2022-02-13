@@ -19,8 +19,11 @@ simulation: Simulation
 
 def main():
     global simulation
+
+    # these flags decide which mobility model will be selected for milulation linearmobility of spline mobility
     linearMobilityFlag = False
     splineMobilityFlag = True
+
     parser = argparse.ArgumentParser(description='Importing configuration-file')
     # parser.add_argument('--path', type=str, required=True, help='reference folder path for waypoints and plotting')
     parser.add_argument('--configuration', action='store', type=str,
