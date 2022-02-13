@@ -49,7 +49,7 @@ class Splinemobility(Basemobility):
 
             elif passedTime>= self._totalFlightTime :
                 move.setFinalFlag(True)
-                move.setLinearMobilitySpFlag(False)
+                # move.setLinearMobilitySpFlag(False)
                 # move.setSpeed(0.0)
 
 

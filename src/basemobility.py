@@ -50,13 +50,39 @@ class Basemobility(ABC):
         
         return currentPos
 
+    # current position function for spline mobility
+    def getCurrentPosSp(self):
+        passedTime = (Simulationparameter.currentSimStep * Simulationparameter.stepLength) - self.getMove().getStartTime()
+        # currenPos = Point(0, 0, 0)
+        if not self.getMove().getFinalFlag():
+
+            currentPos = self.getMove().getNextCoordinate()
+        # if (self.getMove().getFinalFlag()):
+        #     currentPos = self.getMove().getNextCoordinate()
+
+            return currentPos
+
+        elif self.getMove().getFinalFlag():
+            # currentPos=Point(self.getMove().getTempStartPos().x, self.getMove().getTempStartPos().y, 0.0)
+            currentPos=Point(self.getMove().getNextCoordinate().x, self.getMove().getNextCoordinate().y, 0.0)
+            # currentPos = self.getMove().getNextCoordinate()
+
+
+
+
+
+        return currentPos
+
 
     def makeMove(self):
         self.doLog()
 
     def doLog(self):
         #print("do log")
-        self._resultcollection.logCurrentPosition(self._uid, self.getCurrentPos(), self.getMove())
+        if self.getMove().getLinearMobilitySpFlag():
+            self._resultcollection.logCurrentPosition(self._uid, self.getCurrentPosSp(), self.getMove())
+        else:
+            self._resultcollection.logCurrentPosition(self._uid, self.getCurrentPos(), self.getMove())
         currentEnergy = self._baseenergy.getcurrentEnergy(self.getMove().getSpeed(), (Simulationparameter.currentSimStep * Simulationparameter.stepLength) - self.getMove().getStartTime())
 
         self._resultcollection.logCurrentEnergy(self._uid,currentEnergy[0], currentEnergy[1])
