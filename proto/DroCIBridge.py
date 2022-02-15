@@ -9,6 +9,10 @@ from proto import airmobisim_pb2
 
 
 class AirMobiSim(airmobisim_pb2_grpc.AirMobiSimServicer):
+    index=[]
+    x=[]
+    y=[]
+    z=[]
 
     def __init__(self, simulation_obj):
         self._isRunning = False
@@ -31,7 +35,7 @@ class AirMobiSim(airmobisim_pb2_grpc.AirMobiSimServicer):
         """
             Execute one timestep - Update the values (positions, velocity,...)
         """
-        print('#########')
+        #print('#########')
         responseQuery = airmobisim_pb2.ResponseQuery()
 
         if not self._isRunning:
@@ -86,6 +90,27 @@ class AirMobiSim(airmobisim_pb2_grpc.AirMobiSimServicer):
             responseQuery.responses.append(uav)
         return responseQuery
 
+    def InsertWaypoints(self, request, context):
+        print("working")
+        print(request)
+        # index=[]
+        # x=[]
+        # y=[]
+        # z=[]
+
+        for i in range(0, len(request.waypoints)):
+            # print(request.waypoints[i].index)
+            # print(request.waypoints[i].x)
+            # print(request.waypoints[i].y)
+            # print(request.waypoints[i].z)
+            AirMobiSim.index.append(request.waypoints[i].index)
+            AirMobiSim.x.append(request.waypoints[i].x)
+            AirMobiSim.y.append(request.waypoints[i].y)
+            AirMobiSim.z.append(request.waypoints[i].z)
+    
+    @classmethod
+    def getWaypointsByIndex(cls):
+        return cls.index, cls.x, cls.y
 
 
 
