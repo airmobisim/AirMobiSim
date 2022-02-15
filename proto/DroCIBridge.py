@@ -23,14 +23,15 @@ class AirMobiSim(airmobisim_pb2_grpc.AirMobiSimServicer):
     def Start(self, request, context):
         pass
 
-    """
+        """
         TODO:  ExecuteOneTimeStep should be an own method with the return GRPC statement 
-    """
+        """
 
     def ExecuteOneTimeStep(self, request, context):
         """
             Execute one timestep - Update the values (positions, velocity,...)
         """
+        print('#########')
         responseQuery = airmobisim_pb2.ResponseQuery()
 
         if not self._isRunning:

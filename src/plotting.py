@@ -209,6 +209,22 @@ def load_Data():
     # print("hello")
     # print(time1)
     # print(z1)
+    uavStartPos1=Point(1500,1500,3)
+    uavEndPos1=Point(0,5,7)
+    time1 = [0, 15]
+    x1 = [1500,0]
+    y1 = [1500,5]
+    z1=[3,7]
+
+    totalFlightTime1 = time1[-1]
+
+    uavStartPos=[uavStartPos1]
+    uavEndPos= [uavEndPos1]
+    totalFlightTime=[totalFlightTime1]
+    time=[time1]
+    x=[x1]
+    y=[y1]
+    z=[z1]
 
 
 
