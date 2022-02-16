@@ -35,7 +35,7 @@ class AirMobiSim(airmobisim_pb2_grpc.AirMobiSimServicer):
         """
             Execute one timestep - Update the values (positions, velocity,...)
         """
-        #print('#########')
+        #print('ExecuteOneTimeStep #########')
         responseQuery = airmobisim_pb2.ResponseQuery()
 
         if not self._isRunning:
@@ -91,7 +91,7 @@ class AirMobiSim(airmobisim_pb2_grpc.AirMobiSimServicer):
         return responseQuery
 
     def InsertWaypoints(self, request, context):
-        print("working")
+        print("working#####################")
         print(request)
         # index=[]
         # x=[]

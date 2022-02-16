@@ -184,11 +184,15 @@ def load_Data():
 
     #waypoint for 2nd uav
 
-    time2=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
-    x2= [-1, 0, 1, 0, -1, 0, 1, 0, -1, 0, 1, 0, -1]      #right ahnd grip shape
-    y2= [0, 1, 0, -1, 0, 1, 0, -1, 0,  1, 0, -1, 0]
-    z2=np.linspace(3, 0.5, num=13)
-    # z2.fill(1)
+    # time2=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+    # x2= [-1, 0, 1, 0, -1, 0, 1, 0, -1, 0, 1, 0, -1]      #right ahnd grip shape
+    # y2= [0, 1, 0, -1, 0, 1, 0, -1, 0,  1, 0, -1, 0]
+    # z2=np.linspace(3, 0.5, num=13)
+    time2=[0, 6, 12]
+    x2= [1, 6, 12]      #rfir error testing use above one once error is fixed
+    y2= [1, 6, 12]
+    z2=np.empty(3)
+    z2.fill(3)
 
     uavStartPos2 = Point(x2[0], y2[0], z2[0])
     uavEndPos2 = Point(x2[-1], y2[-1], z2[-1])
@@ -209,22 +213,22 @@ def load_Data():
     # print("hello")
     # print(time1)
     # print(z1)
-    uavStartPos1=Point(1500,1500,3)
-    uavEndPos1=Point(0,5,7)
-    time1 = [0, 15]
-    x1 = [1500,0]
-    y1 = [1500,5]
-    z1=[3,7]
+    # uavStartPos1=Point(1500,1500,3)
+    # uavEndPos1=Point(0,5,7)
+    # time1 = [0, 15]
+    # x1 = [1500,0]
+    # y1 = [1500,5]
+    # z1=[3,7]
 
-    totalFlightTime1 = time1[-1]
+    # totalFlightTime1 = time1[-1]
 
-    uavStartPos=[uavStartPos1]
-    uavEndPos= [uavEndPos1]
-    totalFlightTime=[totalFlightTime1]
-    time=[time1]
-    x=[x1]
-    y=[y1]
-    z=[z1]
+    # uavStartPos=[uavStartPos1]
+    # uavEndPos= [uavEndPos1]
+    # totalFlightTime=[totalFlightTime1]
+    # time=[time1]
+    # x=[x1]
+    # y=[y1]
+    # z=[z1]
 
 
 
