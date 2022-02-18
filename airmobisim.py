@@ -3,6 +3,7 @@ import sys
 import argparse
 import pathlib
 
+from shapely.geometry import Point
 from src.simulation import Simulation
 from src.simpleapp import Simpleapp
 
@@ -46,6 +47,29 @@ def main():
 
     p = Yamlparser(args.configuration)
     config = p.readConfig()
+    ####################################
+
+    # print(config['uav'])
+    # print(config['uavsp'])
+    # a = config['uavsp']
+    # # print(a)
+    # b=a[0]['waypointX']
+    # print(type(b[0]))
+
+    if splineMobilityFlag:
+        uavStartPos.clear(), uavEndPos.clear(), totalFlightTime.clear(), waypointTime.clear(), waypointX.clear(), waypointY.clear(), waypointZ.clear()
+        for uav in config['uavsp']:
+            waypointX.append(uav['waypointX'])
+            waypointY.append(uav['waypointY'])
+            waypointZ.append(uav['waypointZ'])
+            waypointTime.append(uav['waypointTime'])
+            uavStartPos.append(Point(uav['waypointX'][0],uav['waypointY'][0],uav['waypointZ'][0]))
+            uavEndPos.append(Point(uav['waypointX'][-1],uav['waypointY'][-1],uav['waypointZ'][-1]))
+            totalFlightTime.append(uav['waypointTime'][-1])
+
+
+
+    ###################################
     directory = pathlib.Path(args.configuration).parent.resolve()
     initializeSimulation(config, directory, uavStartPos, uavEndPos, totalFlightTime,waypointTime, waypointX, waypointY, waypointZ,linearMobilityFlag,splineMobilityFlag)
 
@@ -63,6 +87,8 @@ def main():
     # print("here")
     # print(simulation)
             make_plot()
+            print('FINISH###########################')
+
 
 
 def initializeSimulation(config, directory, uavStartPos, uavEndPos, totalFlightTime, waypointTime, waypointX, waypointY, waypointZ,linearMobilityFlag,splineMobilityFlag):
