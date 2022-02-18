@@ -41,23 +41,26 @@ def main():
     args = parser.parse_args()
 
     # passing file path to load measurements
-    uavStartPos, uavEndPos, totalFlightTime,  waypointTime, waypointX, waypointY, waypointZ = load_Data()
+    # uavStartPos, uavEndPos, totalFlightTime,  waypointTime, waypointX, waypointY, waypointZ = load_Data()
 
     # Start the DroCI Bridge - Listen to OmNet++ incomes
 
     p = Yamlparser(args.configuration)
     config = p.readConfig()
     ####################################
+    uavStartPos = []
+    uavEndPos = []
+    totalFlightTime = []
+    waypointTime = []
+    waypointX = []
+    waypointY = []
+    waypointZ = []
 
-    # print(config['uav'])
-    # print(config['uavsp'])
-    # a = config['uavsp']
-    # # print(a)
-    # b=a[0]['waypointX']
-    # print(type(b[0]))
 
     if splineMobilityFlag:
-        uavStartPos.clear(), uavEndPos.clear(), totalFlightTime.clear(), waypointTime.clear(), waypointX.clear(), waypointY.clear(), waypointZ.clear()
+        # uavStartPos.clear(), uavEndPos.clear(), totalFlightTime.clear(), waypointTime.clear(), waypointX.clear(), waypointY.clear(), waypointZ.clear()
+
+
         for uav in config['uavsp']:
             waypointX.append(uav['waypointX'])
             waypointY.append(uav['waypointY'])
