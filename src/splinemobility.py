@@ -8,20 +8,24 @@ from .simulationparameter import Simulationparameter
 
 
 class Splinemobility(Basemobility):
-    def __init__(self, uid, startPos, endPos, totalFlightTime, waypointTime, waypointX, waypointY, waypointZ):
-        super().__init__(uid, startPos, endPos)
-        self._move.setStart(startPos, 0)
-        self._move.setLastPos(endPos)
-        self._move.setTempStartPos(startPos) # holds each intermediate points of linear in each iteration
+    def __init__(self, uid, waypointTime, waypointX, waypointY, waypointZ):
+        self._startpos=Point(waypointX[0],waypointY[0],waypointZ[0])
+        self._endpos=Point(waypointX[-1],waypointY[-1],waypointZ[-1])
+        self._totalFlightTime = waypointTime[-1]
+
+        super().__init__(uid, self._startpos, self._endpos)
+
         self._waypointTime = waypointTime
         self._waypointX = waypointX
         self._waypointY = waypointY
         self._waypointZ = waypointZ
         self._uid = uid
-        self._totalFlightTime=totalFlightTime
-        # only for testing spline mobility fixing to true
+        self._move.setStart(self._startpos, 0)
+        self._move.setLastPos(self._endpos)
+        self._move.setTempStartPos(self._startpos) # holds each intermediate points of linear in each iteration
+        # since spline so fixing it to true
         self._move.setLinearMobilitySpFlag(True)
-        self._totalFlightTime= totalFlightTime
+        # self._totalFlightTime= totalFlightTime
 
     def makeMove(self):
         #object of Movement

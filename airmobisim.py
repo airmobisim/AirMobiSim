@@ -41,16 +41,15 @@ def main():
     args = parser.parse_args()
 
     # passing file path to load measurements
-    # uavStartPos, uavEndPos, totalFlightTime,  waypointTime, waypointX, waypointY, waypointZ = load_Data()
+    # waypointTime, waypointX, waypointY, waypointZ = load_Data()
 
     # Start the DroCI Bridge - Listen to OmNet++ incomes
 
     p = Yamlparser(args.configuration)
     config = p.readConfig()
     ####################################
-    uavStartPos = []
-    uavEndPos = []
-    totalFlightTime = []
+
+
     waypointTime = []
     waypointX = []
     waypointY = []
@@ -66,15 +65,14 @@ def main():
             waypointY.append(uav['waypointY'])
             waypointZ.append(uav['waypointZ'])
             waypointTime.append(uav['waypointTime'])
-            uavStartPos.append(Point(uav['waypointX'][0],uav['waypointY'][0],uav['waypointZ'][0]))
-            uavEndPos.append(Point(uav['waypointX'][-1],uav['waypointY'][-1],uav['waypointZ'][-1]))
-            totalFlightTime.append(uav['waypointTime'][-1])
+
+
 
 
 
     ###################################
     directory = pathlib.Path(args.configuration).parent.resolve()
-    initializeSimulation(config, directory, uavStartPos, uavEndPos, totalFlightTime,waypointTime, waypointX, waypointY, waypointZ,linearMobilityFlag,splineMobilityFlag)
+    initializeSimulation(config, directory, waypointTime, waypointX, waypointY, waypointZ,linearMobilityFlag,splineMobilityFlag)
 
 
     if args.show:
@@ -94,7 +92,7 @@ def main():
 
 
 
-def initializeSimulation(config, directory, uavStartPos, uavEndPos, totalFlightTime, waypointTime, waypointX, waypointY, waypointZ,linearMobilityFlag,splineMobilityFlag):
+def initializeSimulation(config, directory, waypointTime, waypointX, waypointY, waypointZ,linearMobilityFlag,splineMobilityFlag):
 
     global simulation
     simulation = Simulation(config['simulation']['stepLength'],
@@ -103,9 +101,6 @@ def initializeSimulation(config, directory, uavStartPos, uavEndPos, totalFlightT
                             config['simulation']['playgroundSizeY'],
                             config['simulation']['playgroundSizeZ'],
                             config['uav'],
-                            uavStartPos,
-                            uavEndPos,
-                            totalFlightTime,
                             waypointTime,
                             waypointX,
                             waypointY,

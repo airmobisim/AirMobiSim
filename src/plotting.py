@@ -212,7 +212,7 @@ def load_Data():
 
 
 
-    return uavStartPos, uavEndPos, totalFlightTime, time, x,y,z
+    return time, x,y,z
 
 def make_plot():
     current_file = os.path.abspath(os.path.dirname(__file__))
