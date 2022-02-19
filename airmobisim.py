@@ -43,7 +43,7 @@ def main():
     # passing file path to load measurements
     # waypointTime, waypointX, waypointY, waypointZ = load_Data()
 
-    # Start the DroCI Bridge - Listen to OmNet++ incomes
+
 
     p = Yamlparser(args.configuration)
     config = p.readConfig()
@@ -60,13 +60,13 @@ def main():
         # uavStartPos.clear(), uavEndPos.clear(), totalFlightTime.clear(), waypointTime.clear(), waypointX.clear(), waypointY.clear(), waypointZ.clear()
 
 
-        for uav in config['uavsp']:
-            waypointX.append(uav['waypointX'])
-            waypointY.append(uav['waypointY'])
-            waypointZ.append(uav['waypointZ'])
-            waypointTime.append(uav['waypointTime'])
+        for uavsp in config['uavsp']:
+            waypointX.append(uavsp['waypointX'])
+            waypointY.append(uavsp['waypointY'])
+            waypointZ.append(uavsp['waypointZ'])
+            waypointTime.append(uavsp['waypointTime'])
 
-
+        # waypointTime, waypointX, waypointY, waypointZ = load_Data()
 
 
 
@@ -74,7 +74,7 @@ def main():
     directory = pathlib.Path(args.configuration).parent.resolve()
     initializeSimulation(config, directory, waypointTime, waypointX, waypointY, waypointZ,linearMobilityFlag,splineMobilityFlag)
 
-
+    # Start the DroCI Bridge - Listen to OmNet++ incomes
     if args.show:
         result = Resultcollection()
         result.showEnergy()
