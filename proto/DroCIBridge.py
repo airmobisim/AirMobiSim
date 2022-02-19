@@ -1,4 +1,8 @@
 import grpc
+from google.protobuf import struct_pb2
+
+
+
 from src.simulation import Simulation
 from concurrent import futures
 from src.simulationparameter import Simulationparameter
@@ -76,7 +80,7 @@ class AirMobiSim(airmobisim_pb2_grpc.AirMobiSimServicer):
 
     def GetManagedHosts(self, request, context):
         responseQuery = airmobisim_pb2.ResponseQuery()
-
+        #print("GetManagedHosts get called")
         if not self._isRunning:
             self.startSimulation()
 
@@ -107,6 +111,8 @@ class AirMobiSim(airmobisim_pb2_grpc.AirMobiSimServicer):
             AirMobiSim.x.append(request.waypoints[i].x)
             AirMobiSim.y.append(request.waypoints[i].y)
             AirMobiSim.z.append(request.waypoints[i].z)
+
+        return struct_pb2.Value()
     
     @classmethod
     def getWaypointsByIndex(cls):
