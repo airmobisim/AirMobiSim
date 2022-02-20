@@ -40,7 +40,7 @@ def main():
 
     args = parser.parse_args()
 
-    # passing file path to load measurements
+
     # waypointTime, waypointX, waypointY, waypointZ = load_Data()
 
 
@@ -66,6 +66,7 @@ def main():
             waypointZ.append(uavsp['waypointZ'])
             waypointTime.append(uavsp['waypointTime'])
 
+        # passing file path to load measurements
         # waypointTime, waypointX, waypointY, waypointZ = load_Data()
 
 
