@@ -221,11 +221,11 @@ def load_Data():
     y1 = np.empty(12)#[1500,5]
     y1.fill(12)
     z1=np.empty(12)#[3,7]
-    z1.fill(3)
+    z1.fill(2)
     uavStartPos1 = Point(x1[0], y1[0], z1[0])
     uavEndPos1 = Point(x1[-1],y1[-1],z1[-1])
 
-    # totalFlightTime1 = time1[-1]
+    totalFlightTime1 = time1[-1]
 
     uavStartPos=[uavStartPos1]
     uavEndPos= [uavEndPos1]
