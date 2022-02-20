@@ -58,5 +58,44 @@ class Splinemobility(Basemobility):
         move.setPassedTime(passedTime)
         super().makeMove()
 
+    def updateWaypointsByIndex(self):
+        waypointsIndex = [6, 7]
+        waypointsX = [0.23, 0.21]
+        waypointsY = [-0.2, -0.35]
+
+        # waypointsIndex, waypointsX, waypointsY = getWaypointsByIndex()
+
+        # print('hello hello')
+        time = self._waypointTime.copy().tolist()
+        x = self._waypointX.copy()
+        y = self._waypointY.copy()
+        # print(time)
+        # print(x)
+        # print(y)
+        # print(len(time))
+        # print(len(x))
+        # print(len(y))
+        for i, v in enumerate(waypointsIndex):
+            if 1 <= v <= len(time) - 2:
+                print(v)
+                time.insert(v, (time[v] + time[v - 1]) / 2)
+                x.insert(v, waypointsX[i])
+                y.insert(v, waypointsY[i])
+        # print('later')
+        # print(len(time))
+        # print(len(x))
+        # print(len(y))
+        # print(time)
+        # print(x)
+        # print(y)
+
+        spl_x = CubicSpline(time, x)
+        spl_y = CubicSpline(time, y)
+        self._waypointTime = time
+        self._waypointX = x
+        self._waypointY = y
+
+        return spl_x, spl_y
+
 
 
