@@ -1,4 +1,5 @@
 import math
+import numpy as np
 import geopandas
 from shapely.geometry import Point
 from .basemobility import Basemobility
@@ -23,6 +24,7 @@ class Splinemobility(Basemobility):
         # only for testing spline mobility fixing to true
         self._move.setLinearMobilitySpFlag(True)
         self._totalFlightTime= totalFlightTime
+        self._waypointsInsertedFlag=False     # this decides calling of updateWaypointsByIndex()
 
     def makeMove(self):
         #object of Movement
@@ -38,14 +40,18 @@ class Splinemobility(Basemobility):
                 '''
                 reduce computation by passing the following lines in constructor
                 '''
+                #########
+                if self._waypointsInsertedFlag == False:  # if waypoints is not inserted this this add the waypoints if already inserted then it will ignore
+                    self._waypointsInsertedFlag=True    #done once at the beginning
+                    self.updateWaypointsByIndex()  # to insert way points
+
+                ########
 
                 spl_x = CubicSpline(self._waypointTime, self._waypointX)
                 spl_y = CubicSpline(self._waypointTime, self._waypointY)
                 spl_z = CubicSpline(self._waypointTime, self._waypointZ)
-                #########
 
 
-                ########
 
 
                 nextCoordinate= Point(spl_x(passedTime), spl_y(passedTime), spl_z(passedTime))
@@ -59,44 +65,48 @@ class Splinemobility(Basemobility):
                 # move.setLinearMobilitySpFlag(False)
                 # move.setSpeed(0.0)
 
-
-
-            pass
         move.setPassedTime(passedTime)
         super().makeMove()
 
     def updateWaypointsByIndex(self):
-        waypointsIndex = [6, 7]
-        waypointsX = [0.23, 0.21]
-        waypointsY = [-0.2, -0.35]
-        waypointsZ = [3, 3]
+        # waypointsIndex = [6, 7]
+        # waypointsX = [0.23, 0.21]
+        # waypointsY = [-0.2, -0.35]
+        # waypointsZ = [3, 3]
 
-        # waypointsIndex, waypointsX, waypointsY = getWaypointsByIndex()
+        # waypointsIndex = [6,7]
+        # waypointsX = [6.5,6.8]
+        # waypointsY = [10,10]
+        # waypointsZ = [12,12]
 
-        # print('hello hello')
-        time = self._waypointTime.copy().tolist()
-        x = self._waypointX.copy()
-        y = self._waypointY.copy()
-        z = self._waypointY.copy()
+        waypointsIndex, waypointsX, waypointsY, waypointsZ = AirMobiSim.getWaypointsByIndex()
+        # print(waypointsIndex)
+        # print(waypointsIndex1==None)
+        if waypointsIndex != None:
+            # print('hello hello')
+            time = self._waypointTime.copy().tolist()
+            x = self._waypointX.copy()
+            y = self._waypointY.copy()
+            z = self._waypointY.copy()
 
-        for i, v in enumerate(waypointsIndex):
-            if 1 <= v <= len(time) - 2:
-                print(v)
-                time.insert(v, (time[v] + time[v - 1]) / 2)
-                x.insert(v, waypointsX[i])
-                y.insert(v, waypointsY[i])
-                z.insert(v, waypointsZ[i])
+            for i, v in enumerate(waypointsIndex):
+                if 1 <= v <= len(time) - 2:
+                    # print('vertex: ',v)
+                    time.insert(v, (time[v] + time[v - 1]) / 2)
+                    x= np.insert(x,v, waypointsX[i])
+                    y=np.insert(y,v, waypointsY[i])
+                    z=np.insert(z,v, waypointsZ[i])
 
 
-        spl_x = CubicSpline(time, x)
-        spl_y = CubicSpline(time, y)
-        spl_z = CubicSpline(time, z)
-        self._waypointTime = time
-        self._waypointX = x
-        self._waypointY = y
-        self._waypointZ = z
+            # spl_x = CubicSpline(time, x)
+            # spl_y = CubicSpline(time, y)
+            # spl_z = CubicSpline(time, z)
+            self._waypointTime = time
+            self._waypointX = x
+            self._waypointY = y
+            self._waypointZ = z
+            print('waypoint inserted')
 
-        return spl_x, spl_y, spl_z
 
 
 

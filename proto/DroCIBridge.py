@@ -13,6 +13,10 @@ from proto import airmobisim_pb2
 
 
 class AirMobiSim(airmobisim_pb2_grpc.AirMobiSimServicer):
+    # index = [6, 7]
+    # x = [6.5, 6.8]
+    # y = [10, 10]
+    # z = [12, 12]
     index=[]
     x=[]
     y=[]
@@ -115,8 +119,12 @@ class AirMobiSim(airmobisim_pb2_grpc.AirMobiSimServicer):
         return struct_pb2.Value()
     
     @staticmethod
-    def getWaypointsByIndex(cls):
+    def getWaypointsByIndex():
+        if len(AirMobiSim.index)==0:
+            return None,None, None,None
+
         return AirMobiSim.index, AirMobiSim.x, AirMobiSim.y,AirMobiSim.z
+
 
 
 

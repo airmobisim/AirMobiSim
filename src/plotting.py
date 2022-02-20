@@ -203,6 +203,7 @@ def load_Data():
     # y=np.add(y,3)
     # print("printing x")
     # print(x)
+    ################# usual##############
     uavStartPos=[uavStartPos1, uavEndPos2]
     uavEndPos= [uavEndPos1, uavEndPos2]
     totalFlightTime=[totalFlightTime1, totalFlightTime2]
@@ -210,25 +211,29 @@ def load_Data():
     x=[x1, x2]
     y=[y1,y2]
     z=[z1, z2]
+    ##################
     # print("hello")
     # print(time1)
     # print(z1)
-    # uavStartPos1=Point(1500,1500,3)
-    # uavEndPos1=Point(0,5,7)
-    # time1 = [0, 15]
-    # x1 = [1500,0]
-    # y1 = [1500,5]
-    # z1=[3,7]
+
+    time1 = np.linspace(1,12,12)#[0, 15]
+    x1 = np.linspace(1,12,12)#[1500,0]
+    y1 = np.empty(12)#[1500,5]
+    y1.fill(12)
+    z1=np.empty(12)#[3,7]
+    z1.fill(3)
+    uavStartPos1 = Point(x1[0], y1[0], z1[0])
+    uavEndPos1 = Point(x1[-1],y1[-1],z1[-1])
 
     # totalFlightTime1 = time1[-1]
 
-    # uavStartPos=[uavStartPos1]
-    # uavEndPos= [uavEndPos1]
-    # totalFlightTime=[totalFlightTime1]
-    # time=[time1]
-    # x=[x1]
-    # y=[y1]
-    # z=[z1]
+    uavStartPos=[uavStartPos1]
+    uavEndPos= [uavEndPos1]
+    totalFlightTime=[totalFlightTime1]
+    time=[time1]
+    x=[x1]
+    y=[y1]
+    z=[z1]
 
 
 
