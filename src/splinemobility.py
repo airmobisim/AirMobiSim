@@ -5,6 +5,7 @@ from .basemobility import Basemobility
 from scipy.interpolate import CubicSpline
 
 from .simulationparameter import Simulationparameter
+from proto.DroCIBridge import AirMobiSim
 
 
 class Splinemobility(Basemobility):
@@ -41,6 +42,12 @@ class Splinemobility(Basemobility):
                 spl_x = CubicSpline(self._waypointTime, self._waypointX)
                 spl_y = CubicSpline(self._waypointTime, self._waypointY)
                 spl_z = CubicSpline(self._waypointTime, self._waypointZ)
+                #########
+
+
+                ########
+
+
                 nextCoordinate= Point(spl_x(passedTime), spl_y(passedTime), spl_z(passedTime))
                 move.setNextCoordinate(nextCoordinate)
 
@@ -62,6 +69,7 @@ class Splinemobility(Basemobility):
         waypointsIndex = [6, 7]
         waypointsX = [0.23, 0.21]
         waypointsY = [-0.2, -0.35]
+        waypointsZ = [3, 3]
 
         # waypointsIndex, waypointsX, waypointsY = getWaypointsByIndex()
 
@@ -69,33 +77,26 @@ class Splinemobility(Basemobility):
         time = self._waypointTime.copy().tolist()
         x = self._waypointX.copy()
         y = self._waypointY.copy()
-        # print(time)
-        # print(x)
-        # print(y)
-        # print(len(time))
-        # print(len(x))
-        # print(len(y))
+        z = self._waypointY.copy()
+
         for i, v in enumerate(waypointsIndex):
             if 1 <= v <= len(time) - 2:
                 print(v)
                 time.insert(v, (time[v] + time[v - 1]) / 2)
                 x.insert(v, waypointsX[i])
                 y.insert(v, waypointsY[i])
-        # print('later')
-        # print(len(time))
-        # print(len(x))
-        # print(len(y))
-        # print(time)
-        # print(x)
-        # print(y)
+                z.insert(v, waypointsZ[i])
+
 
         spl_x = CubicSpline(time, x)
         spl_y = CubicSpline(time, y)
+        spl_z = CubicSpline(time, z)
         self._waypointTime = time
         self._waypointX = x
         self._waypointY = y
+        self._waypointZ = z
 
-        return spl_x, spl_y
+        return spl_x, spl_y, spl_z
 
 
 

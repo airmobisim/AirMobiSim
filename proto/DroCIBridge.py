@@ -3,7 +3,7 @@ from google.protobuf import struct_pb2
 
 
 
-from src.simulation import Simulation
+# from src.simulation import Simulation
 from concurrent import futures
 from src.simulationparameter import Simulationparameter
 
@@ -114,9 +114,9 @@ class AirMobiSim(airmobisim_pb2_grpc.AirMobiSimServicer):
 
         return struct_pb2.Value()
     
-    @classmethod
+    @staticmethod
     def getWaypointsByIndex(cls):
-        return cls.index, cls.x, cls.y
+        return AirMobiSim.index, AirMobiSim.x, AirMobiSim.y,AirMobiSim.z
 
 
 
