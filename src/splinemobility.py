@@ -82,12 +82,15 @@ class Splinemobility(Basemobility):
         waypointsIndex, waypointsX, waypointsY, waypointsZ = AirMobiSim.getWaypointsByIndex()
         # print(waypointsIndex)
         # print(waypointsIndex1==None)
+
         if waypointsIndex != None:
             # print('hello hello')
             time = self._waypointTime.copy().tolist()
             x = self._waypointX.copy()
             y = self._waypointY.copy()
-            z = self._waypointY.copy()
+            z = self._waypointZ.copy()
+
+
 
             for i, v in enumerate(waypointsIndex):
                 if 1 <= v <= len(time) - 2:

@@ -16,7 +16,7 @@ class AirMobiSim(airmobisim_pb2_grpc.AirMobiSimServicer):
     # index = [6, 7]
     # x = [6.5, 6.8]
     # y = [10, 10]
-    # z = [12, 12]
+    # z = [3, 3]
     index=[]
     x=[]
     y=[]
