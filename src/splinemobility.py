@@ -87,7 +87,7 @@ class Splinemobility(Basemobility):
             time = self._waypointTime.copy().tolist()
             x = self._waypointX.copy()
             y = self._waypointY.copy()
-            z = self._waypointY.copy()
+            z = self._waypointZ.copy()
 
             for i, v in enumerate(waypointsIndex):
                 if 1 <= v <= len(time) - 2:
