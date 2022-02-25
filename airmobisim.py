@@ -5,6 +5,7 @@ import sys
 import argparse
 import pathlib
 
+
 from src.simulation import Simulation
 from src.simpleapp import Simpleapp
 
@@ -17,42 +18,37 @@ import os
 import errno
 
 import socket
-
+import time
 
 simulation: Simulation
 
 def main():
-    try:
-        global simulation
-        os.chdir("/home/dalisha.logan2/Documents/project_airmobisim/AirMobiSim")
-        parser = argparse.ArgumentParser(description='Importing configuration-file')
-        parser.add_argument('--configuration', action='store', type=str, default="examples/simpleSimulation/simulation.config", help='configuration')
-        parser.add_argument('--omnetpp', action='store_true', help='Start the OmNet++ simulator')
-        print("""AirMobiSim Simulation  (C) 2021 Chair of Networked Systems Modelling TU Dresden.\nVersion: 0.0.1\nSee the license for distribution terms and warranty disclaimer""")
+    global simulation
+    #os.chdir("/home/dalisha.logan2/Documents/project_airmobisim/AirMobiSim")
+    parser = argparse.ArgumentParser(description='Importing configuration-file')
+    parser.add_argument('--configuration', action='store', type=str, default="examples/simpleSimulation/simulation.config", help='configuration')
+    parser.add_argument('--omnetpp', action='store_true', help='Start the OmNet++ simulator')
+    print("""AirMobiSim Simulation  (C) 2021 Chair of Networked Systems Modelling TU Dresden.\nVersion: 0.0.1\nSee the license for distribution terms and warranty disclaimer""", flush=True)
+    args = parser.parse_args()
 
-        args = parser.parse_args()
-        p = Yamlparser(args.configuration)
-	
-        config = p.readConfig()
-        directory = pathlib.Path(args.configuration).parent.resolve()
-        initializeSimulation(config, directory)
+    #Setting the path right, else it will cause problems with omnetpp
+    path = str(sys.argv[0]).replace("/airmobisim.py","") + args.configuration
+    #print(path)
+    p = Yamlparser(path)
+    config = p.readConfig()
 
-        if args.omnetpp:
-           print("Start the AirMobiSim Server.....")
-           # Start the DroCI Bridge - Listen to OmNet++ incomes
-           startServer(simulation)
-        else:
-           print("Starting the Simulation")
-           simulation.startSimulation()
+    directory = pathlib.Path(str(sys.argv[0])).parent.resolve()
+    #print(directory)
+    initializeSimulation(config, directory)
 
-    except:
-           devnull = os.open(os.devnull, os.O_WRONLY)
-           #os.write(devnull, b'Hello')
-           os.dup2(devnull, sys.stdout.fileno())
-           sys.exit(1)
+    if args.omnetpp:
+        print("Start the AirMobiSim Server...", flush=True)
+        #Start the DroCI Bridge - Listen to ONet++ incomes
+        #startServer(simulation)
+    else:
+        #print("Starting the Simulation")
+        simulation.startSimulation()
 
- 
-        
 
 
 def initializeSimulation(config, directory):
@@ -66,6 +62,25 @@ def initializeSimulation(config, directory):
                             directory,
                             )
 
+    newpid = os.fork()
+    if newpid == 0:
+        startServer(simulation)
+    else:
+        status = os.wait()
+        sys.exit()
+
+
+def get_lock(process_name):
+    get_lock._lock_socket = socket.socket(socket.AF_UNIX, socket.SOCK_DGRAM)
+    try:
+        get_lock._lock_socket.bind("\0" + process_name)
+        print("I got lock")
+    except:
+        print("Lock exists")
+        sys.exit()
 
 if __name__ == "__main__":
+    
+    print("Starting process")
+    get_lock("running_test")
     main()

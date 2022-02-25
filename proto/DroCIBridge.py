@@ -8,11 +8,13 @@ from src.simulationparameter import Simulationparameter
 from shapely.geometry import Point
 from src.uav import Uav
 import time
+import sys
 
 
 from proto import airmobisim_pb2_grpc
 from proto import airmobisim_pb2
 
+ending = 0
 
 class AirMobiSim(airmobisim_pb2_grpc.AirMobiSimServicer):
 
@@ -27,7 +29,8 @@ class AirMobiSim(airmobisim_pb2_grpc.AirMobiSimServicer):
         self._isRunning = True
 
     def Start(self, request, context):
-        pass
+        print("Start gets called")
+        return struct_pb2.Value()
 
     """
         TODO:  ExecuteOneTimeStep should be an own method with the return GRPC statement 
@@ -57,12 +60,12 @@ class AirMobiSim(airmobisim_pb2_grpc.AirMobiSimServicer):
                     node.getMobility().makeMove()
                     self._isInitialized = True
                     currentPos = node.getMobility().getCurrentPos()
-                    print("##########################################################")
-                    print("THIS IS WHAT I AM SENDING ON THE INTERFACE")
-                    print("##########################################################")
-                    print("currentPos.x:"  + str(currentPos.x))
-                    print("currentPos.y:"  + str(currentPos.y))
-                    print("currentPos.z:"  + str(currentPos.z))
+                    print("##########################################################", flush=True)
+                    print("THIS IS WHAT I AM SENDING ON THE INTERFACE", flush=True)
+                    print("##########################################################", flush=True)
+                    print("currentPos.x:"  + str(currentPos.x), flush=True)
+                    print("currentPos.y:"  + str(currentPos.y), flush=True)
+                    print("currentPos.z:"  + str(currentPos.z), flush=True)
                     uav = airmobisim_pb2.Response(id=node._uid, x=currentPos.x, y=currentPos.y, z=currentPos.z, speed=node.getMobility()._move.getSpeed(), angle=node.getMobility()._angle)
                     self._lastUavReport.append(uav)
                     responseQuery.responses.append(uav)
@@ -76,10 +79,12 @@ class AirMobiSim(airmobisim_pb2_grpc.AirMobiSimServicer):
                 self.simulation_obj.finishSimulation()
 
     def Finish(self, request, context):
-        pass
+        os.close(sys.stdout.fileno())
+        os.close(sys.stderr.fileno())
+
+        return struct_pb2.Value()
 
     def GetManagedHosts(self, request, context):
-
         print("GetManagesHosts gets called!")
         responseQuery = airmobisim_pb2.ResponseQuery()
 
@@ -102,8 +107,7 @@ class AirMobiSim(airmobisim_pb2_grpc.AirMobiSimServicer):
         Method inserts an UAV in simulation
         In the next timestep makeMove()
         """
-        print("InsertUAV  gets called!")
-        print(request.coordinates[0].x)
+        print("InsertUAV  gets called")
         self.simulation_obj._managedNodes.append(Uav(request.id, Point(request.coordinates[0].x, request.coordinates[0].y, request.coordinates[0].z), Point(request.coordinates[1].x, request.coordinates[1].y, request.coordinates[1].z), angle=request.angle, speed=request.speed))
         
         return struct_pb2.Value()
@@ -147,17 +151,19 @@ def startServer(simulation_object):
     """
         Start the AirMobiSim Server
     """
-
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
     airmobisim_pb2_grpc.add_AirMobiSimServicer_to_server(AirMobiSim(simulation_object), server)
     server.add_insecure_port('localhost:50051')
     server.start()
 
     print("AirMobiSim Server has started....")
+   
 
     try:
         while True:
             time.sleep(1)
-    except KeyboardInterrupt:
+            sys.stdout.flush()
+    except:
+        print("I stopped the Server!")
         server.stop(0)
-        print("Server has been stopped")
+        #print("Server has been stopped")
