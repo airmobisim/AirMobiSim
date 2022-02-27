@@ -28,10 +28,10 @@ class Splinemobility(Basemobility):
         self._move.setLinearMobilitySpFlag(True)
         # self._totalFlightTime= totalFlightTime
         print(waypointTime)
-        self._speed= 0.5
+        self._speed= 1.5
         # self._waypointTimeN=Splinemobility.insertWaypointTime()
-        Splinemobility.computeSplineDistance()
-
+        # Splinemobility.computeSplineDistance()
+        self.insertWaypointTime()
     def makeMove(self):
         #object of Movement
         move = self.getMove()
@@ -69,18 +69,26 @@ class Splinemobility(Basemobility):
 
 
     def insertWaypointTime(self):
-        pass
-    @staticmethod
+        area_of_segments= Splinemobility.computeSplineDistance(self._waypointX, self._waypointY, self._waypointZ)
+        total_spline_distance=np.sum(area_of_segments)
+        total_flight_time= total_spline_distance/self._speed
+        print('total flight time')
+        print(total_flight_time)
+
+
+
+
+    @staticmethod         # this functions returns area of segments for each waypoint segments
     def computeSplineDistance(waypointX=[0,6,12],waypointY=[0,6,12],waypointZ=[3,3,3]):
         waypointCount=len(waypointX)
         waypointIndex=np.linspace(0,waypointCount-1,num=waypointCount)
-        print('inside computer spline distance')
-        print(waypointIndex)
+        # print('inside computer spline distance')
+        # print(waypointIndex)
         spl_x = CubicSpline(waypointIndex, waypointX)
         spl_y = CubicSpline(waypointIndex, waypointY)
         spl_z = CubicSpline(waypointIndex, waypointZ)
 
-        area_of_segment=[]   # 1 less thank number of points
+        area_of_segments=[]   # 1 less thank number of points
         for i in range(waypointCount-1):
             number_of_small_segment=100
 
@@ -90,16 +98,16 @@ class Splinemobility(Basemobility):
             segments_small_z=spl_z(segments_of_index)
             # print(len(segments_of_x))
             # print(type(segments_of_x))
-            segment_distance=0
+            segments_distance=0
             for i in range(number_of_small_segment-1):
-                segment_distance += math.sqrt((segments_small_x[i+1] - segments_small_x[i])**2 +(segments_small_y[i+1] - segments_small_y[i])**2 + (segments_small_z[i+1] - segments_small_z[i])**2 )
+                segments_distance += math.sqrt((segments_small_x[i+1] - segments_small_x[i])**2 +(segments_small_y[i+1] - segments_small_y[i])**2 + (segments_small_z[i+1] - segments_small_z[i])**2 )
 
-            area_of_segment.append(segment_distance)
+            area_of_segments.append(segments_distance)
 
-        print(area_of_segment)
+        # print(np.sum(area_of_segment))
 
 
-        pass
+        return area_of_segments
 
 
 
