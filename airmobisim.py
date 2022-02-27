@@ -90,7 +90,7 @@ def main():
 
     # print("here")
     # print(simulation)
-    #         make_plot()
+            make_plot()
             print('FINISH###########################')
 
 

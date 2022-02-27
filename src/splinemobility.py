@@ -12,14 +12,16 @@ class Splinemobility(Basemobility):
     def __init__(self, uid, waypointTime, waypointX, waypointY, waypointZ):
         self._startpos=Point(waypointX[0],waypointY[0],waypointZ[0])
         self._endpos=Point(waypointX[-1],waypointY[-1],waypointZ[-1])
-        self._totalFlightTime = waypointTime[-1]
+        # self._totalFlightTime = waypointTime[-1]
 
         super().__init__(uid, self._startpos, self._endpos)
 
-        self._waypointTime = waypointTime
+        # self._waypointTime = waypointTime
+
         self._waypointX = waypointX
         self._waypointY = waypointY
         self._waypointZ = waypointZ
+
         self._uid = uid
         self._move.setStart(self._startpos, 0)
         self._move.setLastPos(self._endpos)
@@ -31,7 +33,10 @@ class Splinemobility(Basemobility):
         self._speed= 1.5
         # self._waypointTimeN=Splinemobility.insertWaypointTime()
         # Splinemobility.computeSplineDistance()
-        self.insertWaypointTime()
+        # self.insertWaypointTime()
+        self._waypointTime = self.insertWaypointTime()
+        self._totalFlightTime = self._waypointTime[-1]
+        print(self._waypointTime)
     def makeMove(self):
         #object of Movement
         move = self.getMove()
@@ -69,11 +74,29 @@ class Splinemobility(Basemobility):
 
 
     def insertWaypointTime(self):
-        area_of_segments= Splinemobility.computeSplineDistance(self._waypointX, self._waypointY, self._waypointZ)
-        total_spline_distance=np.sum(area_of_segments)
+        distance_of_segments= Splinemobility.computeSplineDistance(self._waypointX, self._waypointY, self._waypointZ)
+        total_spline_distance=np.sum(distance_of_segments)
         total_flight_time= total_spline_distance/self._speed
         print('total flight time')
         print(total_flight_time)
+
+        waypointTime=[]
+        # now put time stamp for each waypoint
+        for i in range(len(self._waypointX)):
+            print('value of i: ',i )
+            if i==0:
+                waypointTime.append(0)
+            elif i== len(self._waypointX)-1:
+                waypointTime.append(total_flight_time)
+
+            else:
+                time_needed_for_this_segment= (distance_of_segments[i-1]/total_spline_distance)*total_flight_time
+                waypointTime.append(waypointTime[-1]+time_needed_for_this_segment)
+
+        print('generated time stamp')
+        print(waypointTime)
+        # print(len(self._waypointX))
+        return waypointTime
 
 
 
@@ -88,7 +111,7 @@ class Splinemobility(Basemobility):
         spl_y = CubicSpline(waypointIndex, waypointY)
         spl_z = CubicSpline(waypointIndex, waypointZ)
 
-        area_of_segments=[]   # 1 less thank number of points
+        distance_of_segments=[]   # 1 less thank number of points
         for i in range(waypointCount-1):
             number_of_small_segment=100
 
@@ -102,12 +125,12 @@ class Splinemobility(Basemobility):
             for i in range(number_of_small_segment-1):
                 segments_distance += math.sqrt((segments_small_x[i+1] - segments_small_x[i])**2 +(segments_small_y[i+1] - segments_small_y[i])**2 + (segments_small_z[i+1] - segments_small_z[i])**2 )
 
-            area_of_segments.append(segments_distance)
+            distance_of_segments.append(segments_distance)
 
         # print(np.sum(area_of_segment))
 
 
-        return area_of_segments
+        return distance_of_segments
 
 
 
