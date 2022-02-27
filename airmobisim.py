@@ -48,7 +48,9 @@ def main():
     p = Yamlparser(args.configuration)
     config = p.readConfig()
     ####################################
-
+    '''
+    the code within this ###s are only forr the imput of spline mobility it is a redudent code which should be during final merge 
+    '''
 
     waypointTime = []
     waypointX = []
@@ -88,7 +90,7 @@ def main():
 
     # print("here")
     # print(simulation)
-            make_plot()
+    #         make_plot()
             print('FINISH###########################')
 
 
@@ -96,20 +98,36 @@ def main():
 def initializeSimulation(config, directory, waypointTime, waypointX, waypointY, waypointZ,linearMobilityFlag,splineMobilityFlag):
 
     global simulation
-    simulation = Simulation(config['simulation']['stepLength'],
-                            config['simulation']['simTimeLimit'],
-                            config['simulation']['playgroundSizeX'],
-                            config['simulation']['playgroundSizeY'],
-                            config['simulation']['playgroundSizeZ'],
-                            config['uav'],
-                            waypointTime,
-                            waypointX,
-                            waypointY,
-                            waypointZ,
-                            linearMobilityFlag,
-                            splineMobilityFlag,
-                            directory,
-                            )
+    if splineMobilityFlag:
+        simulation = Simulation(config['simulation']['stepLength'],
+                                config['simulation']['simTimeLimit'],
+                                config['simulation']['playgroundSizeX'],
+                                config['simulation']['playgroundSizeY'],
+                                config['simulation']['playgroundSizeZ'],
+                                config['uavsp'],
+                                waypointTime,
+                                waypointX,
+                                waypointY,
+                                waypointZ,
+                                linearMobilityFlag,
+                                splineMobilityFlag,
+                                directory,
+                                )
+    else:
+        simulation = Simulation(config['simulation']['stepLength'],
+                                config['simulation']['simTimeLimit'],
+                                config['simulation']['playgroundSizeX'],
+                                config['simulation']['playgroundSizeY'],
+                                config['simulation']['playgroundSizeZ'],
+                                config['uav'],
+                                waypointTime,
+                                waypointX,
+                                waypointY,
+                                waypointZ,
+                                linearMobilityFlag,
+                                splineMobilityFlag,
+                                directory,
+                                )
 
 
 
