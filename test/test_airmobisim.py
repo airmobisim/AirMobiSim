@@ -4,6 +4,7 @@ import airmobisim
 
 
 class TestAirmobisim(unittest.TestCase):
+
     def test_input(self):
         p = Yamlparser("../examples/simpleSimulation/simulation.config")
         config = p.readConfig()
@@ -26,36 +27,20 @@ class TestAirmobisim(unittest.TestCase):
             waypointZ.append(uavsp['waypointZ'])
             speed.append(uavsp['speed'])
 
-        validInputSp=True
+        # validInputSp=True for equal len of x,y,z list
+        validInputSp = len(waypointX) == len(waypointY) == len(waypointZ)
 
         for i,v in enumerate(waypointX):
-            # print(waypointX)
-            # print(item)
-            for item in v:
-                if item<0 or item>playgroundSizeX:
-                    validInputSp=False
-
-        # print('hello')
-
-        #if validInputSp:
-           # validInputSp= all((0 <= element <= playgroundSizeX)  for element in waypointX)
+            validInputSp=all(0 <= item <=playgroundSizeX for item in v)
 
         if validInputSp:
             for i, v in enumerate(waypointY):
-                # print(waypointX)
-                # print(item)
-                for item in v:
-                    if item < 0 or item > playgroundSizeY:
-                        validInputSp = False
+                validInputSp = all(0 <= item <= playgroundSizeY for item in v)
 
         if validInputSp:
             for i, v in enumerate(waypointZ):
-                # print(waypointZ)
-                # print(item)
-                for item in v:
-                    if item < 0 or item > playgroundSizeZ:
-                        validInputSp = False
+                validInputSp = all(0 <= item <= playgroundSizeZ for item in v)
+
 
         self.assertEqual(validInputSp,True)
 
-    pass
