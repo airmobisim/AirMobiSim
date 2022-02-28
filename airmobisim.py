@@ -52,7 +52,7 @@ def main():
     the code within this ###s are only forr the imput of spline mobility it is a redudent code which should be during final merge 
     '''
 
-    waypointTime = []
+    speed = []
     waypointX = []
     waypointY = []
     waypointZ = []
@@ -66,7 +66,7 @@ def main():
             waypointX.append(uavsp['waypointX'])
             waypointY.append(uavsp['waypointY'])
             waypointZ.append(uavsp['waypointZ'])
-            waypointTime.append(uavsp['waypointTime'])
+            speed.append(uavsp['speed'])
 
         # passing file path to load measurements
         # waypointTime, waypointX, waypointY, waypointZ = load_Data()
@@ -75,7 +75,7 @@ def main():
 
     ###################################
     directory = pathlib.Path(args.configuration).parent.resolve()
-    initializeSimulation(config, directory, waypointTime, waypointX, waypointY, waypointZ,linearMobilityFlag,splineMobilityFlag)
+    initializeSimulation(config, directory, speed, waypointX, waypointY, waypointZ,linearMobilityFlag,splineMobilityFlag)
 
     # Start the DroCI Bridge - Listen to OmNet++ incomes
     if args.show:
@@ -95,7 +95,7 @@ def main():
 
 
 
-def initializeSimulation(config, directory, waypointTime, waypointX, waypointY, waypointZ,linearMobilityFlag,splineMobilityFlag):
+def initializeSimulation(config, directory, speed, waypointX, waypointY, waypointZ,linearMobilityFlag,splineMobilityFlag):
 
     global simulation
     if splineMobilityFlag:
@@ -105,7 +105,7 @@ def initializeSimulation(config, directory, waypointTime, waypointX, waypointY, 
                                 config['simulation']['playgroundSizeY'],
                                 config['simulation']['playgroundSizeZ'],
                                 config['uavsp'],
-                                waypointTime,
+                                speed,
                                 waypointX,
                                 waypointY,
                                 waypointZ,
@@ -120,7 +120,7 @@ def initializeSimulation(config, directory, waypointTime, waypointX, waypointY, 
                                 config['simulation']['playgroundSizeY'],
                                 config['simulation']['playgroundSizeZ'],
                                 config['uav'],
-                                waypointTime,
+                                speed,
                                 waypointX,
                                 waypointY,
                                 waypointZ,

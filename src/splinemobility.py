@@ -9,15 +9,12 @@ from .simulationparameter import Simulationparameter
 
 
 class Splinemobility(Basemobility):
-    def __init__(self, uid, waypointTime, waypointX, waypointY, waypointZ):
+    def __init__(self, uid, speed, waypointX, waypointY, waypointZ):
         self._startpos=Point(waypointX[0],waypointY[0],waypointZ[0])
         self._endpos=Point(waypointX[-1],waypointY[-1],waypointZ[-1])
         # self._totalFlightTime = waypointTime[-1]
 
         super().__init__(uid, self._startpos, self._endpos)
-
-        # self._waypointTime = waypointTime
-
         self._waypointX = waypointX
         self._waypointY = waypointY
         self._waypointZ = waypointZ
@@ -26,17 +23,13 @@ class Splinemobility(Basemobility):
         self._move.setStart(self._startpos, 0)
         self._move.setLastPos(self._endpos)
         self._move.setTempStartPos(self._startpos) # holds each intermediate points of linear in each iteration
+
         # since spline so fixing it to true, this flag is used to separate some code from other mobility
         self._move.setLinearMobilitySpFlag(True)
-        # self._totalFlightTime= totalFlightTime
-        print(waypointTime)
-        self._speed= 1.5
-        # self._waypointTimeN=Splinemobility.insertWaypointTime()
-        # Splinemobility.computeSplineDistance()
-        # self.insertWaypointTime()
+        self._speed= speed
         self._waypointTime = self.insertWaypointTime()
         self._totalFlightTime = self._waypointTime[-1]
-        print(self._waypointTime)
+
     def makeMove(self):
         #object of Movement
         move = self.getMove()
@@ -59,7 +52,7 @@ class Splinemobility(Basemobility):
                 move.setNextCoordinate(nextCoordinate)
 
 
-                pass
+
 
             elif passedTime>= self._totalFlightTime :
                 move.setFinalFlag(True)
@@ -68,7 +61,7 @@ class Splinemobility(Basemobility):
 
 
 
-            pass
+
         move.setPassedTime(passedTime)
         super().makeMove()
 
@@ -77,13 +70,12 @@ class Splinemobility(Basemobility):
         distance_of_segments= Splinemobility.computeSplineDistance(self._waypointX, self._waypointY, self._waypointZ)
         total_spline_distance=np.sum(distance_of_segments)
         total_flight_time= total_spline_distance/self._speed
-        print('total flight time')
+        print(' func insertWaypointTime total flight time')
         print(total_flight_time)
 
         waypointTime=[]
         # now put time stamp for each waypoint
         for i in range(len(self._waypointX)):
-            print('value of i: ',i )
             if i==0:
                 waypointTime.append(0)
             elif i== len(self._waypointX)-1:
@@ -93,8 +85,8 @@ class Splinemobility(Basemobility):
                 time_needed_for_this_segment= (distance_of_segments[i-1]/total_spline_distance)*total_flight_time
                 waypointTime.append(waypointTime[-1]+time_needed_for_this_segment)
 
-        print('generated time stamp')
-        print(waypointTime)
+        #print('generated time stamp')
+        #print(waypointTime)
         # print(len(self._waypointX))
         return waypointTime
 
