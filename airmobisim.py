@@ -49,7 +49,7 @@ def main():
     config = p.readConfig()
     ####################################
     '''
-    the code within this ###s are only forr the imput of spline mobility it is a redudent code which should be during final merge 
+    the code within this ###s are only for the input of spline mobility it is a redundant code which should be removed during final merge.
     '''
 
     speed = []
