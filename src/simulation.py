@@ -30,6 +30,7 @@ class Simulation:
         self._playgroundSizeZ = playgroundSizeZ
         self._simulationSteps = simTimeLimit / Simulationparameter.stepLength
         self._startUavs = uavs
+
         self._speed = speed
         self._waypointX = waypointX
         self._waypointY = waypointY
