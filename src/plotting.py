@@ -202,7 +202,7 @@ def load_Data():
     uavStartPos=[uavStartPos1, uavEndPos2]
     uavEndPos= [uavEndPos1, uavEndPos2]
     totalFlightTime=[totalFlightTime1, totalFlightTime2]
-    time=[time1, time2]
+    time=[3, 3]
     x=[x1, x2]
     y=[y1,y2]
     z=[z1, z2]
