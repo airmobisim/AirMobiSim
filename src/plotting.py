@@ -176,8 +176,8 @@ def load_Data():
     # z1 = np.empty(13)  # numpy arrat size 12
     # z1.fill(2)    # list filled with 1
     time1 = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
-    x1 = np.linspace(-1.5, 1.5, num=10 )
-    y1 = np.linspace(-1.5, 1.5, num=10 )
+    x1 = np.linspace(1.5, 2.5, num=10 )
+    y1 = np.linspace(1.5, 2.5, num=10 )
     z1=[1, 1.3, 1, 0.7, 1, 1.3, 1, 0.7, 1, 1.3]
 
     totalFlightTime1 = time1[-1]
@@ -189,6 +189,8 @@ def load_Data():
     y2= [0, 1, 0, -1, 0, 1, 0, -1, 0,  1, 0, -1, 0]
     z2=np.linspace(3, 0.5, num=13)
     # z2.fill(1)
+    x2=np.add(x2,2)
+    y2=np.add(y2,2)
 
     uavStartPos2 = Point(x2[0], y2[0], z2[0])
     uavEndPos2 = Point(x2[-1], y2[-1], z2[-1])
@@ -202,17 +204,22 @@ def load_Data():
     uavStartPos=[uavStartPos1, uavEndPos2]
     uavEndPos= [uavEndPos1, uavEndPos2]
     totalFlightTime=[totalFlightTime1, totalFlightTime2]
-    time=[time1, time2]
+    speed=[3, 3]
     x=[x1, x2]
     y=[y1,y2]
     z=[z1, z2]
     # print("hello")
     # print(time1)
     # print(z1)
+    print('data')
+    print(x)
+    print(y)
+    print(z)
+    print(speed)
 
 
 
-    return time, x,y,z
+    return speed, x,y,z
 
 def make_plot():
     current_file = os.path.abspath(os.path.dirname(__file__))

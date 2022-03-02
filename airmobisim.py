@@ -69,7 +69,9 @@ def main():
             speed.append(uavsp['speed'])
 
         # passing file path to load measurements
-        # waypointTime, waypointX, waypointY, waypointZ = load_Data()
+        # speed, waypointX, waypointY, waypointZ = load_Data()
+        # print('testing looop')
+        # print(speed)
 
 
 
