@@ -10,6 +10,7 @@ import glob
 import math
 import re
 import numpy as np
+from random import randint
 from os.path import abspath
 
 from plotly.graph_objs import Layout
@@ -229,24 +230,26 @@ def make_plot():
     # copy of df_simulation dataframe without affecting the df_simulation
     # df_simulation_trimmed = df_simulation.copy(deep=True)
     max_uav_index=max(df_simulation['uid'])
-    print('max unid')
-    print(max_uav_index)
+    #print('max unid')
+    #print(max_uav_index)
     df_simulation_uavs=[]
     # df_simulation_uav0 = df_simulation.loc[df_simulation['uid'] == 0]
     # df_simulation_uav1 = df_simulation.loc[df_simulation['uid'] == 1]
 
     for index in range(max_uav_index+1):
-        print (index)
+        # print (index)
         df_simulation_uavs.append(df_simulation.loc[df_simulation['uid'] == index])
 
-    # print(df_simulation)
-    # print('hello bhai')
-    # print(df_simulation_trimmed.head)
-    # print(flight_time_considered)
-    # print(df_simulation_uav0.head())
-    # print(df_simulation_uav1.head())
+    # diffeerent colors for plot chosen randomly
+    color = []
+    n = max_uav_index+1
+    if n<=3:
+        color=['red', 'green', 'blue']
+    else:
+        for i in range(n):
+            color.append('#%06X' % randint(0, 0xFFFFFF))
 
-    # be careful with below line print the value of flight_time_considered and rethink.
+    # print(color)
 
     # df_simulation_trimmed = df_simulation_trimmed.drop(
     #     df_simulation_trimmed[df_simulation_trimmed.passedTime >= float(flight_time_considered)].index)
@@ -267,13 +270,16 @@ def make_plot():
     #                  line={"color": 'red'}, name='reference'), row=1, col=1
     #
     # )
+
+
+
     #uav 0
-    for df_uav in df_simulation_uavs:
-        print(index)
+    for index,df_uav in enumerate( df_simulation_uavs):
+        # print(index)
         fig.add_trace(
             go.Scatter3d(x=df_uav['posX'].to_numpy(), y=df_uav['posY'].to_numpy(),
                          z=df_uav['posZ'].to_numpy(), mode="lines",
-                         line={"color": 'blue'}, name='simulation uav0'), row=1, col=1
+                         line={"color": color[index]}, name='simulation uav'+str(index)), row=1, col=1
         )
     #uav1
     # fig.add_trace(
@@ -285,7 +291,7 @@ def make_plot():
         fig.add_trace(
             go.Scatter(x=df_uav['passedTime'].to_numpy(), y=df_uav['posX'].to_numpy(),
                        mode="lines",
-                       line={"color": 'blue'}, name='simulation', showlegend=False), row=1, col=2,
+                       line={"color": color[index]}, name='simulation', showlegend=False), row=1, col=2,
 
         )
 
@@ -299,7 +305,7 @@ def make_plot():
         fig.add_trace(
             go.Scatter(x=df_uav['passedTime'].to_numpy(), y=df_uav['posY'].to_numpy(),
                        mode="lines",
-                       line={"color": 'blue'}, name='simulation uav0', showlegend=False), row=2, col=2
+                       line={"color": color[index]}, name='simulation uav0', showlegend=False), row=2, col=2
         )
 
     # fig.add_trace(
@@ -313,7 +319,7 @@ def make_plot():
         fig.add_trace(
             go.Scatter(x=df_uav['passedTime'].to_numpy(), y=df_uav['posZ'].to_numpy(),
                        mode="lines",
-                       line={"color": 'blue'}, name='simulation uav0', showlegend=False), row=3, col=2
+                       line={"color": color[index]}, name='simulation uav0', showlegend=False), row=3, col=2
         )
 
     # fig.add_trace(
