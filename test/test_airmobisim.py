@@ -79,24 +79,15 @@ class TestAirmobisim(unittest.TestCase):
         # TestAirmobisim.waypointZ[0].append(3.0)
         for index, df_uav in enumerate(df_simulation_uavs):     # loop through each uav dataframe
             for x,y,z in zip(TestAirmobisim.waypointX[index],TestAirmobisim.waypointY[index],TestAirmobisim.waypointZ[index]): # loop through input waypoints for each uav
-                print(x)
-                print(y)
-                print(z)
+                # print(x)
+                # print(y)
+                # print(z)
                 value= 0.1
                 df_uav_conditional= df_uav.loc[(abs(df_uav['posX'] -x) <= value) & (abs(df_uav['posY']-y) <= value)  & (abs(df_uav['posZ']-z) <= value)] # search for rows with satisfied conditions
                 self.assertEqual( not df_uav_conditional.empty,True)
-                print('testing')
-                print(df_uav_conditional)
-                print('end testing')
-            # print('end')
-            # print(df_uav_conditional)
-
-            bool = True
-            self.assertEqual(bool, True)
-            pass
-
-
-
+                # print('testing')
+                # print(df_uav_conditional)
+                # print('end testing')
 
     def process_result_file(self):
         current_file = os.path.abspath(os.path.dirname(__file__))
