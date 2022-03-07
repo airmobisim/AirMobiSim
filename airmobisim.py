@@ -73,6 +73,7 @@ def main():
 
 
 
+
     ###################################
     directory = pathlib.Path(args.configuration).parent.resolve()
     initializeSimulation(config, directory, speed, waypointX, waypointY, waypointZ,linearMobilityFlag,splineMobilityFlag)
