@@ -66,7 +66,7 @@ class TestAirmobisim(unittest.TestCase):
             print(splineObj._totalFlightTime)
             self.assertEqual(splineObj._totalFlightTime<=TestAirmobisim.simTimeLimit,True)
 
-    def test_waypoints_reached(self):
+    def test_all_waypoints_simulated(self):
 
 
         # define some args
