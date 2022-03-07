@@ -11,7 +11,7 @@ from src.yamlparser import Yamlparser
 
 from src.resultcollection import Resultcollection
 from src.plotting import load_Data, make_plot
-
+from pathlib import Path
 
 from proto.DroCIBridge import startServer
 
@@ -26,13 +26,12 @@ def main():
     splineMobilityFlag = True
 
     parser = argparse.ArgumentParser(description='Importing configuration-file')
-    # parser.add_argument('--path', type=str, required=True, help='reference folder path for waypoints and plotting')
+    parser.add_argument('--plot', type=int, required=False, default=1, help='plot vs no plot')
     parser.add_argument('--configuration', action='store', type=str,
-                        default="examples/simpleSimulation/simulation.config", help='configuration')
+                        default=Path("examples/simpleSimulation/simulation.config").resolve(), help='configuration')
     parser.add_argument('--omnetpp', action='store_true', help='Start the OmNet++ simulator')
 
     parser.add_argument('--show', action='store_true', help='Show the Energy as Plot')
-
 
 
     print(
@@ -40,13 +39,10 @@ def main():
 
     args = parser.parse_args()
 
-
-    # waypointTime, waypointX, waypointY, waypointZ = load_Data()
-
-
-
     p = Yamlparser(args.configuration)
     config = p.readConfig()
+
+
     ####################################
     '''
     the code within this ###s are only for the input of spline mobility it is a redundant code which should be removed during final merge.
@@ -71,10 +67,8 @@ def main():
         # passing file path to load measurements
         # speed, waypointX, waypointY, waypointZ = load_Data()
 
-
-
-
     ###################################
+
     directory = pathlib.Path(args.configuration).parent.resolve()
     initializeSimulation(config, directory, speed, waypointX, waypointY, waypointZ,linearMobilityFlag,splineMobilityFlag)
 
@@ -88,11 +82,12 @@ def main():
             startServer(simulation)
         else:
             simulation.startSimulation()
-
-    # print("here")
-    # print(simulation)
-            make_plot()
             print('FINISH###########################')
+
+
+        if args.plot:
+            make_plot()
+
 
 
 

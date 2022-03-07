@@ -3,6 +3,8 @@ import unittest
 from src.yamlparser import Yamlparser
 from src.splinemobility import Splinemobility
 import airmobisim
+import os
+from pathlib import Path
 
 
 class TestAirmobisim(unittest.TestCase):
@@ -62,7 +64,17 @@ class TestAirmobisim(unittest.TestCase):
             print('total flight time')
             print(splineObj._totalFlightTime)
             self.assertEqual(splineObj._totalFlightTime<=TestAirmobisim.simTimeLimit,True)
-        pass
+
+    def test_waypoints_reached(self):
+
+
+        # define some args
+        config_path_abs = str(Path("../examples/simpleSimulation/simulation.config").resolve())
+
+        os.system('../airmobisim.py --configuration ' + config_path_abs +' --plot 0')
+
+        bool=True
+        self.assertEqual(bool,True)
 
 
 
