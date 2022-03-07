@@ -7,9 +7,10 @@ from concurrent import futures
 from src.simulationparameter import Simulationparameter
 from shapely.geometry import Point
 from src.uav import Uav
+
 import time
 import sys
-
+import string
 
 from proto import airmobisim_pb2_grpc
 from proto import airmobisim_pb2
@@ -18,11 +19,13 @@ ending = 0
 
 class AirMobiSim(airmobisim_pb2_grpc.AirMobiSimServicer):
 
+
     def __init__(self, simulation_obj):
         self._isRunning = False
         self._isInitialized = True
         self.simulation_obj = simulation_obj
         self._lastUavReport = []
+        self.finish = False
 
     def startSimulation(self):
         self.simulation_obj.initializeNodes()
@@ -79,11 +82,10 @@ class AirMobiSim(airmobisim_pb2_grpc.AirMobiSimServicer):
                 self.simulation_obj.finishSimulation()
 
     def Finish(self, request, context):
-        os.close(sys.stdout.fileno())
-        os.close(sys.stderr.fileno())
-
+        #os.close(sys.stdout.fileno())
+        #os.close(sys.stderr.fileno())
+        self.finish = True
         return struct_pb2.Value()
-
     def GetManagedHosts(self, request, context):
         print("GetManagesHosts gets called!")
         responseQuery = airmobisim_pb2.ResponseQuery()
@@ -152,18 +154,31 @@ def startServer(simulation_object):
         Start the AirMobiSim Server
     """
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
-    airmobisim_pb2_grpc.add_AirMobiSimServicer_to_server(AirMobiSim(simulation_object), server)
+    airmobisim_object = AirMobiSim(simulation_object)
+    airmobisim_pb2_grpc.add_AirMobiSimServicer_to_server(airmobisim_object, server)
     server.add_insecure_port('localhost:50051')
     server.start()
 
     print("AirMobiSim Server has started....")
-   
+    
 
     try:
-        while True:
-            time.sleep(1)
-            sys.stdout.flush()
+        while True: 
+            if airmobisim_object.finish == True:
+                #print("Simulation has ended and closing the pipe...", flush=True) 
+                server.stop(0)
+                break
+            else:
+                #This part is not necessary - can be removed later
+                for line in sys.stdin:
+                    a = "".join(filter(lambda x: x in string.printable, str(line)))
+                    if a[0:3] == "End":
+                        print("Shutting down AirMObiSim and closing the pipe", flush=True)
+                        server.stop(0)
+                        break
+
+ 
     except:
-        print("I stopped the Server!")
+        print("An error occurred - Server has been stopped")
         server.stop(0)
         #print("Server has been stopped")

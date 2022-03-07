@@ -32,13 +32,13 @@ def main():
     args = parser.parse_args()
 
     #Setting the path right, else it will cause problems with omnetpp
-    path = str(sys.argv[0]).replace("/airmobisim.py","") + args.configuration
-    #print(path)
+    path = str(sys.argv[0]).replace("airmobisim.py","") + args.configuration
+    print(path, flush=True)
     p = Yamlparser(path)
     config = p.readConfig()
 
     directory = pathlib.Path(str(sys.argv[0])).parent.resolve()
-    #print(directory)
+    print(directory, flush=True)
     initializeSimulation(config, directory)
 
     if args.omnetpp:
@@ -65,22 +65,12 @@ def initializeSimulation(config, directory):
     newpid = os.fork()
     if newpid == 0:
         startServer(simulation)
+        sys.exit()
     else:
         status = os.wait()
         sys.exit()
 
 
-def get_lock(process_name):
-    get_lock._lock_socket = socket.socket(socket.AF_UNIX, socket.SOCK_DGRAM)
-    try:
-        get_lock._lock_socket.bind("\0" + process_name)
-        print("I got lock")
-    except:
-        print("Lock exists")
-        sys.exit()
-
-if __name__ == "__main__":
-    
-    print("Starting process")
-    get_lock("running_test")
+if __name__ == "__main__":    
+    print("Starting process", flush=True)
     main()
