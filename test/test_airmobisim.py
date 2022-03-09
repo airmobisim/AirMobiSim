@@ -69,10 +69,9 @@ class TestAirmobisim(unittest.TestCase):
     def test_all_waypoints_simulated(self):
 
 
-        # define some args
-        config_path_abs = str(Path("../examples/simpleSimulation/simulation.config").resolve())
-
-        os.system('../airmobisim.py --configuration ' + config_path_abs +' --plot 0')
+        # run simulation sp
+        self.run_simulator_sp()
+        # get all uav_sp dataframe
         df_simulation_uavs = self.process_result_file()     # result dataframe for each uav
         # TestAirmobisim.waypointX[0].append(0.678822509939085)
         # TestAirmobisim.waypointY[0].append(0.678822509939085)
@@ -89,7 +88,15 @@ class TestAirmobisim(unittest.TestCase):
                 # print(df_uav_conditional)
                 # print('end testing')
 
+    def run_simulator_sp(self):
+        config_path_abs = str(Path("../examples/simpleSimulation/simulation.config").resolve())
+
+        os.system('../airmobisim.py --configuration ' + config_path_abs + ' --plot 0')
+
     def process_result_file(self):
+        '''
+        after running the simulation create seperate dataframe for each uid from resultant .csv file
+        '''
         current_file = os.path.abspath(os.path.dirname(__file__))
         csv_filename = os.path.join(current_file, '../examples/simpleSimulation/results/positionResults.csv')
 
@@ -105,6 +112,25 @@ class TestAirmobisim(unittest.TestCase):
             df_simulation_uavs.append(df_simulation.loc[df_simulation['uid'] == index])
 
         return df_simulation_uavs
+
+    def test_active_uav_count_sp(self):
+        '''
+        number of spline uav active
+        '''
+        self.assertEqual(len(TestAirmobisim.uavsSpline),1, 'should be 1 check config')
+
+    def test_simulation_finish_time(self):
+        df_simulation_uavs = self.process_result_file()  # result dataframe for each uav
+
+        for df_uav in df_simulation_uavs:
+
+            df_uav_conditional = df_uav.loc[(df_uav['posZ'] == df_uav['posZ'].to_numpy()[-1]) &
+                                             (df_uav['posY'] == df_uav['posY'].to_numpy()[-1]) &
+                                             (df_uav['posX'] == df_uav['posX'].to_numpy()[-1]) ]  # search for rows which are similar as the last entry/ finish line
+
+
+            self.assertTrue(df_uav_conditional['passedTime'].to_numpy()[0] <= TestAirmobisim.simTimeLimit, 'check simulation finish time')
+
 
 
     # self.assertEqual(validInputSp,True)
