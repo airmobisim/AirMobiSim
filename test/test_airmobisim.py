@@ -49,14 +49,14 @@ class TestAirmobisim(unittest.TestCase):
 
     def test_input_sp(self):   # all inputs need to be positive and inside the playground
 
-        self.assertEqual(len(TestAirmobisim.waypointX) == len(TestAirmobisim.waypointY) == len(TestAirmobisim.waypointZ), True)
+        self.assertTrue(len(TestAirmobisim.waypointX) == len(TestAirmobisim.waypointY) == len(TestAirmobisim.waypointZ), 'input waypoint length for x,y and z should be same')
 
         for i,v in enumerate(TestAirmobisim.waypointX):
             # validInputSp=all(0 <= item <=playgroundSizeX for item in v)
-            self.assertEqual(len(TestAirmobisim.waypointX[i]) == len(TestAirmobisim.waypointY[i]) == len(TestAirmobisim.waypointZ[i]), True)
-            self.assertEqual(all(0 <= item <=TestAirmobisim.playgroundSizeX for item in TestAirmobisim.waypointX[i]), True)
-            self.assertEqual(all(0 <= item <=TestAirmobisim.playgroundSizeY for item in TestAirmobisim.waypointY[i]), True)
-            self.assertEqual(all(0 <= item <=TestAirmobisim.playgroundSizeZ for item in TestAirmobisim.waypointZ[i]), True)
+            self.assertTrue(len(TestAirmobisim.waypointX[i]) == len(TestAirmobisim.waypointY[i]) == len(TestAirmobisim.waypointZ[i]), 'waypoint x,y,z should be same for each uav')
+            self.assertTrue(all(0 <= item <=TestAirmobisim.playgroundSizeX for item in TestAirmobisim.waypointX[i]), 'waypoint x should be within playgroundX')
+            self.assertTrue(all(0 <= item <=TestAirmobisim.playgroundSizeY for item in TestAirmobisim.waypointY[i]), 'waypoint y should be within playgroundY')
+            self.assertTrue(all(0 <= item <=TestAirmobisim.playgroundSizeZ for item in TestAirmobisim.waypointZ[i]), 'waypoint z should be within playgroundZ')
 
     def test_speed_limit_sp(self):
         for index,uavsp in enumerate(TestAirmobisim.uavsSpline):
@@ -64,7 +64,7 @@ class TestAirmobisim(unittest.TestCase):
             splineObj= Splinemobility(index,TestAirmobisim.speed[index],TestAirmobisim.waypointX[index],TestAirmobisim.waypointY[index],TestAirmobisim.waypointZ[index])
             print('total flight time')
             print(splineObj._totalFlightTime)
-            self.assertEqual(splineObj._totalFlightTime<=TestAirmobisim.simTimeLimit,True)
+            self.assertTrue(splineObj._totalFlightTime<=TestAirmobisim.simTimeLimit, 'this speed will exceed the simTimeLimit consider reducing it')
 
     def test_all_waypoints_simulated(self):
 
@@ -83,7 +83,7 @@ class TestAirmobisim(unittest.TestCase):
                 # print(z)
                 value= 0.1
                 df_uav_conditional= df_uav.loc[(abs(df_uav['posX'] -x) <= value) & (abs(df_uav['posY']-y) <= value)  & (abs(df_uav['posZ']-z) <= value)] # search for rows with satisfied conditions
-                self.assertEqual( not df_uav_conditional.empty,True)
+                self.assertFalse( df_uav_conditional.empty, 'data frame should not be empty/ no such waypoint is found')
                 # print('testing')
                 # print(df_uav_conditional)
                 # print('end testing')
