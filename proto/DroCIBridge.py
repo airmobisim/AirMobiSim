@@ -1,4 +1,6 @@
 import grpc
+
+from google.protobuf import struct_pb2
 # from src.simulation import Simulation
 from concurrent import futures
 from src.simulationparameter import Simulationparameter
@@ -9,11 +11,15 @@ from proto import airmobisim_pb2
 
 
 class AirMobiSim(airmobisim_pb2_grpc.AirMobiSimServicer):
-    # lists for adding waypoints|| make them private
-    index = []
-    x = []
-    y = []
-    z = []  # z will not be returned for now since height same
+
+    # index = [6, 7]
+    # x = [6.5, 6.8]
+    # y = [10, 10]
+    # z = [3, 3]
+    index=[]
+    x=[]
+    y=[]
+    z=[]
 
     def __init__(self, simulation_obj):
         self._isRunning = False
@@ -28,14 +34,15 @@ class AirMobiSim(airmobisim_pb2_grpc.AirMobiSimServicer):
     def Start(self, request, context):
         pass
 
-    """
+        """
         TODO:  ExecuteOneTimeStep should be an own method with the return GRPC statement 
-    """
+        """
 
     def ExecuteOneTimeStep(self, request, context):
         """
             Execute one timestep - Update the values (positions, velocity,...)
         """
+        #print('ExecuteOneTimeStep #########')
         responseQuery = airmobisim_pb2.ResponseQuery()
 
         if not self._isRunning:
@@ -76,7 +83,7 @@ class AirMobiSim(airmobisim_pb2_grpc.AirMobiSimServicer):
 
     def GetManagedHosts(self, request, context):
         responseQuery = airmobisim_pb2.ResponseQuery()
-
+        #print("GetManagedHosts get called")
         if not self._isRunning:
             self.startSimulation()
 
@@ -91,7 +98,7 @@ class AirMobiSim(airmobisim_pb2_grpc.AirMobiSimServicer):
         return responseQuery
 
     def InsertWaypoints(self, request, context):
-        print("working")
+        print("working#####################")
         print(request)
         # index=[]
         # x=[]
@@ -108,9 +115,17 @@ class AirMobiSim(airmobisim_pb2_grpc.AirMobiSimServicer):
             AirMobiSim.y.append(request.waypoints[i].y)
             AirMobiSim.z.append(request.waypoints[i].z)
 
-    @classmethod
-    def getWaypointsByIndex(cls):
-        return cls.index, cls.x, cls.y
+
+
+        return struct_pb2.Value()
+    
+    @staticmethod
+    def getWaypointsByIndex():
+        if len(AirMobiSim.index)==0:
+            return None,None, None,None
+
+        return AirMobiSim.index, AirMobiSim.x, AirMobiSim.y,AirMobiSim.z
+
 
 
 
