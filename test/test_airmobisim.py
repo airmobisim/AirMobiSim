@@ -51,7 +51,7 @@ class TestAirmobisim(unittest.TestCase):
 
         self.assertTrue(len(TestAirmobisim.waypointX) == len(TestAirmobisim.waypointY) == len(TestAirmobisim.waypointZ), 'input waypoint length for x,y and z should be same')
 
-        for i,v in enumerate(TestAirmobisim.waypointX):
+        for i,v in enumerate(TestAirmobisim.waypointX):      # use zip function correct it later on
             # validInputSp=all(0 <= item <=playgroundSizeX for item in v)
             self.assertTrue(len(TestAirmobisim.waypointX[i]) == len(TestAirmobisim.waypointY[i]) == len(TestAirmobisim.waypointZ[i]), 'waypoint x,y,z should be same for each uav')
             self.assertTrue(all(0 <= item <=TestAirmobisim.playgroundSizeX for item in TestAirmobisim.waypointX[i]), 'waypoint x should be within playgroundX')

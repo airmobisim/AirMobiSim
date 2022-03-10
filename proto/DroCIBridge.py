@@ -12,14 +12,15 @@ from proto import airmobisim_pb2
 
 class AirMobiSim(airmobisim_pb2_grpc.AirMobiSimServicer):
 
-    # index = [6, 7]
-    # x = [6.5, 6.8]
-    # y = [10, 10]
-    # z = [3, 3]
+
     index=[]
     x=[]
-    y=[]
+    y=[]            # these list are loaded by omnet   organization needed for multiple waypoint values
     z=[]
+    # index = [0, 1]
+    # x = [6.5, 6.8]      # harcoded onnet values for testing
+    # y = [10, 10]
+    # z = [3, 3]
 
     def __init__(self, simulation_obj):
         self._isRunning = False

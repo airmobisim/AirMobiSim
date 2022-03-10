@@ -28,10 +28,8 @@ class Splinemobility(Basemobility):
 
         # since spline so fixing it to true, this flag is used to separate some code from other mobility
         self._move.setLinearMobilitySpFlag(True)
-
-
-        self._waypointsInsertedFlag=False     # this decides calling of updateWaypointsByIndex()
-
+        # self._waypointsInsertedFlag=True     # this decides calling of updateWaypointsByIndex()
+        # self.updateWaypointsByIndex()     # uncomment this line when you want to use insertion of waypoints
         self._speed= speed
         self._waypointTime = self.insertWaypointTime()
         self._totalFlightTime = self._waypointTime[-1]
@@ -51,12 +49,7 @@ class Splinemobility(Basemobility):
                 '''
                 reduce computation by passing the following lines in constructor
                 '''
-                #########
-                if self._waypointsInsertedFlag == False:  # if waypoints is not inserted this this add the waypoints if already inserted then it will ignore
-                    self._waypointsInsertedFlag=True    #done once at the beginning
-                    self.updateWaypointsByIndex()  # to insert way points
 
-                ########
 
                 spl_x = CubicSpline(self._waypointTime, self._waypointX)
                 spl_y = CubicSpline(self._waypointTime, self._waypointY)
@@ -83,28 +76,25 @@ class Splinemobility(Basemobility):
 
         waypointsIndex, waypointsX, waypointsY, waypointsZ = AirMobiSim.getWaypointsByIndex()
 
-
         if waypointsIndex != None:
             # print('hello hello')
-            time = self._waypointTime.copy().tolist()
+            # time = list(self._waypointTime.copy())
             x = self._waypointX.copy()
             y = self._waypointY.copy()
             z = self._waypointZ.copy()
+            x=[float(i) for i in x]   # type cast to float required by np.insert()
+            y=[float(i) for i in y]
+            z=[float(i) for i in z]
+
+            for idx_new,x_new,y_new,z_new in zip(waypointsIndex,waypointsX,waypointsY,waypointsZ) :
+
+                # print('vertex: ',v)
+                # time.insert(v, (time[v] + time[v - 1]) / 2)
+                x= np.insert(x,idx_new, x_new)
+                y=np.insert(y,idx_new,y_new)
+                z=np.insert(z,idx_new, z_new)
 
 
-            for i, v in enumerate(waypointsIndex):
-                if 1 <= v <= len(time) - 2:
-                    # print('vertex: ',v)
-                    time.insert(v, (time[v] + time[v - 1]) / 2)
-                    x= np.insert(x,v, waypointsX[i])
-                    y=np.insert(y,v, waypointsY[i])
-                    z=np.insert(z,v, waypointsZ[i])
-
-
-            # spl_x = CubicSpline(time, x)
-            # spl_y = CubicSpline(time, y)
-            # spl_z = CubicSpline(time, z)
-            self._waypointTime = time
             self._waypointX = x
             self._waypointY = y
             self._waypointZ = z
@@ -113,12 +103,13 @@ class Splinemobility(Basemobility):
 
 
 
+
     def insertWaypointTime(self):
         distance_of_segments= Splinemobility.computeSplineDistance(self._waypointX, self._waypointY, self._waypointZ)
         total_spline_distance=np.sum(distance_of_segments)
         total_flight_time= total_spline_distance/self._speed
-        print(' func insertWaypointTime total flight time')
-        print(total_flight_time)
+        # print(' func insertWaypointTime total flight time')
+        # print(total_flight_time)
 
         waypointTime=[]
         # now put time stamp for each waypoint
@@ -132,9 +123,7 @@ class Splinemobility(Basemobility):
                 time_needed_for_this_segment= (distance_of_segments[i-1]/total_spline_distance)*total_flight_time
                 waypointTime.append(waypointTime[-1]+time_needed_for_this_segment)
 
-        #print('generated time stamp')
-        #print(waypointTime)
-        # print(len(self._waypointX))
+
         return waypointTime
 
 
@@ -144,8 +133,7 @@ class Splinemobility(Basemobility):
     def computeSplineDistance(waypointX=[0,6,12],waypointY=[0,6,12],waypointZ=[3,3,3]):
         waypointCount=len(waypointX)
         waypointIndex=np.linspace(0,waypointCount-1,num=waypointCount)
-        # print('inside computer spline distance')
-        # print(waypointIndex)
+
         spl_x = CubicSpline(waypointIndex, waypointX)
         spl_y = CubicSpline(waypointIndex, waypointY)
         spl_z = CubicSpline(waypointIndex, waypointZ)
@@ -158,8 +146,7 @@ class Splinemobility(Basemobility):
             segments_small_x=spl_x(segments_of_index)
             segments_small_y=spl_y(segments_of_index)
             segments_small_z=spl_z(segments_of_index)
-            # print(len(segments_of_x))
-            # print(type(segments_of_x))
+
             segments_distance=0
             for i in range(number_of_small_segment-1):
                 segments_distance += math.sqrt((segments_small_x[i+1] - segments_small_x[i])**2 +(segments_small_y[i+1] - segments_small_y[i])**2 + (segments_small_z[i+1] - segments_small_z[i])**2 )
