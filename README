@@ -1,30 +1,27 @@
-
 # AirmobiSim Project
 
-## set up:
-    This project requires python 3.9.0 and poetry and environment.
-    -Run 'build.sh' in the project directory for the setup.
-## Dependencies
-To install the dependencies associated with the project run the following command:
+## Quick Start:
+AirMobiSim requires OMNeT++ 6 Pre 10 to be installed and part of your PATH.
+All required dependencies will be locally installed using pyenv and poetry by executing the ```build.sh``` script:
 ```Bash
-poetry install
+./build.sh
 ```
 ## Run AirmobiSim
 To run the project use the following command in 'poetry shell':
 ```Bash
-./airmobisim.py
+poetry run ./airmobisim.py
 ```
 
 The above command will run the simulation and display the simulated plot.
 To run the simulation without plot use :
 
 ```Bash
-./airmobisim.py  --plot 0
+poetry run ./airmobisim.py  --plot 0
 ```
 
-##Model:
+## Kinematic Models
 
-This project has two mobility model.
+AirMobiSim provides two different mobility model.
 1. Linear_mobility
 2. Spline_mobility
 
@@ -34,5 +31,6 @@ To switch between mobility model you need to change boolean values of two attrib
 
 Set the attribute value to 'True' depending on your choice of choice of model.
 
-## Input
-The input parameters for the simulations are take from 'simulation.config' file, located in 'examples' directory. Feel free to change it and try it out!
+## Configure a simulation
+The input parameters for the simulations are taken from a file named ```simulation.config```.
+An example is located in the ```examples``` directory. 
