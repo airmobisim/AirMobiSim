@@ -65,8 +65,8 @@ fi
 if !(pyenv install 3.9.0); then
 	echo "Python 3.9.0 will not be installed by this setup. Proceed with the setup.."
 fi
+eval "$(pyenv init -)"
 pyenv global 3.9.0
-
 ##################################
 #                  _              
 # _ __   ___   ___| |_ _ __ _   _ 
@@ -82,6 +82,8 @@ then
 
 	source $HOME/.poetry/env
 fi
+echo "Switching to python 3.9.0"
+poetry env use 3.9.0
 ################################################################
 # ____        _   _                   ____       _               
 #|  _ \ _   _| |_| |__   ___  _ __   / ___|  ___| |_ _   _ _ __  
@@ -96,7 +98,6 @@ echo "Installing required Python packages..."
 poetry install
 poetry run python -m grpc_tools.protoc --python_out=. --grpc_python_out=. proto/airmobisim.proto -I .
 export PATH="$HOME/.poetry/bin:$PATH"
-#source ~/.profile
 
 #pip3 install --user conan # We need a lokal installation outside poetry, since conan is required for the OMNeT++ part
 AIRMOBISIMDIR=$(pwd)
