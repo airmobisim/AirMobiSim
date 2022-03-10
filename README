@@ -1,23 +1,38 @@
-Initial README 
-
-run ```pipenv install ``` for the installation
-
-## launch basic simulation:
-```
-./airmobisim.py "examples/simpleSimulation/simulation.config
-```
-
-Updated README:
 
 # AirmobiSim Project
 
+## set up:
+    This project requires python 3.9.0 and poetry and environment.
+    -Run 'build.sh' in the project directory for the setup.
 ## Dependencies
 To install the dependencies associated with the project run the following command:
 ```Bash
-pipenv install
+poetry install
 ```
 ## Run AirmobiSim
-To run the project use the following command from terminal(or PyCharm terminal):
+To run the project use the following command in 'poetry shell':
 ```Bash
-./airmobisim.py  --path `absolute_folder_path_to_data`
+./airmobisim.py
 ```
+
+The above command will run the simulation and display the simulated plot.
+To run the simulation without plot use :
+
+```Bash
+./airmobisim.py  --plot 0
+```
+
+##Model:
+
+This project has two mobility model.
+1. Linear_mobility
+2. Spline_mobility
+
+To switch between mobility model you need to change boolean values of two attributes in 'airmobisim.py' file:
+1. linearMobilityFlag
+2. splineMobilityFlag
+
+Set the attribute value to 'True' depending on your choice of choice of model.
+
+## Input
+The input parameters for the simulations are take from 'simulation.config' file, located in 'examples' directory. Feel free to change it and try it out!
