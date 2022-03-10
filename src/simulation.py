@@ -17,7 +17,7 @@ class Simulation:
     _highestUid = -1
 
     def __init__(self, stepLength, simTimeLimit, playgroundSizeX, playgroundSizeY, playgroundSizeZ,
-                 uavs, uavStartPos, uavEndPos, totalFlightTime, waypointTime, waypointX, waypointY, waypointZ,linearMobilityFlag,splineMobilityFlag,
+                 uavs, speed, waypointX, waypointY, waypointZ,linearMobilityFlag,splineMobilityFlag,
                  directory):
 
         print("Initializing...")
@@ -30,10 +30,8 @@ class Simulation:
         self._playgroundSizeZ = playgroundSizeZ
         self._simulationSteps = simTimeLimit / Simulationparameter.stepLength
         self._startUavs = uavs
-        self._uavStartPos = uavStartPos
-        self._uavEndPos = uavEndPos
-        self._totalFlightTime = totalFlightTime
-        self._waypointTime = waypointTime
+
+        self._speed = speed
         self._waypointX = waypointX
         self._waypointY = waypointY
         self._waypointZ = waypointZ
@@ -73,8 +71,8 @@ class Simulation:
 
             if self._splineMobilityFlag:
                 self._managedNodes.append(
-                   Uav(nextUid, self._uavStartPos[nextUid], self._uavEndPos[nextUid], self._totalFlightTime[nextUid],
-                       self._waypointTime[nextUid], self._waypointX[nextUid], self._waypointY[nextUid], self._waypointZ[nextUid],self._linearMobilityFlag,self._splineMobilityFlag))
+                   Uav(nextUid, None, None, self._speed[nextUid], self._waypointX[nextUid],
+                       self._waypointY[nextUid], self._waypointZ[nextUid],self._linearMobilityFlag,self._splineMobilityFlag))
 
             #for linearmobility
             else:
