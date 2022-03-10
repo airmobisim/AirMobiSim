@@ -128,7 +128,7 @@ cd $AIRMOBISIMDIR
 if [  ! -f "$HOME/.conan/profiles/default" ]; then 
 	echo "Create new default conan profile"
 	mkdir -p "$HOME/.conan/profiles/"
-	#poetry run "conan profile new default --detect"
+	poetry run "conan profile new default --detect"
 fi
 
 if [[ "$OSTYPE" == "linux-gnu"* ]]; then
@@ -137,6 +137,8 @@ if [[ "$OSTYPE" == "linux-gnu"* ]]; then
 else
 	echo "This is a Mac"
 	poetry run bash -c "conan profile update settings.compiler.version=13.0 default"
+	#poetry run bash -c "conan profile update settings.compiler.version=12.0 default"
+	#poetry run bash -c "conan profile update settings.compiler.libcxx=libstdc++ default"
 fi
 
 echo "Starting installation of conan dependencies"
@@ -148,6 +150,8 @@ cd .conan/data
 
 basePath=$(pwd)
 
+
+### TODO: Start Remove ###
 grpc_cpp_plugin=$(find . -type f -name "grpc_cpp_plugin" 2>/dev/null | grep -aE "$GRPC_VERSION.*package")
 grpc_cpp_plugin="${grpc_cpp_plugin:1}"
 grpc_cpp_plugin=$basePath$grpc_cpp_plugin
@@ -164,9 +168,10 @@ $protoc airmobisim.proto --cpp_out=src/veins_libairmobisim/proto
 
 $protoc airmobisim.proto --grpc_out=src/veins_libairmobisim/proto/ --plugin=protoc-gen-grpc=$grpc_cpp_plugin
 
+### TODO: END Remove ###
+
 
 ./configure
-make -j$(nproc)
 if [[  "$OSTYPE" == "darwin"* ]]; then
 	make -j$(sysctl -n hw.ncpu)
 	#make -j4

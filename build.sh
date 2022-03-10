@@ -107,7 +107,6 @@ pip3 install --user --prefix=  pipenv
 
 poetry install
 poetry run python -m grpc_tools.protoc --python_out=. --grpc_python_out=. proto/airmobisim.proto -I .
-#source ~/.profile
 
 pip3 install --user --prefix= conan # We need a lokal installation outside poetry, since conan is required for the OMNeT++ part
 AIRMOBISIMDIR=$(pwd)
