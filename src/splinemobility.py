@@ -91,7 +91,6 @@ class Splinemobility(Basemobility):
             z = self._waypointZ.copy()
 
 
-
             for i, v in enumerate(waypointsIndex):
                 if 1 <= v <= len(time) - 2:
                     # print('vertex: ',v)
