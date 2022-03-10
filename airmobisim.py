@@ -58,7 +58,7 @@ def main():
 
     # print("here")
     # print(simulation)
-    make_plot()
+            make_plot()
 
 
 def initializeSimulation(config, directory, uavStartPos, uavEndPos, totalFlightTime, waypointTime, waypointX, waypointY, waypointZ):

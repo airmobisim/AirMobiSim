@@ -30,6 +30,11 @@ share/python-wheels/
 pip-log.txt
 pip-delete-this-directory.txt
 
+#auto generated files
+examples/simpleSimulation/results/energyResults.csv
+examples/simpleSimulation/results/positionResults.csv
+
+
 
 # MAC
 .DS_Store
