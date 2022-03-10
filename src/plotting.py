@@ -259,11 +259,9 @@ def make_plot():
     # copy of df_simulation dataframe without affecting the df_simulation
     # df_simulation_trimmed = df_simulation.copy(deep=True)
     max_uav_index=max(df_simulation['uid'])
-    #print('max unid')
-    #print(max_uav_index)
+
     df_simulation_uavs=[]
-    # df_simulation_uav0 = df_simulation.loc[df_simulation['uid'] == 0]
-    # df_simulation_uav1 = df_simulation.loc[df_simulation['uid'] == 1]
+
 
     for index in range(max_uav_index+1):
         # print (index)
@@ -302,7 +300,7 @@ def make_plot():
 
 
 
-    #uav 0
+
     for index,df_uav in enumerate( df_simulation_uavs):
         # print(index)
         fig.add_trace(
@@ -310,12 +308,6 @@ def make_plot():
                          z=df_uav['posZ'].to_numpy(), mode="lines",
                          line={"color": color[index]}, name='simulation uav'+str(index)), row=1, col=1
         )
-    #uav1
-    # fig.add_trace(
-    #     go.Scatter3d(x=df_simulation_uav1['posX'].to_numpy(), y=df_simulation_uav1['posY'].to_numpy(),
-    #                  z=df_simulation_uav1['posZ'].to_numpy(), mode="lines",
-    #                  line={"color": 'green'}, name='simulation uav1'), row=1, col=1
-    # )
 
         fig.add_trace(
             go.Scatter(x=df_uav['passedTime'].to_numpy(), y=df_uav['posX'].to_numpy(),
@@ -324,10 +316,7 @@ def make_plot():
 
         )
 
-    # fig.add_trace(
-    #     go.Scatter(x=df_position['timestamp'].to_numpy(), y=df_position['stateEstimate.x'].to_numpy(), mode="lines",
-    #                line={"color": 'red'}, name='simulation', showlegend=False), row=1, col=2
-    # )
+
         fig.update_xaxes(title='t(s)', row=1, col=2)
         fig.update_yaxes(title='x(m)', row=1, col=2)
 
@@ -337,10 +326,7 @@ def make_plot():
                        line={"color": color[index]}, name='simulation uav0', showlegend=False), row=2, col=2
         )
 
-    # fig.add_trace(
-    #     go.Scatter(x=df_position['timestamp'].to_numpy(), y=df_position['stateEstimate.y'].to_numpy(), mode="lines",
-    #                line={"color": 'red'}, name='simulation', showlegend=False), row=2, col=2
-    # )
+
 
         fig.update_xaxes(title='t(s)', row=2, col=2)
         fig.update_yaxes(title='y(m)', row=2, col=2)
@@ -351,10 +337,7 @@ def make_plot():
                        line={"color": color[index]}, name='simulation uav0', showlegend=False), row=3, col=2
         )
 
-    # fig.add_trace(
-    #     go.Scatter(x=df_position['timestamp'].to_numpy(), y=df_position['stateEstimate.z'].to_numpy(), mode="lines",
-    #                line={"color": 'red'}, name='simulation', showlegend=False), row=3, col=2
-    # )
+
         fig.update_xaxes(title='t(s)', row=3, col=2)
         fig.update_yaxes(title='z(m)', row=3, col=2)
 
