@@ -11,6 +11,7 @@ from src.uav import Uav
 import time
 import sys
 import string
+import os
 
 from proto import airmobisim_pb2_grpc
 from proto import airmobisim_pb2
@@ -161,21 +162,16 @@ def startServer(simulation_object):
 
     print("AirMobiSim Server has started....")
     
+    ppid = os.getppid()
 
     try:
         while True: 
-            if airmobisim_object.finish == True:
+            if os.getppid() != ppid:
                 #print("Simulation has ended and closing the pipe...", flush=True) 
                 server.stop(0)
-                break
+                sys.exit(1)
             else:
-                #This part is not necessary - can be removed later
-                for line in sys.stdin:
-                    a = "".join(filter(lambda x: x in string.printable, str(line)))
-                    if a[0:3] == "End":
-                        print("Shutting down AirMObiSim and closing the pipe", flush=True)
-                        server.stop(0)
-                        break
+                pass
 
  
     except:
