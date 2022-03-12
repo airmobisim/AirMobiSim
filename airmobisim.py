@@ -22,8 +22,8 @@ def main():
     global simulation
 
     # these flags decide which mobility model will be selected for milulation linearmobility of spline mobility
-    linearMobilityFlag = False
-    splineMobilityFlag = True
+    linearMobilityFlag = True
+    splineMobilityFlag = False
 
     parser = argparse.ArgumentParser(description='Importing configuration-file')
     parser.add_argument('--plot', type=int, required=False, default=1, help='plot vs no plot')
@@ -97,6 +97,7 @@ def initializeSimulation(config, directory, speed, waypointX, waypointY, waypoin
 
     global simulation
     if splineMobilityFlag:
+        print("Launch spline mobility")
         simulation = Simulation(config['simulation']['stepLength'],
                                 config['simulation']['simTimeLimit'],
                                 config['simulation']['playgroundSizeX'],
@@ -112,6 +113,7 @@ def initializeSimulation(config, directory, speed, waypointX, waypointY, waypoin
                                 directory,
                                 )
     else:
+        print("Launch linear mobility")
         simulation = Simulation(config['simulation']['stepLength'],
                                 config['simulation']['simTimeLimit'],
                                 config['simulation']['playgroundSizeX'],
