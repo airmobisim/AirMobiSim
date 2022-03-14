@@ -10,6 +10,7 @@ col <- cols(
 
 df <- read_tsv("../results/positionResults.csv", col_types = col)
 
+summary(df)
 plt.lwd = c(2)
 
 
@@ -17,6 +18,7 @@ pdf("plotPosition.pdf")
 	par(mar=c(3,4.0,1,1.0))
 	plot.new()
 	plot.window(xlim=c(0,3000), ylim=c(0,3000), xaxs="i", yaxs="i")
+	#plot.window(xlim=c(10,12), ylim=c(10,12), xaxs="i", yaxs="i")
 
 	lines(df$posX,   df$posY,   lwd = plt.lwd[1])
 

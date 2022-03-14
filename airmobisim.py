@@ -2,6 +2,7 @@
 import sys
 import argparse
 import pathlib
+import os
 
 from shapely.geometry import Point
 from src.simulation import Simulation
@@ -34,8 +35,7 @@ def main():
     parser.add_argument('--show', action='store_true', help='Show the Energy as Plot')
 
 
-    print(
-        """AirMobiSim Simulation  (C) 2021 Chair of Networked Systems Modelling TU Dresden.\nVersion: 0.0.1\nSee the license for distribution terms and warranty disclaimer""")
+    print("""AirMobiSim Simulation  (C) 2021 Chair of Networked Systems Modelling TU Dresden.\nVersion: 0.0.1\nSee the license for distribution terms and warranty disclaimer""")
 
     args = parser.parse_args()
 
@@ -57,17 +57,11 @@ def main():
     if splineMobilityFlag:
         # uavStartPos.clear(), uavEndPos.clear(), totalFlightTime.clear(), waypointTime.clear(), waypointX.clear(), waypointY.clear(), waypointZ.clear()
 
-
         for uavsp in config['uavsp']:
             waypointX.append(uavsp['waypointX'])
             waypointY.append(uavsp['waypointY'])
             waypointZ.append(uavsp['waypointZ'])
             speed.append(uavsp['speed'])
-
-        # passing file path to load measurements
-        # speed, waypointX, waypointY, waypointZ = load_Data()
-
-    ###################################
 
     directory = pathlib.Path(args.configuration).parent.resolve()
     initializeSimulation(config, directory, speed, waypointX, waypointY, waypointZ,linearMobilityFlag,splineMobilityFlag)
@@ -82,19 +76,11 @@ def main():
             startServer(simulation)
         else:
             simulation.startSimulation()
-            print('FINISH###########################')
-
-
-
+            print('FINISH')
         if args.plot:
             make_plot()
 
-
-
-
-
 def initializeSimulation(config, directory, speed, waypointX, waypointY, waypointZ,linearMobilityFlag,splineMobilityFlag):
-
     global simulation
     if splineMobilityFlag:
         print("Launch spline mobility")
@@ -128,8 +114,6 @@ def initializeSimulation(config, directory, speed, waypointX, waypointY, waypoin
                                 splineMobilityFlag,
                                 directory,
                                 )
-
-
 
 if __name__ == "__main__":
     main()

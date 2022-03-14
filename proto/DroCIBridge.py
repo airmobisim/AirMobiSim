@@ -1,11 +1,13 @@
 import grpc
+import os
+import threading, _thread
+import time
+import sys
 
 from google.protobuf import struct_pb2
-# from src.simulation import Simulation
 from concurrent import futures
 from src.simulationparameter import Simulationparameter
 
-import time
 from proto import airmobisim_pb2_grpc
 from proto import airmobisim_pb2
 
@@ -129,12 +131,26 @@ class AirMobiSim(airmobisim_pb2_grpc.AirMobiSimServicer):
 
 
 
-
-
+def checkForParentProcess():
+    ppid = os.getppid()
+    print("checkForParentProcess!")
+    while True:
+        time.sleep(1)
+        #print("os.getppid() == ", os.getppid(), " / ppid == ",ppid)
+        if os.getppid() != ppid:
+            print("aaaawck! You're not my parent. Refusing to work for init, launchd, or the likes :-(")
+            sys.exit(1)
+            #_thread.interrupt_main()
+        else:
+            pass
+            #print("AirMobiSim-tick -> ", ppid)
+    pass
 def startServer(simulation_object):
     """
         Start the AirMobiSim Server
     """
+
+    threading.Thread(target = checkForParentProcess).start()
 
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
     airmobisim_pb2_grpc.add_AirMobiSimServicer_to_server(AirMobiSim(simulation_object), server)
