@@ -24,7 +24,6 @@ simulation: Simulation
 
 def main():
     global simulation
-    #os.chdir("/home/dalisha.logan2/Documents/project_airmobisim/AirMobiSim")
     parser = argparse.ArgumentParser(description='Importing configuration-file')
     parser.add_argument('--configuration', action='store', type=str, default="examples/simpleSimulation/simulation.config", help='configuration')
     parser.add_argument('--omnetpp', action='store_true', help='Start the OmNet++ simulator')
@@ -32,19 +31,18 @@ def main():
     args = parser.parse_args()
 
     #Setting the path right, else it will cause problems with omnetpp
-    path = str(sys.argv[0]).replace("airmobisim.py","") + args.configuration
-    print(path, flush=True)
-    p = Yamlparser(path)
+   
+    p = Yamlparser(args.configuration)
     config = p.readConfig()
 
-    directory = pathlib.Path(str(sys.argv[0])).parent.resolve()
+    directory = pathlib.Path(args.configuration).parent.resolve()
     print(directory, flush=True)
     initializeSimulation(config, directory)
 
     if args.omnetpp:
         print("Start the AirMobiSim Server...", flush=True)
         #Start the DroCI Bridge - Listen to ONet++ incomes
-        #startServer(simulation)
+        startServer(simulation)
     else:
         #print("Starting the Simulation")
         simulation.startSimulation()
@@ -62,15 +60,8 @@ def initializeSimulation(config, directory):
                             directory,
                             )
 
-    newpid = os.fork()
-    if newpid == 0:
-        startServer(simulation)
-        sys.exit()
-    else:
-        status = os.wait()
-        sys.exit()
-
 
 if __name__ == "__main__":    
     print("Starting process", flush=True)
+    print(os.getcwd())
     main()

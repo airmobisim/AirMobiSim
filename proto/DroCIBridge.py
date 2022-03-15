@@ -12,6 +12,8 @@ import time
 import sys
 import string
 import os
+import threading, _thread
+
 
 from proto import airmobisim_pb2_grpc
 from proto import airmobisim_pb2
@@ -150,10 +152,27 @@ class AirMobiSim(airmobisim_pb2_grpc.AirMobiSimServicer):
 
       return airmobisim_pb2.Number(num=currentUAV)
 
+def checkForParentProcess():
+    ppid = os.getppid()
+    print("checkForParentProcess!")
+    while True:
+        time.sleep(1)
+        if os.getppid() != ppid:
+            print("You are not my parent")
+            sys.exit()
+        else:
+            pass
+
+
+
+
 def startServer(simulation_object):
     """
         Start the AirMobiSim Server
     """
+    threading.Thread(target = checkForParentProcess).start()
+
+    print("I am still there", flush=True)
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
     airmobisim_object = AirMobiSim(simulation_object)
     airmobisim_pb2_grpc.add_AirMobiSimServicer_to_server(airmobisim_object, server)
@@ -166,15 +185,7 @@ def startServer(simulation_object):
 
     try:
         while True: 
-            if os.getppid() != ppid:
-                #print("Simulation has ended and closing the pipe...", flush=True) 
-                server.stop(0)
-                sys.exit(1)
-            else:
-                pass
-
- 
+            time.sleep(1);
     except:
-        print("An error occurred - Server has been stopped")
         server.stop(0)
-        #print("Server has been stopped")
+        print("Server has been stopped")
