@@ -85,9 +85,6 @@ class AirMobiSim(airmobisim_pb2_grpc.AirMobiSimServicer):
                 self.simulation_obj.finishSimulation()
 
     def Finish(self, request, context):
-        #os.close(sys.stdout.fileno())
-        #os.close(sys.stderr.fileno())
-        self.finish = True
         return struct_pb2.Value()
     def GetManagedHosts(self, request, context):
         print("GetManagesHosts gets called!")
@@ -118,13 +115,16 @@ class AirMobiSim(airmobisim_pb2_grpc.AirMobiSimServicer):
         return struct_pb2.Value()
 
     def InsertWaypoints(self, request, context):
-        pass
+         pass
 
     def DeleteUAV(self, request, context):
        """
        Delete UAV with the given Id
        """
        print("DeleteUAV gets called")
+       print(request.num)
+
+       print("DeleteUAV gets called -> to delete")
        print(request.num)
        for node in range(len(self.simulation_obj._managedNodes)):
            print(node)
@@ -159,9 +159,10 @@ def checkForParentProcess():
         time.sleep(1)
         if os.getppid() != ppid:
             print("You are not my parent")
-            sys.exit()
+            sys.exit(1)
         else:
-            pass
+            if stop_threads:
+               sys.exit(1)
 
 
 
@@ -170,6 +171,8 @@ def startServer(simulation_object):
     """
         Start the AirMobiSim Server
     """
+    global stop_threads
+    stop_threads = False
     threading.Thread(target = checkForParentProcess).start()
 
     print("I am still there", flush=True)
@@ -188,4 +191,5 @@ def startServer(simulation_object):
             time.sleep(1);
     except:
         server.stop(0)
+        stop_threads = True
         print("Server has been stopped")
