@@ -78,7 +78,12 @@ pyenv global 3.9.0
 if ! command -v poetry &> /dev/null
 then
 	echo "Installing poetry"
-	curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python -
+	if [[  "$OSTYPE" == "darwin"* ]]; then
+		brew install poetry
+	else
+		curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python -
+	fi
+	
 
 	source $HOME/.poetry/env
 fi
