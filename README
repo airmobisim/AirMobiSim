@@ -33,4 +33,14 @@ Set the attribute value to 'True' depending on your choice of choice of model.
 
 ## Configure a simulation
 The input parameters for the simulations are taken from a file named ```simulation.config```.
-An example is located in the ```examples``` directory. 
+An example is located in the ```examples``` directory.
+
+
+## Test Cases
+Test cases are located inside the `test` directory. The idea is to perform smoke test for the project. To run the test:
+
+```Bash
+- cd test
+- poetry run python3 test_airmobisim.py
+```
+

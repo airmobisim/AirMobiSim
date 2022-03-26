@@ -23,8 +23,8 @@ def main():
     global simulation
 
     # these flags decide which mobility model will be selected for milulation linearmobility of spline mobility
-    linearMobilityFlag = True
-    splineMobilityFlag = False
+    linearMobilityFlag = False
+    splineMobilityFlag = True
 
     parser = argparse.ArgumentParser(description='Importing configuration-file')
     parser.add_argument('--plot', type=int, required=False, default=1, help='plot vs no plot')
