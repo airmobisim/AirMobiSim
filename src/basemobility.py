@@ -79,9 +79,10 @@ class Basemobility(ABC):
 
     def doLog(self):
         #print("do log")
-        if self.getMove().getLinearMobilitySpFlag():
+        if self.getMove().getLinearMobilitySpFlag():   # log for spline mobility
             self._resultcollection.logCurrentPosition(self._uid, self.getCurrentPosSp(), self.getMove())
-        else:
+
+        else:   # log for linear mobility
             self._resultcollection.logCurrentPosition(self._uid, self.getCurrentPos(), self.getMove())
         currentEnergy = self._baseenergy.getcurrentEnergy(self.getMove().getSpeed(), (Simulationparameter.currentSimStep * Simulationparameter.stepLength) - self.getMove().getStartTime())
 
