@@ -18,7 +18,7 @@ import threading, _thread
 from proto import airmobisim_pb2_grpc
 from proto import airmobisim_pb2
 
-ending = 0
+ending = False
 
 class AirMobiSim(airmobisim_pb2_grpc.AirMobiSimServicer):
 
@@ -46,7 +46,7 @@ class AirMobiSim(airmobisim_pb2_grpc.AirMobiSimServicer):
         """
             Execute one timestep - Update the values (positions, velocity,...)
         """
-        print("Executing one Timestep")
+        #print("Executing one Timestep")
         responseQuery = airmobisim_pb2.ResponseQuery()
         if not self._isRunning:
             self.startSimulation()
@@ -66,12 +66,12 @@ class AirMobiSim(airmobisim_pb2_grpc.AirMobiSimServicer):
                     node.getMobility().makeMove()
                     self._isInitialized = True
                     currentPos = node.getMobility().getCurrentPos()
-                    print("##########################################################", flush=True)
-                    print("THIS IS WHAT I AM SENDING ON THE INTERFACE", flush=True)
-                    print("##########################################################", flush=True)
-                    print("currentPos.x:"  + str(currentPos.x), flush=True)
-                    print("currentPos.y:"  + str(currentPos.y), flush=True)
-                    print("currentPos.z:"  + str(currentPos.z), flush=True)
+                   # print("##########################################################", flush=True)
+                   # print("THIS IS WHAT I AM SENDING ON THE INTERFACE", flush=True)
+                   # print("##########################################################", flush=True)
+                   # print("currentPos.x:"  + str(currentPos.x), flush=True)
+                   # print("currentPos.y:"  + str(currentPos.y), flush=True)
+                   # print("currentPos.z:"  + str(currentPos.z), flush=True)
                     uav = airmobisim_pb2.Response(id=node._uid, x=currentPos.x, y=currentPos.y, z=currentPos.z, speed=node.getMobility()._move.getSpeed(), angle=node.getMobility()._angle)
                     self._lastUavReport.append(uav)
                     responseQuery.responses.append(uav)
@@ -85,9 +85,10 @@ class AirMobiSim(airmobisim_pb2_grpc.AirMobiSimServicer):
                 self.simulation_obj.finishSimulation()
 
     def Finish(self, request, context):
+        ending = True
         return struct_pb2.Value()
     def GetManagedHosts(self, request, context):
-        print("GetManagesHosts gets called!")
+        print("GetManagesHosts gets called!", flush=True)
         responseQuery = airmobisim_pb2.ResponseQuery()
 
         if not self._isRunning:
@@ -109,7 +110,7 @@ class AirMobiSim(airmobisim_pb2_grpc.AirMobiSimServicer):
         Method inserts an UAV in simulation
         In the next timestep makeMove()
         """
-        print("InsertUAV  gets called")
+        print("InsertUAV  gets called", flush=True)
         self.simulation_obj._managedNodes.append(Uav(request.id, Point(request.coordinates[0].x, request.coordinates[0].y, request.coordinates[0].z), Point(request.coordinates[1].x, request.coordinates[1].y, request.coordinates[1].z), angle=request.angle, speed=request.speed))
         
         return struct_pb2.Value()
@@ -122,18 +123,14 @@ class AirMobiSim(airmobisim_pb2_grpc.AirMobiSimServicer):
        Delete UAV with the given Id
        """
        print("DeleteUAV gets called")
-       print(request.num)
 
-       print("DeleteUAV gets called -> to delete")
-       print(request.num)
+       print("DeleteUAV gets called -> to delete", request.num)
        for node in range(len(self.simulation_obj._managedNodes)):
-           print(node)
-           print("I am printing the length of list")
-           print(len(self.simulation_obj._managedNodes))
+           print("Length of List before Deletion", len(self.simulation_obj._managedNodes))
            if self.simulation_obj._managedNodes[node]._uid == request.num:
                 self.simulation_obj._managedNodes.pop(node)
                 print("I deleted a Node")
-           print(len(self.simulation_obj._managedNodes))
+           print("Length of List after Deletiom", len(self.simulation_obj._managedNodes))
 
        print("I am done.")
 
@@ -147,7 +144,7 @@ class AirMobiSim(airmobisim_pb2_grpc.AirMobiSimServicer):
        Return the number for current UAVs
       """
      
-      print("getNumberCurrentUAV gets called")
+      print("getNumberCurrentUAV gets called", flush=True)
       currentUAV = len(self.simulation_obj._managedNodes) 
 
       return airmobisim_pb2.Number(num=currentUAV)
@@ -157,6 +154,7 @@ def checkForParentProcess():
     print("checkForParentProcess!")
     while True:
         time.sleep(1)
+        print(ppid)
         if os.getppid() != ppid:
             print("You are not my parent")
             sys.exit(1)
@@ -167,29 +165,44 @@ def checkForParentProcess():
 
 
 
-def startServer(simulation_object):
+def startServer(simulation_object, pid_omnetpp):
     """
         Start the AirMobiSim Server
     """
     global stop_threads
     stop_threads = False
-    threading.Thread(target = checkForParentProcess).start()
-
-    print("I am still there", flush=True)
+    check = threading.Thread(target = checkForParentProcess)
+    #check.start()
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
     airmobisim_object = AirMobiSim(simulation_object)
     airmobisim_pb2_grpc.add_AirMobiSimServicer_to_server(airmobisim_object, server)
     server.add_insecure_port('localhost:50051')
     server.start()
 
-    print("AirMobiSim Server has started....")
-    
+    print("AirMobiSim Server has started", flush=True) 
     ppid = os.getppid()
 
     try:
-        while True: 
-            time.sleep(1);
+        pid_omnetpp = int(pid_omnetpp)
+    except ValueError:
+        print("OmNet++ pid is not valid", flush=True)
+        sys.exit(1)
+
+    try:
+        while True:
+            time.sleep(1) 
+            #if not check.is_alive(): 
+               # sys.exit(1)
+            #else:
+                #time.sleep(1)
+            #if os.getppid() != ppid:
+                #server.stop(0)
+                #sys.exit(1)
+            os.kill(pid_omnetpp, 0)
+            
     except:
+        time.sleep(1)
         server.stop(0)
-        stop_threads = True
-        print("Server has been stopped")
+        #stop_threads = True
+        #print("Server has been stopped", flush=True)
+        sys.exit(1)

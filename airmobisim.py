@@ -27,12 +27,13 @@ def main():
     parser = argparse.ArgumentParser(description='Importing configuration-file')
     parser.add_argument('--configuration', action='store', type=str, default="examples/simpleSimulation/simulation.config", help='configuration')
     parser.add_argument('--omnetpp', action='store_true', help='Start the OmNet++ simulator')
+    parser.add_argument('--pid', action='store', type=str, default="False")
+
     print("""AirMobiSim Simulation  (C) 2021 Chair of Networked Systems Modelling TU Dresden.\nVersion: 0.0.1\nSee the license for distribution terms and warranty disclaimer""", flush=True)
     args = parser.parse_args()
+    homePath = os.environ['AIRMOBISIMHOME']
 
-    #Setting the path right, else it will cause problems with omnetpp
-   
-    p = Yamlparser(args.configuration)
+    p = Yamlparser(homePath + "/" + args.configuration)
     config = p.readConfig()
 
     directory = pathlib.Path(args.configuration).parent.resolve()
@@ -41,8 +42,8 @@ def main():
 
     if args.omnetpp:
         print("Start the AirMobiSim Server...", flush=True)
-        #Start the DroCI Bridge - Listen to ONet++ incomes
-        startServer(simulation)
+        #Start the DroCIBridge
+        startServer(simulation, args.pid)
     else:
         #print("Starting the Simulation")
         simulation.startSimulation()
@@ -62,6 +63,4 @@ def initializeSimulation(config, directory):
 
 
 if __name__ == "__main__":    
-    print("Starting process", flush=True)
-    print(os.getcwd())
     main()

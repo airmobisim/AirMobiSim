@@ -22,7 +22,7 @@ class Resultcollection(metaclass=Singleton):
         """
         logfile = self._logDir + "positionResults.csv"
         if self._firstLog:
-            print("creating new log")
+            print("creating new log", flush=True)
             f = open(logfile, "w")
             f.write("uid" + self._logDelimiter + "passedTime" + self._logDelimiter + "posX" + self._logDelimiter + "posY" + self._logDelimiter + "posZ"+"\n")
             #self._firstLog = False
