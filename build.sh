@@ -91,6 +91,7 @@ then
 	source $HOME/.poetry/env
 fi
 echo "Switching to python 3.9.0"
+mkdir -p $HOME/.cache/pypoetry/virtualenvs
 poetry env use 3.9.0
 ################################################################
 # ____        _   _                   ____       _               
