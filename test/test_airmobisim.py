@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 import unittest
-from unittest.mock import patch
+from unittest.mock import patch, Mock
 
+import src.basemobility
 from src.yamlparser import Yamlparser
 from src.splinemobility import Splinemobility
 import airmobisim
@@ -138,14 +139,27 @@ class TestAirmobisim(unittest.TestCase):
             self.assertTrue(df_uav_conditional['passedTime'].to_numpy()[0] <= TestAirmobisim.simTimeLimit, 'check simulation finish time')
 
     @patch('src.basemobility.Basemobility.doLog')
-    def test_doLog_sp(self, mock_doLog):
+    @patch('src.movement.Movement.getLinearMobilitySpFlag')
+    # @patch('src.resultcollection.Resultcollection.logCurrentPosition')
+    # def test_doLog_sp(self, mock_doLog, mock_getLinearMobilitySpFlag, mock_logCurrentPosition):
+    def test_doLog_sp(self, mock_doLog,mock_getLinearMobilitySpFlag):
 
         sp_obj = Splinemobility(0,TestAirmobisim.speed[0],TestAirmobisim.waypointX[0],TestAirmobisim.waypointY[0],TestAirmobisim.waypointZ[0])
 
         # ht.foo("some string")
+        # with patch('src.movement.Movement.getLinearMobilitySpFlag') as mock_flag:
+        mock_getLinearMobilitySpFlag.retuned_value = True
+        # mock_logCurrentPosition.retuned_value
+        # mock_logCurrentPosition=Mock()
         sp_obj.makeMove()
+        # mock_flag.assert_called_once()
+
         # print(sp_obj.passedtime)
         self.assertTrue(mock_doLog.called)
+        self.assertTrue(mock_getLinearMobilitySpFlag.called_once())
+        print(mock_getLinearMobilitySpFlag.call_count)
+        # self.assertTrue(mock_logCurrentPosition.called)
+        # self.assertTrue(mock_getLinearMobilitySpFlag.called)
 
     # self.assertEqual(validInputSp,True)
 if __name__=='__main__':
