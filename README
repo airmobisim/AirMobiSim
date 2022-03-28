@@ -41,6 +41,7 @@ Test cases are located inside the `test` directory. The idea is to perform smoke
 
 ```Bash
 - cd test
-- poetry run python3 test_airmobisim.py
+- poetry run python3 test_airmobisim.py   or python3 -m unittest
+
 ```
 

@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 import unittest
+from unittest.mock import patch
+
 from src.yamlparser import Yamlparser
 from src.splinemobility import Splinemobility
 import airmobisim
@@ -135,7 +137,15 @@ class TestAirmobisim(unittest.TestCase):
 
             self.assertTrue(df_uav_conditional['passedTime'].to_numpy()[0] <= TestAirmobisim.simTimeLimit, 'check simulation finish time')
 
+    @patch('src.basemobility.Basemobility.doLog')
+    def test_doLog_sp(self, mock_doLog):
 
+        sp_obj = Splinemobility(0,TestAirmobisim.speed[0],TestAirmobisim.waypointX[0],TestAirmobisim.waypointY[0],TestAirmobisim.waypointZ[0])
+
+        # ht.foo("some string")
+        sp_obj.makeMove()
+        # print(sp_obj.passedtime)
+        self.assertTrue(mock_doLog.called)
 
     # self.assertEqual(validInputSp,True)
 if __name__=='__main__':
