@@ -22,10 +22,6 @@ simulation: Simulation
 def main():
     global simulation
 
-    # these flags decide which mobility model will be selected for milulation linearmobility of spline mobility
-    linearMobilityFlag = False
-    splineMobilityFlag = True
-
     parser = argparse.ArgumentParser(description='Importing configuration-file')
     parser.add_argument('--plot', type=int, required=False, default=1, help='plot vs no plot')
     parser.add_argument('--configuration', action='store', type=str,
@@ -42,7 +38,9 @@ def main():
     p = Yamlparser(args.configuration)
     config = p.readConfig()
 
-
+    # flags to refer kinetic model selection
+    linearMobilityFlag = config['kinetic_model']['linearMobility']
+    splineMobilityFlag = config['kinetic_model']['splineMobility']
     ####################################
     '''
     the code within this ###s are only for the input of spline mobility it is a redundant code which should be removed during final merge.
@@ -63,6 +61,8 @@ def main():
             waypointZ.append(uavsp['waypointZ'])
             speed.append(uavsp['speed'])
 
+
+    #####################################
     directory = pathlib.Path(args.configuration).parent.resolve()
     initializeSimulation(config, directory, speed, waypointX, waypointY, waypointZ,linearMobilityFlag,splineMobilityFlag)
 
