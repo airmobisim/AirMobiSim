@@ -1,8 +1,12 @@
 #!/usr/bin/env python3
+import math
 import unittest
-from unittest.mock import patch, Mock
+from unittest.mock import patch, Mock, MagicMock
+
+from shapely.geometry import Point
 
 import src.basemobility
+from src.linearmobility import Linearmobility
 from src.yamlparser import Yamlparser
 from src.splinemobility import Splinemobility
 import airmobisim
@@ -36,6 +40,18 @@ class TestAirmobisim(unittest.TestCase):
             cls.waypointY.append(uavsp['waypointY'])
             cls.waypointZ.append(uavsp['waypointZ'])
             cls.speed.append(uavsp['speed'])
+
+
+        cls.startPos = []
+        cls.endPos = []
+
+
+        for uavlin in cls.uavsLinear:
+
+            cls.startPos.append(Point(uavlin['startPosX'],uavlin['startPosY'],uavlin['startPosZ']))
+            cls.endPos.append(Point(uavlin['endPosX'],uavlin['endPosY'],uavlin['endPosZ']))
+
+
 
     @classmethod
     def tearDownClass(cls) -> None:
@@ -139,28 +155,50 @@ class TestAirmobisim(unittest.TestCase):
             self.assertTrue(df_uav_conditional['passedTime'].to_numpy()[0] <= TestAirmobisim.simTimeLimit, 'check simulation finish time')
 
     @patch('src.basemobility.Basemobility.doLog')
-    @patch('src.movement.Movement.getLinearMobilitySpFlag')
+    @patch('src.movement.Movement.getLinearMobilitySpFlag',return_value= True)
     # @patch('src.resultcollection.Resultcollection.logCurrentPosition')
-    # def test_doLog_sp(self, mock_doLog, mock_getLinearMobilitySpFlag, mock_logCurrentPosition):
-    def test_doLog_sp(self, mock_doLog,mock_getLinearMobilitySpFlag):
+    # def test_doLog_sp(self, mock_logCurrentPosition, mock_getLinearMobilitySpFlag,mock_doLog):
+    def test_doLog_sp_mob(self, mock_doLog,mock_getLinearMobilitySpFlag):
 
         sp_obj = Splinemobility(0,TestAirmobisim.speed[0],TestAirmobisim.waypointX[0],TestAirmobisim.waypointY[0],TestAirmobisim.waypointZ[0])
-
-        # ht.foo("some string")
-        # with patch('src.movement.Movement.getLinearMobilitySpFlag') as mock_flag:
-        mock_getLinearMobilitySpFlag.retuned_value = True
-        # mock_logCurrentPosition.retuned_value
-        # mock_logCurrentPosition=Mock()
+        # mock_getLinearMobilitySpFlag.retuned_value = True
         sp_obj.makeMove()
-        # mock_flag.assert_called_once()
 
-        # print(sp_obj.passedtime)
+        # self.assertTrue(mock_logCurrentPosition.called)
         self.assertTrue(mock_doLog.called)
         self.assertTrue(mock_getLinearMobilitySpFlag.called_once())
-        print(mock_getLinearMobilitySpFlag.call_count)
-        # self.assertTrue(mock_logCurrentPosition.called)
+        # print(mock_getLinearMobilitySpFlag.call_count)
         # self.assertTrue(mock_getLinearMobilitySpFlag.called)
 
     # self.assertEqual(validInputSp,True)
+
+    @patch('src.movement.Movement.getLinearMobilitySpFlag', return_value=False)
+    @patch('src.basemobility.Basemobility.doLog')
+    def test_doLog_lin_mob(self, mock_doLog, mock_getLinearMobilitySpFlag):
+        # angle = math.atan2(TestAirmobisim.endPos[0].y - TestAirmobisim.startPos[0].y, TestAirmobisim.endPos[0].x - TestAirmobisim.startPos[0].x) * 180 / math.pi
+        lin_obj = Linearmobility(0, 1, TestAirmobisim.startPos[0], TestAirmobisim.endPos[0])
+        # mock_getLinearMobilitySpFlag.retuned_value = True
+        lin_obj.makeMove()
+
+        # self.assertTrue(mock_logCurrentPosition.called)
+        self.assertTrue(mock_doLog.called)
+        self.assertTrue(mock_getLinearMobilitySpFlag.called_once())
+        # print(mock_getLinearMobilitySpFlag.call_count)
+        # self.assertTrue(mock_getLinearMobilitySpFlag.called)
+
+    # self.assertEqual(validInputSp,True)
+
+    @patch('src.movement.Movement.getLinearMobilitySpFlag', return_value=True)
+    @patch('src.resultcollection.Resultcollection.logCurrentPosition')
+    def test_logCurrentPosition_sp_(self, mock_logCurrentPosition,mock_getflag):
+
+        sp_obj = Splinemobility(0, TestAirmobisim.speed[0], TestAirmobisim.waypointX[0], TestAirmobisim.waypointY[0],
+                                TestAirmobisim.waypointZ[0])
+
+        sp_obj.makeMove()
+
+        self.assertTrue(mock_logCurrentPosition.called)
+
+
 if __name__=='__main__':
     unittest.main()
