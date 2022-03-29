@@ -190,12 +190,23 @@ class TestAirmobisim(unittest.TestCase):
 
     @patch('src.movement.Movement.getLinearMobilitySpFlag', return_value=True)
     @patch('src.resultcollection.Resultcollection.logCurrentPosition')
-    def test_logCurrentPosition_sp_(self, mock_logCurrentPosition,mock_getflag):
+    def test_logCurrentPosition_sp_mob(self, mock_logCurrentPosition,mock_getflag):
 
         sp_obj = Splinemobility(0, TestAirmobisim.speed[0], TestAirmobisim.waypointX[0], TestAirmobisim.waypointY[0],
                                 TestAirmobisim.waypointZ[0])
 
         sp_obj.makeMove()
+
+        self.assertTrue(mock_logCurrentPosition.called)
+
+
+    @patch('src.movement.Movement.getLinearMobilitySpFlag', return_value=False)
+    @patch('src.resultcollection.Resultcollection.logCurrentPosition')
+    def test_logCurrentPosition_lin_mob(self, mock_logCurrentPosition, mock_getflag):
+
+        lin_obj = Linearmobility(0, 1, TestAirmobisim.startPos[0], TestAirmobisim.endPos[0])
+
+        lin_obj.makeMove()
 
         self.assertTrue(mock_logCurrentPosition.called)
 
