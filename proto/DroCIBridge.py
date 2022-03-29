@@ -66,12 +66,6 @@ class AirMobiSim(airmobisim_pb2_grpc.AirMobiSimServicer):
                     node.getMobility().makeMove()
                     self._isInitialized = True
                     currentPos = node.getMobility().getCurrentPos()
-                   # print("##########################################################", flush=True)
-                   # print("THIS IS WHAT I AM SENDING ON THE INTERFACE", flush=True)
-                   # print("##########################################################", flush=True)
-                   # print("currentPos.x:"  + str(currentPos.x), flush=True)
-                   # print("currentPos.y:"  + str(currentPos.y), flush=True)
-                   # print("currentPos.z:"  + str(currentPos.z), flush=True)
                     uav = airmobisim_pb2.Response(id=node._uid, x=currentPos.x, y=currentPos.y, z=currentPos.z, speed=node.getMobility()._move.getSpeed(), angle=node.getMobility()._angle)
                     self._lastUavReport.append(uav)
                     responseQuery.responses.append(uav)
@@ -122,20 +116,11 @@ class AirMobiSim(airmobisim_pb2_grpc.AirMobiSimServicer):
        """
        Delete UAV with the given Id
        """
-       print("DeleteUAV gets called")
-
-       print("DeleteUAV gets called -> to delete", request.num)
+       print("DeleteUAV gets called -> to delete", request.num, flush=True)
        for node in range(len(self.simulation_obj._managedNodes)):
-           print("Length of List before Deletion", len(self.simulation_obj._managedNodes))
            if self.simulation_obj._managedNodes[node]._uid == request.num:
                 self.simulation_obj._managedNodes.pop(node)
-                print("I deleted a Node")
-           print("Length of List after Deletiom", len(self.simulation_obj._managedNodes))
-
-       print("I am done.")
-
-       for node in range(len(self.simulation_obj._managedNodes)):
-           print(self.simulation_obj._managedNodes[node]._uid)
+                break
 
        return struct_pb2.Value()
 
@@ -149,30 +134,12 @@ class AirMobiSim(airmobisim_pb2_grpc.AirMobiSimServicer):
 
       return airmobisim_pb2.Number(num=currentUAV)
 
-def checkForParentProcess():
-    ppid = os.getppid()
-    print("checkForParentProcess!")
-    while True:
-        time.sleep(1)
-        print(ppid)
-        if os.getppid() != ppid:
-            print("You are not my parent")
-            sys.exit(1)
-        else:
-            if stop_threads:
-               sys.exit(1)
-
-
-
 
 def startServer(simulation_object, pid_omnetpp):
     """
         Start the AirMobiSim Server
     """
-    global stop_threads
-    stop_threads = False
-    check = threading.Thread(target = checkForParentProcess)
-    #check.start()
+
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
     airmobisim_object = AirMobiSim(simulation_object)
     airmobisim_pb2_grpc.add_AirMobiSimServicer_to_server(airmobisim_object, server)
@@ -181,28 +148,22 @@ def startServer(simulation_object, pid_omnetpp):
 
     print("AirMobiSim Server has started", flush=True) 
     ppid = os.getppid()
+    omnetpp_pid_valid = False
 
     try:
         pid_omnetpp = int(pid_omnetpp)
+        omnetpp_pid_valid = True
     except ValueError:
-        print("OmNet++ pid is not valid", flush=True)
-        sys.exit(1)
+        #print("Starting AirMobiSim  manuelly", flush=True)
+       pass
 
     try:
         while True:
             time.sleep(1) 
-            #if not check.is_alive(): 
-               # sys.exit(1)
-            #else:
-                #time.sleep(1)
-            #if os.getppid() != ppid:
-                #server.stop(0)
-                #sys.exit(1)
-            os.kill(pid_omnetpp, 0)
-            
+            #Check whether the Omnetpp-process is running
+            if omnetpp_pid_valid:
+                os.kill(pid_omnetpp, 0)
     except:
-        time.sleep(1)
+        #time.sleep(1)
         server.stop(0)
-        #stop_threads = True
-        #print("Server has been stopped", flush=True)
         sys.exit(1)
