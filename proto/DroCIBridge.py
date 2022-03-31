@@ -13,7 +13,7 @@ import sys
 import string
 import os
 import threading, _thread
-
+import psutil
 
 from proto import airmobisim_pb2_grpc
 from proto import airmobisim_pb2
@@ -135,7 +135,7 @@ class AirMobiSim(airmobisim_pb2_grpc.AirMobiSimServicer):
       return airmobisim_pb2.Number(num=currentUAV)
 
 
-def startServer(simulation_object, pid_omnetpp):
+def startServer(simulation_object):
     """
         Start the AirMobiSim Server
     """
@@ -149,20 +149,17 @@ def startServer(simulation_object, pid_omnetpp):
     print("AirMobiSim Server has started", flush=True) 
     ppid = os.getppid()
     omnetpp_pid_valid = False
-
-    try:
-        pid_omnetpp = int(pid_omnetpp)
-        omnetpp_pid_valid = True
-    except ValueError:
-        #print("Starting AirMobiSim  manuelly", flush=True)
-       pass
+    grandparent_pid = psutil.Process(os.getppid()).ppid()
+    print(grandparent_pid)
 
     try:
         while True:
             time.sleep(1) 
             #Check whether the Omnetpp-process is running
-            if omnetpp_pid_valid:
-                os.kill(pid_omnetpp, 0)
+            if psutil.Process(os.getppid()).ppid() != grandparent_pid:
+                #print("Parent died")
+                server.stop(0)
+                sys.exit(1)
     except:
         #time.sleep(1)
         server.stop(0)

@@ -27,7 +27,6 @@ def main():
     parser = argparse.ArgumentParser(description='Importing configuration-file')
     parser.add_argument('--configuration', action='store', type=str, default="examples/simpleSimulation/simulation.config", help='configuration')
     parser.add_argument('--omnetpp', action='store_true', help='Start the OmNet++ simulator')
-    parser.add_argument('--pid', action='store', type=str, default="False")
 
     print("""AirMobiSim Simulation  (C) 2021 Chair of Networked Systems Modelling TU Dresden.\nVersion: 0.0.1\nSee the license for distribution terms and warranty disclaimer""", flush=True)
     args = parser.parse_args()
@@ -43,7 +42,7 @@ def main():
     if args.omnetpp:
         print("Start the AirMobiSim Server...", flush=True)
         #Start the DroCIBridge
-        startServer(simulation, args.pid)
+        startServer(simulation)
     else:
         #print("Starting the Simulation")
         simulation.startSimulation()
