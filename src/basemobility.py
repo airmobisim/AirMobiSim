@@ -65,6 +65,7 @@ class Basemobility(ABC):
         elif self.getMove().getFinalFlag():
             # currentPos=Point(self.getMove().getTempStartPos().x, self.getMove().getTempStartPos().y, 0.0)
             currentPos=Point(self.getMove().getNextCoordinate().x, self.getMove().getNextCoordinate().y, 0.0)
+            # currentPos=Point(self.getMove().getNextCoordinate().x, self.getMove().getNextCoordinate().y, self.getMove().getNextCoordinate().z)
             # currentPos = self.getMove().getNextCoordinate()
 
 

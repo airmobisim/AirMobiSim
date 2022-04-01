@@ -23,7 +23,7 @@ class Splinemobility(Basemobility):
 
         self._uid = uid
         self._move.setStart(self._startpos, 0)
-        self._move.setLastPos(self._endpos)
+        self._move.setEndPos(self._endpos)
         self._move.setTempStartPos(self._startpos) # holds each intermediate points of linear in each iteration
 
         # since spline so fixing it to true, this flag is used to separate some code from other mobility

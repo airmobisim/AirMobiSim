@@ -9,9 +9,11 @@ class Linearmobility(Basemobility):
     def __init__(self, uid, angle, startPos, endPos):
         super().__init__(uid, startPos, endPos)
         self._angle = angle
-        self._acceleration = 1 #acceleration not considered yet
+        self._acceleration = 0 #acceleration not considered yet
         self._move.setStart(startPos, 0)
-        self._move.setSpeed(10)
+        self._move.setEndPos(endPos)
+
+        self._move.setSpeed(100)
         self._uid = uid
         self._stepTarget = ""
     def makeMove(self):
