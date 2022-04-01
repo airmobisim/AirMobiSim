@@ -34,8 +34,11 @@ ICB8X3xcX19fL3xfLl9fL3xffF9fX18vfF98X3wgfF98IHxffA=="
 echo -e "\n=====================================================================
 The open-source unmanned aerial vehicle simulation framework
 ====================================================================="
-echo "AirMobiSim requires OMNeT++ 6 Pre 10 to be installed and part of your PATH."
-echo "This setup installs all required Python  packages (and poetry), loads the AirMobiSim extension from Veins, installs native binaries and libs from GRPC (version $GRPC_VERSION) and Protobuf ($PROTOC_VERSION) using conan.io.
+echo "AirMobiSim requires the following software to be installed:"
+echo "OMNeT++ 6 Pre 10."
+echo "conan.io - version: 1.44.1"
+
+echo "This setup installs all required Python packages (and poetry), loads the AirMobiSim extension from Veins, installs native binaries and libs from GRPC (version $GRPC_VERSION) and Protobuf ($PROTOC_VERSION) using conan.io.
 
 The complete source code is compiled afterwards.
 "
@@ -65,8 +68,8 @@ fi
 if !(pyenv install 3.9.0); then
 	echo "Python 3.9.0 will not be installed by this setup. Proceed with the setup.."
 fi
+eval "$(pyenv init -)"
 pyenv global 3.9.0
-
 ##################################
 #                  _              
 # _ __   ___   ___| |_ _ __ _   _ 
@@ -78,10 +81,18 @@ pyenv global 3.9.0
 if ! command -v poetry &> /dev/null
 then
 	echo "Installing poetry"
-	curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python -
+	if [[  "$OSTYPE" == "darwin"* ]]; then
+		brew install poetry
+	else
+		curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python -
+	fi
+	
 
 	source $HOME/.poetry/env
 fi
+echo "Switching to python 3.9.0"
+mkdir -p $HOME/.cache/pypoetry/virtualenvs
+poetry env use 3.9.0
 ################################################################
 # ____        _   _                   ____       _               
 #|  _ \ _   _| |_| |__   ___  _ __   / ___|  ___| |_ _   _ _ __  
@@ -92,20 +103,12 @@ fi
 ################################################################
 echo "Installing required Python packages..."
 
-pip3 install --user --upgrade pipenv
-#if !(pyenv install 3.9.0); then
-#	echo "Python 3.9 will not be installed by this setup. Proceed with the setup.."
-#fi
-
-#pyenv local 3.9.0
-#PYTHON_BIN_PATH="$(python3 -m site --user-base)/bin"
-#PATH="$PATH:$PYTHON_BIN_PATH"
 
 poetry install
 poetry run python -m grpc_tools.protoc --python_out=. --grpc_python_out=. proto/airmobisim.proto -I .
-source ~/.profile
+export PATH="$HOME/.poetry/bin:$PATH"
 
-pip3 install --user conan # We need a lokal installation outside poetry, since conan is required for the OMNeT++ part
+#pip3 install --user conan # We need a lokal installation outside poetry, since conan is required for the OMNeT++ part
 AIRMOBISIMDIR=$(pwd)
 ################################################################
 #__     __   _             ____       _               
@@ -124,23 +127,41 @@ cd airmobisimVeins
 AIRMOBISIMVEINS_PATH="$(pwd)/subprojects/veins_libairmobisim2"
 
 ./configure
-make -j$(nproc)
+if [[  "$OSTYPE" == "darwin"* ]]; then
+	make -j$(sysctl -n hw.ncpu)
+else
+	make -j$(nproc)
+fi
 
 cd $AIRMOBISIMDIR
 
-if [  ! -f "$HOME/.conan/profiles/default" ]; then
+if [  ! -f "$HOME/.conan/profiles/default" ]; then 
 	echo "Create new default conan profile"
-	conan profile new default --detect #Create new default profile
+	mkdir -p "$HOME/.conan/profiles/"
+	poetry run conan profile new default --detect # the quotation marks created an error when running this on Linux
 fi
 
-poetry run bash -c "conan profile update settings.compiler.libcxx=libstdc++11 default"
-poetry run bash -c "cd $AIRMOBISIMVEINS_PATH && conan install ."
+if [[ "$OSTYPE" == "linux-gnu"* ]]; then
+	echo "This is a Linux"
+	poetry run bash -c "conan profile update settings.compiler.libcxx=libstdc++11 default"
+else
+	echo "This is a Mac"
+	poetry run bash -c "conan profile update settings.compiler.version=13.0 default"
+	#poetry run bash -c "conan profile update settings.compiler.version=12.0 default"
+	#poetry run bash -c "conan profile update settings.compiler.libcxx=libstdc++ default"
+fi
+
+echo "Starting installation of conan dependencies"
+
+poetry run bash -c "cd $AIRMOBISIMVEINS_PATH && conan install . --build missing --profile=default"
 
 cd
 cd .conan/data
 
 basePath=$(pwd)
 
+
+### TODO: Start Remove ###
 grpc_cpp_plugin=$(find . -type f -name "grpc_cpp_plugin" 2>/dev/null | grep -aE "$GRPC_VERSION.*package")
 grpc_cpp_plugin="${grpc_cpp_plugin:1}"
 grpc_cpp_plugin=$basePath$grpc_cpp_plugin
@@ -157,12 +178,20 @@ $protoc airmobisim.proto --cpp_out=src/veins_libairmobisim/proto
 
 $protoc airmobisim.proto --grpc_out=src/veins_libairmobisim/proto/ --plugin=protoc-gen-grpc=$grpc_cpp_plugin
 
+### TODO: END Remove ###
+
 
 ./configure
-make -j$(nproc)
+if [[  "$OSTYPE" == "darwin"* ]]; then
+	make -j$(sysctl -n hw.ncpu)
+	#make -j4
+else
+	make -j$(nproc)
+fi
+
 
 echo "Everything worked"
 echo ""
 echo "Your PATH does not contain \"\$HOME/.poetry/bin:\$PATH\""
-echo "Please run      'export PATH="\$HOME/.poetry/bin:\$PATH"'      or      'source ~/.profile'"
+echo "Please run      'export PATH="\$HOME/.poetry/bin:\$PATH"' or add it to your .bashrc/.zshrc/..."
 echo "You can run AirMobiSim with the command 'poetry run ./airmobisim.py'"
