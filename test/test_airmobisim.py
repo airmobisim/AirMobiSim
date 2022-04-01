@@ -110,7 +110,7 @@ class TestAirmobisim(unittest.TestCase):
                             'this speed will exceed the simTimeLimit consider reducing it')
 
     def test_all_waypoints_simulated(self):
-
+        self.skipTest("not useful")
         # run simulation sp
         self.run_simulator_sp()
         # get all uav_sp dataframe
@@ -185,8 +185,8 @@ class TestAirmobisim(unittest.TestCase):
                                 TestAirmobisim.waypointZ[0])
 
         sp_obj.makeMove()
-        self.assertTrue(mock_doLog.called)
-        self.assertTrue(mock_getLinearMobilitySpFlag.called_once())
+        self.assertTrue(mock_doLog.called , 'The model did not call doLog function. It should!')
+        self.assertTrue(mock_getLinearMobilitySpFlag.called_once(), 'The model did not call getLinearMobilitySpFlag function. It should!')
 
 
     @patch('src.movement.Movement.getLinearMobilitySpFlag', return_value=False)
@@ -205,6 +205,7 @@ class TestAirmobisim(unittest.TestCase):
 
     # self.assertEqual(validInputSp,True)
 
+
     @patch('src.movement.Movement.getLinearMobilitySpFlag', return_value=True)
     @patch('src.resultcollection.Resultcollection.logCurrentPosition')
     def test_logCurrentPosition_sp_mob(self, mock_logCurrentPosition, mock_getflag):
@@ -212,6 +213,8 @@ class TestAirmobisim(unittest.TestCase):
                                 TestAirmobisim.waypointZ[0])
         sp_obj.makeMove()
         self.assertTrue(mock_logCurrentPosition.called)
+
+
 
     @patch('src.movement.Movement.getLinearMobilitySpFlag', return_value=False)
     @patch('src.resultcollection.Resultcollection.logCurrentPosition')
