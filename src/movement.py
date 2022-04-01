@@ -89,7 +89,7 @@ class Movement:
     def setCurrentDirection(self,currentDirection):
         self._currentDirection = currentDirection
     
-    def setDirectionByTarget(self, target):
+    def setDirectionByTarget(self):
         '''
         print("Target.x: " + str(target.x))
         print("Target.y: " + str(target.y))

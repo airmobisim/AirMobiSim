@@ -18,6 +18,8 @@ class Linearmobility(Basemobility):
         self._stepTarget = ""
     def makeMove(self):
         move = self.getMove()
+        passedTime = (
+                                 Simulationparameter.currentSimStep * Simulationparameter.stepLength) - self.getMove().getStartTime()
         '''
         print("----------------------------------------------------")
         print("move.getSpeed(): "      + str(move.getSpeed()))
@@ -26,19 +28,22 @@ class Linearmobility(Basemobility):
         print("move.getStartPos().z: " + str(move.getStartPos().z))
         print("angle: " + str(self._angle))
         '''
-        stepTargetX = move.getStartPos().x + move.getSpeed() * math.cos(math.pi * (self._angle/180)) * Simulationparameter.stepLength
-        stepTargetY = move.getStartPos().y + move.getSpeed() * math.sin(math.pi * (self._angle/180)) * Simulationparameter.stepLength
+        # stepTargetX = move.getStartPos().x + move.getSpeed() * math.cos(math.pi * (self._angle/180)) * Simulationparameter.stepLength
+        # stepTargetY = move.getStartPos().y + move.getSpeed() * math.sin(math.pi * (self._angle/180)) * Simulationparameter.stepLength
         ''' 
         print("stepTargetX: " + str(stepTargetX))
         print("stepTargetY: " + str(stepTargetY))
         '''
-        stepTarget = Point(stepTargetX, stepTargetY, self._startPos.z)
-        self._stepTarget = stepTarget
-        move.setDirectionByTarget(stepTarget)
+        # stepTarget = Point(stepTargetX, stepTargetY, self._startPos.z)
+        # self._stepTarget = stepTarget
+        # move.setDirectionByTarget(stepTarget)
+
+        move.setDirectionByTarget()
 
         newSpeed = move.getSpeed() + self._acceleration * Simulationparameter.stepLength
          
         move.setSpeed(newSpeed)
+        move.setPassedTime(passedTime)
         super().makeMove()
 
         pass
