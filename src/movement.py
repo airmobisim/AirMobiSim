@@ -15,7 +15,7 @@ class Movement:
         self._currentDirection = Point(0, 0, 0)
         self._speed = 0
         self._passedTime = 0
-
+        self._tempStartPos=Point(0,0,0)
         self._nextCoordinate = Point(0, 0, 0)
         self._startPosCircle = Point(0, 0, 0)
         self._finalFlag = False
