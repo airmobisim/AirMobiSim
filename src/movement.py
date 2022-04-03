@@ -98,8 +98,8 @@ class Movement:
         print("Start.y: " + str(self._startPos.y))
         print("Start.z: " + str(self._startPos.z))
         '''
-        print('inside setdirection:' + str(self.getStartPos()))
-        print('inside setdirection:' + str(self.getEndPos()))
+        # print('inside setdirection:' + str(self.getStartPos()))
+        # print('inside setdirection:' + str(self.getEndPos()))
         direction = Point(self._endPos.x - self._startPos.x, self._endPos.y - self._startPos.y, self._endPos.z - self._startPos.z)
         distance = math.sqrt((self._endPos.x - self._startPos.x)**2 + (self._endPos.y - self._startPos.y)**2 + (self._endPos.z - self._startPos.z)**2)
         

@@ -30,13 +30,15 @@ class Simulation:
         self._playgroundSizeZ = playgroundSizeZ
         self._simulationSteps = simTimeLimit / Simulationparameter.stepLength
         self._startUavs = uavs
-
         self._speed = speed
         self._waypointX = waypointX
         self._waypointY = waypointY
         self._waypointZ = waypointZ
         self._linearMobilityFlag=linearMobilityFlag
         self._splineMobilityFlag=splineMobilityFlag
+
+
+
 
     def startSimulation(self):
         if self._isRunnig == True or Simulationparameter.currentSimStep != -1:
@@ -94,3 +96,44 @@ class Simulation:
 
     def getManagedNodes(self):
         return self._managedNodes
+
+
+    # alternative constructors:
+    @classmethod
+    def from_config_spmob(cls, config, linearMobilityFlag, splineMobilityFlag, directory):
+        stepLength, simTimeLimit, playgroundSizeX, playgroundSizeY, playgroundSizeZ, speed, waypointX, waypointY, waypointZ \
+            = Simulation.load_common_parameters_from_config(config)
+        uavs = config['uavsp']
+
+        return cls(stepLength, simTimeLimit, playgroundSizeX, playgroundSizeY, playgroundSizeZ,
+                   uavs, speed, waypointX, waypointY, waypointZ, linearMobilityFlag, splineMobilityFlag,
+                   directory)
+
+    @classmethod
+    def from_config_linmob(cls, config, linearMobilityFlag, splineMobilityFlag, directory):
+        # some parameters of spline mobility are passed to the constructor to satisfy __init__ parameters but it is sorted later on
+
+        stepLength, simTimeLimit, playgroundSizeX, playgroundSizeY, playgroundSizeZ, speed, waypointX, waypointY, waypointZ \
+            = Simulation.load_common_parameters_from_config(config)
+        uavs = config['uav']
+
+        return cls(stepLength, simTimeLimit, playgroundSizeX, playgroundSizeY, playgroundSizeZ,
+                   uavs, speed, waypointX, waypointY, waypointZ, linearMobilityFlag, splineMobilityFlag,
+                   directory)
+
+    @staticmethod     # load data from config file
+    def load_common_parameters_from_config(config):
+        speed = []
+        waypointX = []
+        waypointY = []
+        waypointZ = []
+
+        for uavsp in config['uavsp']:
+            waypointX.append(uavsp['waypointX'])
+            waypointY.append(uavsp['waypointY'])
+            waypointZ.append(uavsp['waypointZ'])
+            speed.append(uavsp['speed'])
+
+        return config['simulation']['stepLength'], config['simulation']['simTimeLimit'], \
+               config['simulation']['playgroundSizeX'], config['simulation']['playgroundSizeY'], \
+               config['simulation']['playgroundSizeZ'], speed, waypointX, waypointY, waypointZ
