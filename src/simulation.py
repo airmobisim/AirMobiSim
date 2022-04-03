@@ -99,7 +99,7 @@ class Simulation:
 
 
     # alternative constructors:
-    @classmethod
+    @classmethod   # for spline mobility
     def from_config_spmob(cls, config, linearMobilityFlag, splineMobilityFlag, directory):
         stepLength, simTimeLimit, playgroundSizeX, playgroundSizeY, playgroundSizeZ, speed, waypointX, waypointY, waypointZ \
             = Simulation.load_common_parameters_from_config(config)
@@ -109,7 +109,7 @@ class Simulation:
                    uavs, speed, waypointX, waypointY, waypointZ, linearMobilityFlag, splineMobilityFlag,
                    directory)
 
-    @classmethod
+    @classmethod     # for linear mobility
     def from_config_linmob(cls, config, linearMobilityFlag, splineMobilityFlag, directory):
         # some parameters of spline mobility are passed to the constructor to satisfy __init__ parameters but it is sorted later on
 

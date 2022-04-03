@@ -88,6 +88,7 @@ def initializeSimulation(config, directory, linearMobilityFlag,splineMobilityFla
     if splineMobilityFlag:
         print("Launch spline mobility")
         simulation = Simulation.from_config_spmob(config, linearMobilityFlag, splineMobilityFlag, directory)
+        '''
         # simulation = Simulation(config['simulation']['stepLength'],
         #                         config['simulation']['simTimeLimit'],
         #                         config['simulation']['playgroundSizeX'],
@@ -102,10 +103,12 @@ def initializeSimulation(config, directory, linearMobilityFlag,splineMobilityFla
         #                         splineMobilityFlag,
         #                         directory,
         #                         )
+        '''
 
     else:
         print("Launch linear mobility")
         simulation = Simulation.from_config_linmob(config, linearMobilityFlag, splineMobilityFlag, directory)
+        '''
         # simulation = Simulation(config['simulation']['stepLength'],
         #                         config['simulation']['simTimeLimit'],
         #                         config['simulation']['playgroundSizeX'],
@@ -120,6 +123,7 @@ def initializeSimulation(config, directory, linearMobilityFlag,splineMobilityFla
         #                         splineMobilityFlag,
         #                         directory,
         #                         )
+        '''
 
 
 
