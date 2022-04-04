@@ -16,9 +16,8 @@ class Simulation:
     _startUavs = []
     _highestUid = -1
 
-    def __init__(self, stepLength, simTimeLimit, playgroundSizeX, playgroundSizeY, playgroundSizeZ,
-                 uavs, speed, waypointX, waypointY, waypointZ,linearMobilityFlag,splineMobilityFlag,
-                 directory):
+    def __init__(self, directory, stepLength, simTimeLimit, playgroundSizeX, playgroundSizeY, playgroundSizeZ, \
+                 linearMobilityFlag, splineMobilityFlag, uavs, speed=None, waypointX=None, waypointY=None, waypointZ=None):
 
         print("Initializing...")
         Simulationparameter.stepLength = stepLength
@@ -101,32 +100,11 @@ class Simulation:
     # alternative constructors:
     @classmethod   # for spline mobility
     def from_config_spmob(cls, config, linearMobilityFlag, splineMobilityFlag, directory):
-        stepLength, simTimeLimit, playgroundSizeX, playgroundSizeY, playgroundSizeZ, speed, waypointX, waypointY, waypointZ \
-            = Simulation.load_common_parameters_from_config(config)
-        uavs = config['uavsp']
-
-        return cls(stepLength, simTimeLimit, playgroundSizeX, playgroundSizeY, playgroundSizeZ,
-                   uavs, speed, waypointX, waypointY, waypointZ, linearMobilityFlag, splineMobilityFlag,
-                   directory)
-
-    @classmethod     # for linear mobility
-    def from_config_linmob(cls, config, linearMobilityFlag, splineMobilityFlag, directory):
-        # some parameters of spline mobility are passed to the constructor to satisfy __init__ parameters but it is sorted later on
-
-        stepLength, simTimeLimit, playgroundSizeX, playgroundSizeY, playgroundSizeZ, speed, waypointX, waypointY, waypointZ \
-            = Simulation.load_common_parameters_from_config(config)
-        uavs = config['uav']
-
-        return cls(stepLength, simTimeLimit, playgroundSizeX, playgroundSizeY, playgroundSizeZ,
-                   uavs, speed, waypointX, waypointY, waypointZ, linearMobilityFlag, splineMobilityFlag,
-                   directory)
-
-    @staticmethod     # load data from config file
-    def load_common_parameters_from_config(config):
         speed = []
         waypointX = []
         waypointY = []
         waypointZ = []
+        uavs = config['uavsp']
 
         for uavsp in config['uavsp']:
             waypointX.append(uavsp['waypointX'])
@@ -134,6 +112,24 @@ class Simulation:
             waypointZ.append(uavsp['waypointZ'])
             speed.append(uavsp['speed'])
 
+        stepLength, simTimeLimit, playgroundSizeX, playgroundSizeY, playgroundSizeZ = Simulation.load_common_parameters_from_config(config)
+
+
+        return cls(directory,stepLength, simTimeLimit, playgroundSizeX, playgroundSizeY, playgroundSizeZ,
+                   linearMobilityFlag, splineMobilityFlag, uavs, speed, waypointX, waypointY, waypointZ)
+
+    @classmethod     # for linear mobility
+    def from_config_linmob(cls, config, linearMobilityFlag, splineMobilityFlag, directory):
+        # some parameters of spline mobility are passed to the constructor to satisfy __init__ parameters but it is sorted later on
+        uavs = config['uav']
+        stepLength, simTimeLimit, playgroundSizeX, playgroundSizeY, playgroundSizeZ = Simulation.load_common_parameters_from_config(config)
+        return cls(directory,stepLength, simTimeLimit, playgroundSizeX, playgroundSizeY, playgroundSizeZ,
+                   linearMobilityFlag, splineMobilityFlag, uavs)
+
+    @staticmethod     # load data from config file
+    def load_common_parameters_from_config(config):
+
+
         return config['simulation']['stepLength'], config['simulation']['simTimeLimit'], \
                config['simulation']['playgroundSizeX'], config['simulation']['playgroundSizeY'], \
-               config['simulation']['playgroundSizeZ'], speed, waypointX, waypointY, waypointZ
+               config['simulation']['playgroundSizeZ']
