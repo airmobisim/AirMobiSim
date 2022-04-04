@@ -1,7 +1,6 @@
-import geopandas
+
 from shapely.geometry import Point
-import threading
-import time
+
 import sys
 
 from .uav import Uav
@@ -16,7 +15,7 @@ class Simulation:
     _startUavs = []
     _highestUid = -1
 
-    def __init__(self, directory, stepLength, simTimeLimit, playgroundSizeX, playgroundSizeY, playgroundSizeZ, \
+    def __init__(self, directory, stepLength, simTimeLimit, playgroundSizeX, playgroundSizeY, playgroundSizeZ,
                  linearMobilityFlag, splineMobilityFlag, uavs, speed=None, waypointX=None, waypointY=None,
                  waypointZ=None):
 
