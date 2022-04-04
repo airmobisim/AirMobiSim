@@ -17,7 +17,8 @@ class Simulation:
     _highestUid = -1
 
     def __init__(self, directory, stepLength, simTimeLimit, playgroundSizeX, playgroundSizeY, playgroundSizeZ, \
-                 linearMobilityFlag, splineMobilityFlag, uavs, speed=None, waypointX=None, waypointY=None, waypointZ=None):
+                 linearMobilityFlag, splineMobilityFlag, uavs, speed=None, waypointX=None, waypointY=None,
+                 waypointZ=None):
 
         print("Initializing...")
         Simulationparameter.stepLength = stepLength
@@ -33,11 +34,8 @@ class Simulation:
         self._waypointX = waypointX
         self._waypointY = waypointY
         self._waypointZ = waypointZ
-        self._linearMobilityFlag=linearMobilityFlag
-        self._splineMobilityFlag=splineMobilityFlag
-
-
-
+        self._linearMobilityFlag = linearMobilityFlag
+        self._splineMobilityFlag = splineMobilityFlag
 
     def startSimulation(self):
         if self._isRunnig == True or Simulationparameter.currentSimStep != -1:
@@ -67,17 +65,20 @@ class Simulation:
     def initializeNodes(self):
         for uav in self._startUavs:
             # print(type(self.getNextUid()))
-            nextUid= self.getNextUid()
-           #for spline mobility
+            nextUid = self.getNextUid()
+            # for spline mobility
 
             if self._splineMobilityFlag:
                 self._managedNodes.append(
-                   Uav(nextUid, None, None, self._speed[nextUid], self._waypointX[nextUid],
-                       self._waypointY[nextUid], self._waypointZ[nextUid],self._linearMobilityFlag,self._splineMobilityFlag))
+                    Uav(nextUid, None, None, self._speed[nextUid], self._waypointX[nextUid],
+                        self._waypointY[nextUid], self._waypointZ[nextUid], self._linearMobilityFlag,
+                        self._splineMobilityFlag))
 
-            #for linearmobility
+            # for linearmobility
             else:
-                self._managedNodes.append(Uav(nextUid, Point(uav['startPosX'], uav['startPosY'], uav['startPosZ']), Point(uav['endPosX'], uav['endPosY'], uav['endPosZ']),self._linearMobilityFlag,self._splineMobilityFlag))
+                self._managedNodes.append(Uav(nextUid, Point(uav['startPosX'], uav['startPosY'], uav['startPosZ']),
+                                              Point(uav['endPosX'], uav['endPosY'], uav['endPosZ']),
+                                              self._linearMobilityFlag, self._splineMobilityFlag))
 
     def processNextStep(self):
         Simulationparameter.incrementCurrentSimStep()
@@ -96,9 +97,9 @@ class Simulation:
     def getManagedNodes(self):
         return self._managedNodes
 
-
     # alternative constructors:
-    @classmethod   # for spline mobility
+
+    @classmethod  # for spline mobility
     def from_config_spmob(cls, config, linearMobilityFlag, splineMobilityFlag, directory):
         speed = []
         waypointX = []
@@ -112,23 +113,22 @@ class Simulation:
             waypointZ.append(uavsp['waypointZ'])
             speed.append(uavsp['speed'])
 
-        stepLength, simTimeLimit, playgroundSizeX, playgroundSizeY, playgroundSizeZ = Simulation.load_common_parameters_from_config(config)
+        stepLength, simTimeLimit, playgroundSizeX, playgroundSizeY, playgroundSizeZ = Simulation.load_common_parameters_from_config(
+            config)
 
-
-        return cls(directory,stepLength, simTimeLimit, playgroundSizeX, playgroundSizeY, playgroundSizeZ,
+        return cls(directory, stepLength, simTimeLimit, playgroundSizeX, playgroundSizeY, playgroundSizeZ,
                    linearMobilityFlag, splineMobilityFlag, uavs, speed, waypointX, waypointY, waypointZ)
 
-    @classmethod     # for linear mobility
+    @classmethod  # for linear mobility
     def from_config_linmob(cls, config, linearMobilityFlag, splineMobilityFlag, directory):
-        # some parameters of spline mobility are passed to the constructor to satisfy __init__ parameters but it is sorted later on
         uavs = config['uav']
-        stepLength, simTimeLimit, playgroundSizeX, playgroundSizeY, playgroundSizeZ = Simulation.load_common_parameters_from_config(config)
-        return cls(directory,stepLength, simTimeLimit, playgroundSizeX, playgroundSizeY, playgroundSizeZ,
+        stepLength, simTimeLimit, playgroundSizeX, playgroundSizeY, playgroundSizeZ = Simulation.load_common_parameters_from_config(
+            config)
+        return cls(directory, stepLength, simTimeLimit, playgroundSizeX, playgroundSizeY, playgroundSizeZ,
                    linearMobilityFlag, splineMobilityFlag, uavs)
 
-    @staticmethod     # load data from config file
+    @staticmethod  # load data from config file
     def load_common_parameters_from_config(config):
-
 
         return config['simulation']['stepLength'], config['simulation']['simTimeLimit'], \
                config['simulation']['playgroundSizeX'], config['simulation']['playgroundSizeY'], \
