@@ -57,6 +57,7 @@ class Linearmobility(Basemobility):
     def computeTotalFlightTime(self):
         distance = math.sqrt((self._endPos.x - self._startPos.x) ** 2 + (self._endPos.y - self._startPos.y) ** 2 + (
                     self._endPos.z - self._startPos.z) ** 2)
-
-        return distance/self.getMove().getSpeed()
+        final_velocity = math.sqrt(self.getMove().getSpeed()**2 + 2*self._acceleration*distance) # v^2=u^2+2as
+        average_velocity= (self.getMove().getSpeed()+final_velocity)/2
+        return distance/average_velocity
 
