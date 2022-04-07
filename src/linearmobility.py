@@ -9,7 +9,7 @@ class Linearmobility(Basemobility):
     def __init__(self, uid, angle, startPos, endPos):
         super().__init__(uid, startPos, endPos)
         self._angle = angle
-        self._acceleration = 0
+        self._acceleration = 5
         self._move.setStart(startPos, 0)
         self._move.setEndPos(endPos)
         self._move.setTempStartPos(startPos)
@@ -41,5 +41,6 @@ class Linearmobility(Basemobility):
                     self._endPos.z - self._startPos.z) ** 2)
         final_velocity = math.sqrt(self.getMove().getSpeed()**2 + 2*self._acceleration*distance) # v^2=u^2+2as
         average_velocity= (self.getMove().getSpeed()+final_velocity)/2
+        assert average_velocity !=0, 'avarage velocity can not be 0'
         return distance/average_velocity
 
