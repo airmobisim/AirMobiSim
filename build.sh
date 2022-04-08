@@ -160,25 +160,7 @@ cd .conan/data
 
 basePath=$(pwd)
 
-
-### TODO: Start Remove ###
-grpc_cpp_plugin=$(find . -type f -name "grpc_cpp_plugin" 2>/dev/null | grep -aE "$GRPC_VERSION.*package")
-grpc_cpp_plugin="${grpc_cpp_plugin:1}"
-grpc_cpp_plugin=$basePath$grpc_cpp_plugin
-
-echo $grpc_cpp_plugin
-
-protoc=$(find . -name "protoc" | grep  "$PROTOC_VERSION.*package")
-protoc="${protoc:1}"
-protoc=$basePath$protoc
-
 cd $AIRMOBISIMVEINS_PATH 
-
-$protoc airmobisim.proto --cpp_out=src/veins_libairmobisim/proto
-
-$protoc airmobisim.proto --grpc_out=src/veins_libairmobisim/proto/ --plugin=protoc-gen-grpc=$grpc_cpp_plugin
-
-### TODO: END Remove ###
 
 
 ./configure
