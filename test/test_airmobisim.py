@@ -230,6 +230,13 @@ class TestAirmobisim(unittest.TestCase):
         self.assertEqual([value  for value in TestAirmobisim.kenetic_model.values()].count(1),1, "Model selection value can contain only one 1 ")
 
 
-
+    def test_waypointTime_generated_splinemobility(self):
+        sp_obj = Splinemobility(0, TestAirmobisim.speed[0], TestAirmobisim.waypointX[0], TestAirmobisim.waypointY[0],
+                                TestAirmobisim.waypointZ[0])
+        print(sp_obj._waypointTime)
+        for item in sp_obj._waypointTime:
+            self.assertEqual([value for value in sp_obj._waypointTime].count(item), 1,
+                         "waypointTime should contain unique timestamp without reperation ")
+        pass
 if __name__ == '__main__':
     unittest.main()
