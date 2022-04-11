@@ -231,12 +231,13 @@ class TestAirmobisim(unittest.TestCase):
 
 
     def test_waypointTime_generated_splinemobility(self):
-        sp_obj = Splinemobility(0, TestAirmobisim.speed[0], TestAirmobisim.waypointX[0], TestAirmobisim.waypointY[0],
-                                TestAirmobisim.waypointZ[0])
-        print(sp_obj._waypointTime)
-        for item in sp_obj._waypointTime:
-            self.assertEqual([value for value in sp_obj._waypointTime].count(item), 1,
-                         "waypointTime should contain unique timestamp without reperation ")
-        pass
+        for uav in range(len(TestAirmobisim.uavsSpline)):   # check for all uavs
+            sp_obj = Splinemobility(uav, TestAirmobisim.speed[uav], TestAirmobisim.waypointX[uav], TestAirmobisim.waypointY[uav],
+                                    TestAirmobisim.waypointZ[uav])
+            print(sp_obj._waypointTime)
+            for item in sp_obj._waypointTime:     # test for each entry in waypointTime list
+                self.assertEqual([value for value in sp_obj._waypointTime].count(item), 1,
+                             "waypointTime should contain unique timestamp without reperation ")       # test uniqueness of waypointTime entry
+
 if __name__ == '__main__':
     unittest.main()
