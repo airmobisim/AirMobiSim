@@ -11,7 +11,7 @@ from proto.DroCIBridge import AirMobiSim
 
 
 class Splinemobility(Basemobility):
-    def __init__(self, uid, speed, waypointX, waypointY, waypointZ):
+    def __init__(self, uid, waypointX, waypointY, waypointZ, speed, polygon_file_path):
         self._startpos=Point(waypointX[0],waypointY[0],waypointZ[0])
         self._endpos=Point(waypointX[-1],waypointY[-1],waypointZ[-1])
         # self._totalFlightTime = waypointTime[-1]
@@ -33,6 +33,8 @@ class Splinemobility(Basemobility):
         self._speed= speed
         self._waypointTime = self.insertWaypointTime()
         self._totalFlightTime = self._waypointTime[-1]
+        self._polygon_file_path = polygon_file_path
+
 
 
     def makeMove(self):

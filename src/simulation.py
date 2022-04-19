@@ -1,3 +1,4 @@
+import pathlib
 
 from shapely.geometry import Point
 
@@ -6,6 +7,7 @@ import sys
 from .uav import Uav
 from .simulationparameter import Simulationparameter
 from .repeatedtimer import Repeatedtimer
+from .uavsp import UavSp
 
 
 class Simulation:
@@ -17,7 +19,7 @@ class Simulation:
 
     def __init__(self, directory, stepLength, simTimeLimit, playgroundSizeX, playgroundSizeY, playgroundSizeZ,
                  linearMobilityFlag, splineMobilityFlag, uavs, speed=None, waypointX=None, waypointY=None,
-                 waypointZ=None):
+                 waypointZ=None, polygon_file_path=None):
 
         print("Initializing...")
         Simulationparameter.stepLength = stepLength
@@ -35,6 +37,7 @@ class Simulation:
         self._waypointZ = waypointZ
         self._linearMobilityFlag = linearMobilityFlag
         self._splineMobilityFlag = splineMobilityFlag
+        self._polygon_file_path= polygon_file_path
 
     def startSimulation(self):
         if self._isRunnig == True or Simulationparameter.currentSimStep != -1:
@@ -69,9 +72,8 @@ class Simulation:
 
             if self._splineMobilityFlag:
                 self._managedNodes.append(
-                    Uav(nextUid, None, None, self._speed[nextUid], self._waypointX[nextUid],
-                        self._waypointY[nextUid], self._waypointZ[nextUid], self._linearMobilityFlag,
-                        self._splineMobilityFlag))
+                    UavSp(nextUid, self._waypointX[nextUid],
+                        self._waypointY[nextUid], self._waypointZ[nextUid], self._speed[nextUid], self._polygon_file_path))
 
             # for linearmobility
             else:
@@ -112,11 +114,16 @@ class Simulation:
             waypointZ.append(uavsp['waypointZ'])
             speed.append(uavsp['speed'])
 
+        polygon_file= config['files']['polygon']
+        polygon_file_path= str(pathlib.Path().resolve())+'/'+polygon_file
+        # print(poly_file_path)
+        # print(pathlib.Path().resolve().parent)
+
         stepLength, simTimeLimit, playgroundSizeX, playgroundSizeY, playgroundSizeZ = Simulation.load_common_parameters_from_config(
             config)
 
         return cls(directory, stepLength, simTimeLimit, playgroundSizeX, playgroundSizeY, playgroundSizeZ,
-                   linearMobilityFlag, splineMobilityFlag, uavs, speed, waypointX, waypointY, waypointZ)
+                   linearMobilityFlag, splineMobilityFlag, uavs, speed, waypointX, waypointY, waypointZ, polygon_file_path)
 
     @classmethod  # for linear mobility
     def from_config_linmob(cls, config, linearMobilityFlag, splineMobilityFlag, directory):

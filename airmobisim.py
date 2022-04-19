@@ -41,31 +41,10 @@ def main():
     # flags to refer kinetic model selection
     linearMobilityFlag = config['kinetic_model']['linearMobility']
     splineMobilityFlag = config['kinetic_model']['splineMobility']
+    # polygon_file= config['files']['polygon']
+    # poly_file_path= str(pathlib.Path().resolve())+'/'+polygon_file
+    # print(pathlib.Path().resolve().parent)
 
-    '''
-    ####################################
-    
-    the code within this ###s are only for the input of spline mobility it is a redundant code which should be removed during final merge.
-    
-
-    speed = []
-    waypointX = []
-    waypointY = []
-    waypointZ = []
-
-
-    if splineMobilityFlag:
-        # uavStartPos.clear(), uavEndPos.clear(), totalFlightTime.clear(), waypointTime.clear(), waypointX.clear(), waypointY.clear(), waypointZ.clear()
-
-        for uavsp in config['uavsp']:
-            waypointX.append(uavsp['waypointX'])
-            waypointY.append(uavsp['waypointY'])
-            waypointZ.append(uavsp['waypointZ'])
-            speed.append(uavsp['speed'])
-
-
-    #####################################
-    '''
     directory = pathlib.Path(args.configuration).parent.resolve()
     initializeSimulation(config, directory, linearMobilityFlag,splineMobilityFlag)
 
