@@ -166,8 +166,8 @@ class Splinemobility(Basemobility):
 
 
     def ParsePolygonFileToBuildings(self):
-        file= minidom.parse(self._polygon_file_path)
-        polygons = file.getElementsByTagName('poly')
+        parsedFile= minidom.parse(self._polygon_file_path)
+        polygons = parsedFile.getElementsByTagName('poly')
         building=[]
         for polygon in polygons:
             shape_of_polygon = polygon.attributes['shape'].value
