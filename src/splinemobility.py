@@ -1,13 +1,16 @@
 import math
-import numpy as np
+
 import geopandas
 import numpy as np
 from shapely.geometry import Point
 from .basemobility import Basemobility
 from scipy.interpolate import CubicSpline
+from xml.dom import minidom
+import matplotlib.path as mplPath
 
 from .simulationparameter import Simulationparameter
 from proto.DroCIBridge import AirMobiSim
+
 
 
 class Splinemobility(Basemobility):
@@ -34,6 +37,7 @@ class Splinemobility(Basemobility):
         self._waypointTime = self.insertWaypointTime()
         self._totalFlightTime = self._waypointTime[-1]
         self._polygon_file_path = polygon_file_path
+        self.ParsePolygonFileToBuildings()
 
 
 
@@ -159,6 +163,44 @@ class Splinemobility(Basemobility):
 
 
         return distance_of_segments
+
+
+    def ParsePolygonFileToBuildings(self):
+        file= minidom.parse(self._polygon_file_path)
+        polygons = file.getElementsByTagName('poly')
+        building=[]
+        for polygon in polygons:
+            shape_of_polygon = polygon.attributes['shape'].value
+            vertex_corordinates= shape_of_polygon.split(' ')       #coordinates are of string type
+            # print("hello")
+            # print(vertex_corordinates)
+            list_of_coordinates=[]
+            for single_vertex in vertex_corordinates:
+                list_of_coordinates.append([float(single_vertex.split(',')[0]),float(single_vertex.split(',')[1])]) # x and y coordinates are seperated and converted to float
+
+            # print(list_of_coordinates)
+            building.append(mplPath.Path(np.array(list_of_coordinates)))     # forming shape of polyson by joining the polygon coordinates and appended to building list
+
+        point = (9.5, -10)
+        print(point, " is in polygon: ", building[0].contains_point(point))
+        '''
+        # ex= polys[0].attributes['shape'].value.split(' ')
+        # print([float(ex[0].split(',')[0]),float(ex[0].split(',')[1])])
+        # vertex_coordinate= [float(ex[0].split(',')[0]),float(ex[0].split(',')[1])]
+        # print(type(vertex_coordinate[0]))
+        # test_list= [[0, 0], [1, 0], [1, 1], [0, 1], [0, 0]]
+        # poly_path = mplPath.Path(np.array(test_list))
+        # print(poly_path)
+        # point = (9.5, -10)
+        # print(point, " is in polygon: ", poly_path.contains_point(point))
+        '''
+
+
+
+
+
+
+
 
 
 
