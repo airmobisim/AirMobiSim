@@ -2,6 +2,7 @@ import math
 
 import geopandas
 import numpy as np
+import warnings
 from shapely.geometry import Point
 from .basemobility import Basemobility
 from scipy.interpolate import CubicSpline
@@ -37,7 +38,7 @@ class Splinemobility(Basemobility):
         self._waypointTime = self.insertWaypointTime()
         self._totalFlightTime = self._waypointTime[-1]
         self._polygon_file_path = polygon_file_path
-        self.ParsePolygonFileToBuildings()
+        # self.ParsePolygonFileToBuildings()
 
 
 
@@ -183,6 +184,10 @@ class Splinemobility(Basemobility):
 
         point = (9.5, -10)
         print(point, " is in polygon: ", building[0].contains_point(point))
+        # warnings.filterwarnings('error')
+        # print(self.getMove().getPassedTime())
+        warnings.warn('prompt warning')
+        print(len(building))
         '''
         # ex= polys[0].attributes['shape'].value.split(' ')
         # print([float(ex[0].split(',')[0]),float(ex[0].split(',')[1])])
