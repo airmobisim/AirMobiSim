@@ -78,8 +78,7 @@ class Simulation:
             # for linearmobility
             else:
                 self._managedNodes.append(Uav(nextUid, Point(uav['startPosX'], uav['startPosY'], uav['startPosZ']),
-                                              Point(uav['endPosX'], uav['endPosY'], uav['endPosZ']),
-                                              self._linearMobilityFlag, self._splineMobilityFlag))
+                                              Point(uav['endPosX'], uav['endPosY'], uav['endPosZ'])))
 
     def processNextStep(self):
         Simulationparameter.incrementCurrentSimStep()
