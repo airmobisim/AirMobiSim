@@ -137,7 +137,7 @@ class Splinemobility(Basemobility):
 
 
     @staticmethod         # this functions returns area of segments for each waypoint segments
-    def computeSplineDistance(waypointX=[0,6,12],waypointY=[0,6,12],waypointZ=[3,3,3]):
+    def computeSplineDistance(waypointX,waypointY,waypointZ):
         waypointCount=len(waypointX)
         waypointIndex=np.linspace(0,waypointCount-1,num=waypointCount)
 
