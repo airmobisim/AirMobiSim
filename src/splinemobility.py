@@ -1,17 +1,21 @@
 import math
-import numpy as np
+
 import geopandas
 import numpy as np
+import warnings
 from shapely.geometry import Point
 from .basemobility import Basemobility
 from scipy.interpolate import CubicSpline
+from xml.dom import minidom
+import matplotlib.path as mplPath
 
 from .simulationparameter import Simulationparameter
 from proto.DroCIBridge import AirMobiSim
 
 
+
 class Splinemobility(Basemobility):
-    def __init__(self, uid, speed, waypointX, waypointY, waypointZ):
+    def __init__(self, uid, waypointX, waypointY, waypointZ, speed, polygon_file_path):
         self._startpos=Point(waypointX[0],waypointY[0],waypointZ[0])
         self._endpos=Point(waypointX[-1],waypointY[-1],waypointZ[-1])
         # self._totalFlightTime = waypointTime[-1]
@@ -23,7 +27,7 @@ class Splinemobility(Basemobility):
 
         self._uid = uid
         self._move.setStart(self._startpos, 0)
-        self._move.setLastPos(self._endpos)
+        self._move.setEndPos(self._endpos)
         self._move.setTempStartPos(self._startpos) # holds each intermediate points of linear in each iteration
 
         # since spline so fixing it to true, this flag is used to separate some code from other mobility
@@ -33,6 +37,9 @@ class Splinemobility(Basemobility):
         self._speed= speed
         self._waypointTime = self.insertWaypointTime()
         self._totalFlightTime = self._waypointTime[-1]
+        self._polygon_file_path = polygon_file_path
+        # self.ParsePolygonFileToBuildings()
+
 
 
     def makeMove(self):
@@ -130,7 +137,7 @@ class Splinemobility(Basemobility):
 
 
     @staticmethod         # this functions returns area of segments for each waypoint segments
-    def computeSplineDistance(waypointX=[0,6,12],waypointY=[0,6,12],waypointZ=[3,3,3]):
+    def computeSplineDistance(waypointX,waypointY,waypointZ):
         waypointCount=len(waypointX)
         waypointIndex=np.linspace(0,waypointCount-1,num=waypointCount)
 
@@ -157,6 +164,48 @@ class Splinemobility(Basemobility):
 
 
         return distance_of_segments
+
+
+    def ParsePolygonFileToBuildings(self):
+        parsedFile= minidom.parse(self._polygon_file_path)
+        polygons = parsedFile.getElementsByTagName('poly')
+        building=[]
+        for polygon in polygons:
+            shape_of_polygon = polygon.attributes['shape'].value
+            vertex_corordinates= shape_of_polygon.split(' ')       #coordinates are of string type
+            # print("hello")
+            # print(vertex_corordinates)
+            list_of_coordinates=[]
+            for single_vertex in vertex_corordinates:
+                list_of_coordinates.append([float(single_vertex.split(',')[0]),float(single_vertex.split(',')[1])]) # x and y coordinates are seperated and converted to float
+
+            # print(list_of_coordinates)
+            building.append(mplPath.Path(np.array(list_of_coordinates)))     # forming shape of polyson by joining the polygon coordinates and appended to building list
+
+        point = (9.5, -10)
+        print(point, " is in polygon: ", building[0].contains_point(point))
+        # warnings.filterwarnings('error')
+        # print(self.getMove().getPassedTime())
+        warnings.warn('prompt warning')
+        print(len(building))
+        '''
+        # ex= polys[0].attributes['shape'].value.split(' ')
+        # print([float(ex[0].split(',')[0]),float(ex[0].split(',')[1])])
+        # vertex_coordinate= [float(ex[0].split(',')[0]),float(ex[0].split(',')[1])]
+        # print(type(vertex_coordinate[0]))
+        # test_list= [[0, 0], [1, 0], [1, 1], [0, 1], [0, 0]]
+        # poly_path = mplPath.Path(np.array(test_list))
+        # print(poly_path)
+        # point = (9.5, -10)
+        # print(point, " is in polygon: ", poly_path.contains_point(point))
+        '''
+
+
+
+
+
+
+
 
 
 

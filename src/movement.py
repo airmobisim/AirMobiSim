@@ -7,7 +7,7 @@ class Movement:
 
     def __init__(self):
         self._startPos = Point(0, 0, 0)
-        self._lastPos = Point(0, 0, 0)
+        self._endPos = Point(0, 0, 0)
         self._startTime = 0
         self._orientationX = 0
         self._orientationY = 0
@@ -15,7 +15,7 @@ class Movement:
         self._currentDirection = Point(0, 0, 0)
         self._speed = 0
         self._passedTime = 0
-
+        self._tempStartPos=Point(0,0,0)
         self._nextCoordinate = Point(0, 0, 0)
         self._startPosCircle = Point(0, 0, 0)
         self._finalFlag = False
@@ -53,11 +53,11 @@ class Movement:
     def setStartPos(self, startPos):
         self._startPos = startPos
 
-    def getLastPos(self):
-        return self._lastPos
+    def getEndPos(self):
+        return self._endPos
 
-    def setLastPos(self, lastPos):
-        self._lastPos = lastPos
+    def setEndPos(self, lastPos):
+        self._endPos = lastPos
 
     def getTempStartPos(self):
         return self._tempStartPos
@@ -89,7 +89,7 @@ class Movement:
     def setCurrentDirection(self,currentDirection):
         self._currentDirection = currentDirection
     
-    def setDirectionByTarget(self, target):
+    def setDirectionByTarget(self):
         '''
         print("Target.x: " + str(target.x))
         print("Target.y: " + str(target.y))
@@ -98,8 +98,10 @@ class Movement:
         print("Start.y: " + str(self._startPos.y))
         print("Start.z: " + str(self._startPos.z))
         '''
-        direction = Point(target.x - self._startPos.x, target.y - self._startPos.y, target.z - self._startPos.z)
-        distance = math.sqrt((target.x - self._startPos.x)**2 + (target.y - self._startPos.y)**2 + (target.z - self._startPos.z)**2)
+        # print('inside setdirection:' + str(self.getStartPos()))
+        # print('inside setdirection:' + str(self.getEndPos()))
+        direction = Point(self._endPos.x - self._startPos.x, self._endPos.y - self._startPos.y, self._endPos.z - self._startPos.z)
+        distance = math.sqrt((self._endPos.x - self._startPos.x)**2 + (self._endPos.y - self._startPos.y)**2 + (self._endPos.z - self._startPos.z)**2)
         
         # Need to convert it into numpy arrays
         direction = np.array([direction.x, direction.y, direction.z])

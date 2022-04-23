@@ -11,7 +11,7 @@ from src.simpleapp import Simpleapp
 from src.yamlparser import Yamlparser
 
 from src.resultcollection import Resultcollection
-from src.plotting import load_Data, make_plot
+from src.plotting import  make_plot
 from pathlib import Path
 
 from proto.DroCIBridge import startServer
@@ -21,10 +21,6 @@ simulation: Simulation
 
 def main():
     global simulation
-
-    # these flags decide which mobility model will be selected for milulation linearmobility of spline mobility
-    linearMobilityFlag = True
-    splineMobilityFlag = False
 
     parser = argparse.ArgumentParser(description='Importing configuration-file')
     parser.add_argument('--plot', type=int, required=False, default=1, help='plot vs no plot')
@@ -42,29 +38,15 @@ def main():
     p = Yamlparser(args.configuration)
     config = p.readConfig()
 
-
-    ####################################
-    '''
-    the code within this ###s are only for the input of spline mobility it is a redundant code which should be removed during final merge.
-    '''
-
-    speed = []
-    waypointX = []
-    waypointY = []
-    waypointZ = []
-
-
-    if splineMobilityFlag:
-        # uavStartPos.clear(), uavEndPos.clear(), totalFlightTime.clear(), waypointTime.clear(), waypointX.clear(), waypointY.clear(), waypointZ.clear()
-
-        for uavsp in config['uavsp']:
-            waypointX.append(uavsp['waypointX'])
-            waypointY.append(uavsp['waypointY'])
-            waypointZ.append(uavsp['waypointZ'])
-            speed.append(uavsp['speed'])
+    # flags to refer kinetic model selection
+    linearMobilityFlag = config['kinetic_model']['linearMobility']
+    splineMobilityFlag = config['kinetic_model']['splineMobility']
+    # polygon_file= config['files']['polygon']
+    # poly_file_path= str(pathlib.Path().resolve())+'/'+polygon_file
+    # print(pathlib.Path().resolve().parent)
 
     directory = pathlib.Path(args.configuration).parent.resolve()
-    initializeSimulation(config, directory, speed, waypointX, waypointY, waypointZ,linearMobilityFlag,splineMobilityFlag)
+    initializeSimulation(config, directory, linearMobilityFlag,splineMobilityFlag)
 
     # Start the DroCI Bridge - Listen to OmNet++ incomes
     if args.show:
@@ -80,40 +62,49 @@ def main():
         if args.plot:
             make_plot()
 
-def initializeSimulation(config, directory, speed, waypointX, waypointY, waypointZ,linearMobilityFlag,splineMobilityFlag):
+def initializeSimulation(config, directory, linearMobilityFlag,splineMobilityFlag):
     global simulation
     if splineMobilityFlag:
         print("Launch spline mobility")
-        simulation = Simulation(config['simulation']['stepLength'],
-                                config['simulation']['simTimeLimit'],
-                                config['simulation']['playgroundSizeX'],
-                                config['simulation']['playgroundSizeY'],
-                                config['simulation']['playgroundSizeZ'],
-                                config['uavsp'],
-                                speed,
-                                waypointX,
-                                waypointY,
-                                waypointZ,
-                                linearMobilityFlag,
-                                splineMobilityFlag,
-                                directory,
-                                )
+        simulation = Simulation.from_config_spmob(config, linearMobilityFlag, splineMobilityFlag, directory)
+        '''
+        # simulation = Simulation(config['simulation']['stepLength'],
+        #                         config['simulation']['simTimeLimit'],
+        #                         config['simulation']['playgroundSizeX'],
+        #                         config['simulation']['playgroundSizeY'],
+        #                         config['simulation']['playgroundSizeZ'],
+        #                         config['uavsp'],
+        #                         speed,
+        #                         waypointX,
+        #                         waypointY,
+        #                         waypointZ,
+        #                         linearMobilityFlag,
+        #                         splineMobilityFlag,
+        #                         directory,
+        #                         )
+        '''
+
     else:
         print("Launch linear mobility")
-        simulation = Simulation(config['simulation']['stepLength'],
-                                config['simulation']['simTimeLimit'],
-                                config['simulation']['playgroundSizeX'],
-                                config['simulation']['playgroundSizeY'],
-                                config['simulation']['playgroundSizeZ'],
-                                config['uav'],
-                                speed,
-                                waypointX,
-                                waypointY,
-                                waypointZ,
-                                linearMobilityFlag,
-                                splineMobilityFlag,
-                                directory,
-                                )
+        simulation = Simulation.from_config_linmob(config, linearMobilityFlag, splineMobilityFlag, directory)
+        '''
+        # simulation = Simulation(config['simulation']['stepLength'],
+        #                         config['simulation']['simTimeLimit'],
+        #                         config['simulation']['playgroundSizeX'],
+        #                         config['simulation']['playgroundSizeY'],
+        #                         config['simulation']['playgroundSizeZ'],
+        #                         config['uav'],
+        #                         speed,
+        #                         waypointX,
+        #                         waypointY,
+        #                         waypointZ,
+        #                         linearMobilityFlag,
+        #                         splineMobilityFlag,
+        #                         directory,
+        #                         )
+        '''
+
+
 
 if __name__ == "__main__":
     main()
