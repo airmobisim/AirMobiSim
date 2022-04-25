@@ -38,7 +38,8 @@ class Splinemobility(Basemobility):
         self._waypointTime = self.insertWaypointTime()
         self._totalFlightTime = self._waypointTime[-1]
         self._polygon_file_path = polygon_file_path
-        # self.ParsePolygonFileToBuildings()
+
+        self._obstracles= self.ParsePolygonFileToObstracles()
 
 
 
@@ -166,10 +167,10 @@ class Splinemobility(Basemobility):
         return distance_of_segments
 
 
-    def ParsePolygonFileToBuildings(self):
+    def ParsePolygonFileToObstracles(self):
         parsedFile= minidom.parse(self._polygon_file_path)
         polygons = parsedFile.getElementsByTagName('poly')
-        building=[]
+        buildings=[]
         for polygon in polygons:
             shape_of_polygon = polygon.attributes['shape'].value
             vertex_corordinates= shape_of_polygon.split(' ')       #coordinates are of string type
@@ -180,14 +181,17 @@ class Splinemobility(Basemobility):
                 list_of_coordinates.append([float(single_vertex.split(',')[0]),float(single_vertex.split(',')[1])]) # x and y coordinates are seperated and converted to float
 
             # print(list_of_coordinates)
-            building.append(mplPath.Path(np.array(list_of_coordinates)))     # forming shape of polyson by joining the polygon coordinates and appended to building list
+            buildings.append(mplPath.Path(np.array(list_of_coordinates)))     # forming shape of polyson by joining the polygon coordinates and appended to building list
 
-        point = (9.5, -10)
-        print(point, " is in polygon: ", building[0].contains_point(point))
+        return buildings
+
+
+        # point = (8.9, 8)
+        # print(point, " is in polygon: ", building[0].contains_point(point))
         # warnings.filterwarnings('error')
         # print(self.getMove().getPassedTime())
-        warnings.warn('prompt warning')
-        print(len(building))
+        # warnings.warn('prompt warning')
+        # print(len(building))
         '''
         # ex= polys[0].attributes['shape'].value.split(' ')
         # print([float(ex[0].split(',')[0]),float(ex[0].split(',')[1])])
