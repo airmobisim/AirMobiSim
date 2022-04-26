@@ -39,7 +39,7 @@ class Splinemobility(Basemobility):
         self._totalFlightTime = self._waypointTime[-1]
         self._polygon_file_path = polygon_file_path
         self._obstrackelDetector_flag = False
-        self._collisionAction=1  # 1= warn, 2 = no action 3=remove uav
+        self._collisionAction = 1  # 1= warn, 2 = no action 3=remove uav
         self._obstracles= self.ParsePolygonFileToObstracles()
 
 
@@ -82,6 +82,7 @@ class Splinemobility(Basemobility):
 
         move.setPassedTime(passedTime)
         super().makeMove()
+        return True if self._obstrackelDetector_flag and self._collisionAction==3 else False
 
     def updateWaypointsByIndex(self):
 

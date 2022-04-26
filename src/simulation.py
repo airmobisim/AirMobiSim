@@ -82,9 +82,15 @@ class Simulation:
 
     def processNextStep(self):
         Simulationparameter.incrementCurrentSimStep()
+        if self._splineMobilityFlag:
+            for node in self._managedNodes:
+                removeNode = node._mobility.makeMove()
+                if removeNode:
+                    self._managedNodes.remove(node)
 
-        for node in self._managedNodes:
-            node._mobility.makeMove()
+        else:
+            for node in self._managedNodes:
+                node._mobility.makeMove()
 
     def finishSimulation(self):
         print(
