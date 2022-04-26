@@ -38,7 +38,8 @@ class Splinemobility(Basemobility):
         self._waypointTime = self.insertWaypointTime()
         self._totalFlightTime = self._waypointTime[-1]
         self._polygon_file_path = polygon_file_path
-
+        self._obstrackelDetector_flag = False
+        self._collisionAction=1  # 1= warn, 2 = no action 3=remove uav
         self._obstracles= self.ParsePolygonFileToObstracles()
 
 
@@ -67,6 +68,8 @@ class Splinemobility(Basemobility):
 
                 nextCoordinate= Point(spl_x(passedTime), spl_y(passedTime), spl_z(passedTime))
                 move.setNextCoordinate(nextCoordinate)
+                if self._collisionAction != 2:
+                    self.manageObstracles(spl_x,spl_y,spl_z, passedTime)
 
 
 
@@ -205,6 +208,20 @@ class Splinemobility(Basemobility):
         '''
 
 
+    def manageObstracles(self, spl_x, spl_y, spl_z, passedTime):
+        futureTime= passedTime + Simulationparameter.stepLength
+        futureCoordinate = (spl_x(futureTime), spl_y(futureTime))
+        # self._obstrackelDetector_flag= self._obstracles[0].contains_point(futureCoordinate)
+        # warnings.filterwarnings('once')
+        detectObstrackel = self._obstracles[0].contains_point(futureCoordinate)
+        if not self._obstrackelDetector_flag and detectObstrackel and self._collisionAction==1:
+            # warnings.warn('uav is going to collide in collide')
+            print('uav is going to collide to collide')
+            print(passedTime)
+
+        self._obstrackelDetector_flag= True if detectObstrackel== True else self._obstrackelDetector_flag
+
+        pass
 
 
 
