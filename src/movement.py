@@ -8,6 +8,7 @@ class Movement:
     def __init__(self):
         self._startPos = Point(0, 0, 0)
         self._endPos = Point(0, 0, 0)
+        self._lastPos =  Point(0, 0, 0)
         self._startTime = 0
         self._orientationX = 0
         self._orientationY = 0
@@ -98,19 +99,16 @@ class Movement:
         print("Start.y: " + str(self._startPos.y))
         print("Start.z: " + str(self._startPos.z))
         '''
-        # print('inside setdirection:' + str(self.getStartPos()))
-        # print('inside setdirection:' + str(self.getEndPos()))
+
         direction = Point(self._endPos.x - self._startPos.x, self._endPos.y - self._startPos.y, self._endPos.z - self._startPos.z)
         distance = math.sqrt((self._endPos.x - self._startPos.x)**2 + (self._endPos.y - self._startPos.y)**2 + (self._endPos.z - self._startPos.z)**2)
-        
-        # Need to convert it into numpy arrays
+ 
         direction = np.array([direction.x, direction.y, direction.z])
         distance = np.array([distance, distance, distance]) 
-    
+
         array = np.divide(direction, distance)
-        newDirection = Point(array[0], array[1], array[2])
+        newDirection = Point(round(array[0],2), round(array[1],2), round(array[2],2))
         #print("old direction: " + str(direction) + " new direction " + str(newDirection))
         self.setCurrentDirection(newDirection)
-    
 
 

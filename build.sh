@@ -151,17 +151,18 @@ else
 	#poetry run bash -c "conan profile update settings.compiler.libcxx=libstdc++ default"
 fi
 
+
 echo "Starting installation of conan dependencies"
 
 poetry run bash -c "cd $AIRMOBISIMVEINS_PATH && conan install . --build missing --profile=default"
+
 
 cd
 cd .conan/data
 
 basePath=$(pwd)
 
-cd $AIRMOBISIMVEINS_PATH 
-
+cd $AIRMOBISIMVEINS_PATH
 
 ./configure
 if [[  "$OSTYPE" == "darwin"* ]]; then

@@ -1,10 +1,13 @@
 #!/usr/bin/env python3
+
 import sys
 import argparse
 import pathlib
 import os
 
+
 from shapely.geometry import Point
+
 from src.simulation import Simulation
 from src.simpleapp import Simpleapp
 
@@ -16,8 +19,9 @@ from pathlib import Path
 
 from proto.DroCIBridge import startServer
 
-simulation: Simulation
+import time
 
+simulation: Simulation
 
 def main():
     global simulation
@@ -25,17 +29,15 @@ def main():
     parser = argparse.ArgumentParser(description='Importing configuration-file')
     parser.add_argument('--plot', type=int, required=False, default=1, help='plot vs no plot')
     parser.add_argument('--configuration', action='store', type=str,
-                        default=Path("examples/simpleSimulation/simulation.config").resolve(), help='configuration')
+                        default="examples/simpleSimulation/simulation.config", help='configuration')
     parser.add_argument('--omnetpp', action='store_true', help='Start the OmNet++ simulator')
-
     parser.add_argument('--show', action='store_true', help='Show the Energy as Plot')
 
-
-    print("""AirMobiSim Simulation  (C) 2021 Chair of Networked Systems Modelling TU Dresden.\nVersion: 0.0.1\nSee the license for distribution terms and warranty disclaimer""")
-
+    print("""AirMobiSim Simulation  (C) 2021 Chair of Networked Systems Modelling TU Dresden.\nVersion: 0.0.1\nSee the license for distribution terms and warranty disclaimer""", flush=True)
     args = parser.parse_args()
+    homePath = os.environ['AIRMOBISIMHOME']
 
-    p = Yamlparser(args.configuration)
+    p = Yamlparser(homePath + "/" + args.configuration)
     config = p.readConfig()
 
     # flags to refer kinetic model selection
@@ -54,13 +56,14 @@ def main():
         result.showEnergy()
     else:
         if args.omnetpp:
-            print("Start the AirMobiSim Server.....")
+            print("Start the AirMobiSim Server.....", flush=True)
             startServer(simulation)
         else:
             simulation.startSimulation()
             print('FINISH')
         if args.plot:
             make_plot()
+
 
 def initializeSimulation(config, directory, linearMobilityFlag,splineMobilityFlag):
     global simulation
@@ -86,14 +89,17 @@ def initializeSimulation(config, directory, linearMobilityFlag,splineMobilityFla
 
     else:
         print("Launch linear mobility")
-        simulation = Simulation.from_config_linmob(config, linearMobilityFlag, splineMobilityFlag, directory)
-        '''
-        # simulation = Simulation(config['simulation']['stepLength'],
-        #                         config['simulation']['simTimeLimit'],
-        #                         config['simulation']['playgroundSizeX'],
-        #                         config['simulation']['playgroundSizeY'],
-        #                         config['simulation']['playgroundSizeZ'],
-        #                         config['uav'],
+        #simulation = Simulation.from_config_linmob(config, linearMobilityFlag, splineMobilityFlag, directory)
+        
+        simulation = Simulation( directory,
+                                 config['simulation']['stepLength'],
+                                 config['simulation']['simTimeLimit'],
+                                 config['simulation']['playgroundSizeX'],
+                                 config['simulation']['playgroundSizeY'],
+                                 config['simulation']['playgroundSizeZ'],
+                                 linearMobilityFlag,
+                                 splineMobilityFlag,
+                                 config['uav'])
         #                         speed,
         #                         waypointX,
         #                         waypointY,
@@ -102,9 +108,9 @@ def initializeSimulation(config, directory, linearMobilityFlag,splineMobilityFla
         #                         splineMobilityFlag,
         #                         directory,
         #                         )
-        '''
+        
 
 
 
-if __name__ == "__main__":
+if __name__ == "__main__":    
     main()

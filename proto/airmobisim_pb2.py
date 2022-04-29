@@ -20,7 +20,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto3',
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\x16proto/airmobisim.proto\x12\nairmobisim\x1a\x1bgoogle/protobuf/empty.proto\"7\n\x0cWaypointList\x12\'\n\twaypoints\x18\x01 \x03(\x0b\x32\x14.airmobisim.Waypoint\":\n\x08Waypoint\x12\r\n\x05index\x18\x01 \x01(\x05\x12\t\n\x01x\x18\x02 \x01(\x01\x12\t\n\x01y\x18\x03 \x01(\x01\x12\t\n\x01z\x18\x04 \x01(\x01\"(\n\x07UavList\x12\x1d\n\x04uavs\x18\x01 \x03(\x0b\x32\x0f.airmobisim.Uav\"A\n\x03Uav\x12\n\n\x02id\x18\x01 \x01(\x05\x12\t\n\x01x\x18\x02 \x01(\x01\x12\t\n\x01y\x18\x03 \x01(\x01\x12\t\n\x01z\x18\x04 \x01(\x01\x12\r\n\x05speed\x18\x05 \x01(\x01\"F\n\x08Response\x12\n\n\x02id\x18\x01 \x01(\x05\x12\t\n\x01x\x18\x02 \x01(\x01\x12\t\n\x01y\x18\x03 \x01(\x01\x12\t\n\x01z\x18\x04 \x01(\x01\x12\r\n\x05speed\x18\x05 \x01(\x01\"8\n\rResponseQuery\x12\'\n\tresponses\x18\x01 \x03(\x0b\x32\x14.airmobisim.Response\"b\n\x08StartUav\x12\n\n\x02id\x18\x01 \x01(\x05\x12,\n\x0b\x63oordinates\x18\x02 \x03(\x0b\x32\x17.airmobisim.Coordinates\x12\r\n\x05speed\x18\x03 \x01(\x01\x12\r\n\x05\x61ngle\x18\x04 \x01(\x01\".\n\x0b\x43oordinates\x12\t\n\x01x\x18\x01 \x01(\x01\x12\t\n\x01y\x18\x02 \x01(\x01\x12\t\n\x01z\x18\x03 \x01(\x01\"\x15\n\x06Number\x12\x0b\n\x03num\x18\x01 \x01(\x05\x32\x84\x04\n\nAirMobiSim\x12\x37\n\x05Start\x12\x16.google.protobuf.Empty\x1a\x16.google.protobuf.Empty\x12G\n\x12\x45xecuteOneTimeStep\x12\x16.google.protobuf.Empty\x1a\x19.airmobisim.ResponseQuery\x12\x38\n\x06\x46inish\x12\x16.google.protobuf.Empty\x1a\x16.google.protobuf.Empty\x12>\n\x0fGetManagedHosts\x12\x16.google.protobuf.Empty\x1a\x13.airmobisim.UavList\x12\x43\n\x0fInsertWaypoints\x12\x18.airmobisim.WaypointList\x1a\x16.google.protobuf.Empty\x12\x39\n\tInsertUAV\x12\x14.airmobisim.StartUav\x1a\x16.google.protobuf.Empty\x12\x37\n\tDeleteUAV\x12\x12.airmobisim.Number\x1a\x16.google.protobuf.Empty\x12\x41\n\x13getNumberCurrentUAV\x12\x16.google.protobuf.Empty\x1a\x12.airmobisim.Numberb\x06proto3'
+  serialized_pb=b'\n\x16proto/airmobisim.proto\x12\nairmobisim\x1a\x1bgoogle/protobuf/empty.proto\"6\n\x0cWaypointList\x12&\n\x08waypoint\x18\x01 \x03(\x0b\x32\x14.airmobisim.Waypoint\":\n\x08Waypoint\x12\r\n\x05index\x18\x01 \x01(\x05\x12\t\n\x01x\x18\x02 \x01(\x01\x12\t\n\x01y\x18\x03 \x01(\x01\x12\t\n\x01z\x18\x04 \x01(\x01\"(\n\x07UavList\x12\x1d\n\x04uavs\x18\x01 \x03(\x0b\x32\x0f.airmobisim.Uav\"A\n\x03Uav\x12\n\n\x02id\x18\x01 \x01(\x05\x12\t\n\x01x\x18\x02 \x01(\x01\x12\t\n\x01y\x18\x03 \x01(\x01\x12\t\n\x01z\x18\x04 \x01(\x01\x12\r\n\x05speed\x18\x05 \x01(\x01\"U\n\x08Response\x12\n\n\x02id\x18\x01 \x01(\x05\x12\t\n\x01x\x18\x02 \x01(\x01\x12\t\n\x01y\x18\x03 \x01(\x01\x12\t\n\x01z\x18\x04 \x01(\x01\x12\r\n\x05speed\x18\x05 \x01(\x01\x12\r\n\x05\x61ngle\x18\x06 \x01(\x01\"8\n\rResponseQuery\x12\'\n\tresponses\x18\x01 \x03(\x0b\x32\x14.airmobisim.Response\"b\n\x08StartUav\x12\n\n\x02id\x18\x01 \x01(\x05\x12,\n\x0b\x63oordinates\x18\x02 \x03(\x0b\x32\x17.airmobisim.Coordinates\x12\r\n\x05speed\x18\x03 \x01(\x01\x12\r\n\x05\x61ngle\x18\x04 \x01(\x01\".\n\x0b\x43oordinates\x12\t\n\x01x\x18\x01 \x01(\x01\x12\t\n\x01y\x18\x02 \x01(\x01\x12\t\n\x01z\x18\x03 \x01(\x01\"\x15\n\x06Number\x12\x0b\n\x03num\x18\x01 \x01(\x05\x32\x84\x04\n\nAirMobiSim\x12\x37\n\x05Start\x12\x16.google.protobuf.Empty\x1a\x16.google.protobuf.Empty\x12G\n\x12\x45xecuteOneTimeStep\x12\x16.google.protobuf.Empty\x1a\x19.airmobisim.ResponseQuery\x12\x38\n\x06\x46inish\x12\x16.google.protobuf.Empty\x1a\x16.google.protobuf.Empty\x12>\n\x0fGetManagedHosts\x12\x16.google.protobuf.Empty\x1a\x13.airmobisim.UavList\x12\x43\n\x0fInsertWaypoints\x12\x18.airmobisim.WaypointList\x1a\x16.google.protobuf.Empty\x12\x39\n\tInsertUAV\x12\x14.airmobisim.StartUav\x1a\x16.google.protobuf.Empty\x12\x37\n\tDeleteUAV\x12\x12.airmobisim.Number\x1a\x16.google.protobuf.Empty\x12\x41\n\x13getNumberCurrentUAV\x12\x16.google.protobuf.Empty\x1a\x12.airmobisim.Numberb\x06proto3'
   ,
   dependencies=[google_dot_protobuf_dot_empty__pb2.DESCRIPTOR,])
 
@@ -36,7 +36,7 @@ _WAYPOINTLIST = _descriptor.Descriptor(
   create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
-      name='waypoints', full_name='airmobisim.WaypointList.waypoints', index=0,
+      name='waypoint', full_name='airmobisim.WaypointList.waypoint', index=0,
       number=1, type=11, cpp_type=10, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
@@ -55,7 +55,7 @@ _WAYPOINTLIST = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=67,
-  serialized_end=122,
+  serialized_end=121,
 )
 
 
@@ -107,8 +107,8 @@ _WAYPOINT = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=124,
-  serialized_end=182,
+  serialized_start=123,
+  serialized_end=181,
 )
 
 
@@ -139,8 +139,8 @@ _UAVLIST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=184,
-  serialized_end=224,
+  serialized_start=183,
+  serialized_end=223,
 )
 
 
@@ -199,8 +199,8 @@ _UAV = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=226,
-  serialized_end=291,
+  serialized_start=225,
+  serialized_end=290,
 )
 
 
@@ -247,6 +247,13 @@ _RESPONSE = _descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='angle', full_name='airmobisim.Response.angle', index=5,
+      number=6, type=1, cpp_type=5, label=1,
+      has_default_value=False, default_value=float(0),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -259,8 +266,8 @@ _RESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=293,
-  serialized_end=363,
+  serialized_start=292,
+  serialized_end=377,
 )
 
 
@@ -291,8 +298,8 @@ _RESPONSEQUERY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=365,
-  serialized_end=421,
+  serialized_start=379,
+  serialized_end=435,
 )
 
 
@@ -344,8 +351,8 @@ _STARTUAV = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=423,
-  serialized_end=521,
+  serialized_start=437,
+  serialized_end=535,
 )
 
 
@@ -390,8 +397,8 @@ _COORDINATES = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=523,
-  serialized_end=569,
+  serialized_start=537,
+  serialized_end=583,
 )
 
 
@@ -422,11 +429,11 @@ _NUMBER = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=571,
-  serialized_end=592,
+  serialized_start=585,
+  serialized_end=606,
 )
 
-_WAYPOINTLIST.fields_by_name['waypoints'].message_type = _WAYPOINT
+_WAYPOINTLIST.fields_by_name['waypoint'].message_type = _WAYPOINT
 _UAVLIST.fields_by_name['uavs'].message_type = _UAV
 _RESPONSEQUERY.fields_by_name['responses'].message_type = _RESPONSE
 _STARTUAV.fields_by_name['coordinates'].message_type = _COORDINATES
@@ -513,8 +520,8 @@ _AIRMOBISIM = _descriptor.ServiceDescriptor(
   index=0,
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_start=595,
-  serialized_end=1111,
+  serialized_start=609,
+  serialized_end=1125,
   methods=[
   _descriptor.MethodDescriptor(
     name='Start',

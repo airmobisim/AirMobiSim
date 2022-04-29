@@ -1,20 +1,24 @@
 import grpc
 import os
-import threading, _thread
-import time
-import sys
 
 from google.protobuf import struct_pb2
+
+
+#from src.simulation import Simulation
 from concurrent import futures
 from src.simulationparameter import Simulationparameter
+from shapely.geometry import Point
+#from src.uav import Uav
+
+import time
+import sys
+import string
+import psutil
 
 from proto import airmobisim_pb2_grpc
 from proto import airmobisim_pb2
 
-
 class AirMobiSim(airmobisim_pb2_grpc.AirMobiSimServicer):
-
-
     index=[]
     x=[]
     y=[]            # these list are loaded by omnet   organization needed for multiple waypoint values
@@ -29,13 +33,15 @@ class AirMobiSim(airmobisim_pb2_grpc.AirMobiSimServicer):
         self._isInitialized = True
         self.simulation_obj = simulation_obj
         self._lastUavReport = []
+        self.finish = False
 
     def startSimulation(self):
         self.simulation_obj.initializeNodes()
         self._isRunning = True
 
     def Start(self, request, context):
-        pass
+        print("Start gets called")
+        return struct_pb2.Value()
 
         """
         TODO:  ExecuteOneTimeStep should be an own method with the return GRPC statement 
@@ -45,15 +51,13 @@ class AirMobiSim(airmobisim_pb2_grpc.AirMobiSimServicer):
         """
             Execute one timestep - Update the values (positions, velocity,...)
         """
-        #print('ExecuteOneTimeStep #########')
+        print("Executing one Timestep", flush=True)
         responseQuery = airmobisim_pb2.ResponseQuery()
-
         if not self._isRunning:
+            print("I am in this not started Block")
             self.startSimulation()
-
             for node in self.simulation_obj._managedNodes:
                 startPos = node._mobility._startPos
-
                 uav = airmobisim_pb2.Response(id=node._uid, x=startPos.x, y=startPos.y, z=startPos.z)
                 responseQuery.responses.append(uav)
 
@@ -61,16 +65,15 @@ class AirMobiSim(airmobisim_pb2_grpc.AirMobiSimServicer):
 
             return responseQuery
         else:
+            print("I am in the else/Block", flush=True)
             # rt = Repeatedtimer(1, self.printStatus, "World")
-
             if Simulationparameter.currentSimStep < self.simulation_obj._simulationSteps:
                 self._lastUavReport = []
                 for node in self.simulation_obj._managedNodes:
-                    node._mobility.makeMove()
+                    node.getMobility().makeMove()
                     self._isInitialized = True
-                    currentPos = node._mobility.getCurrentPos()
-
-                    uav = airmobisim_pb2.Response(id=node._uid, x=currentPos.x, y=currentPos.y, z=currentPos.z)
+                    currentPos = node.getMobility().getCurrentPos()
+                    uav = airmobisim_pb2.Response(id=node._uid, x=currentPos.x, y=currentPos.y, z=currentPos.z, speed=node.getMobility()._move.getSpeed(), angle=node.getMobility()._angle)
                     self._lastUavReport.append(uav)
                     responseQuery.responses.append(uav)
 
@@ -79,24 +82,31 @@ class AirMobiSim(airmobisim_pb2_grpc.AirMobiSimServicer):
 
             else:
                 # rt.stop()
+                print("I finished simulation.")
                 self.simulation_obj.finishSimulation()
 
     def Finish(self, request, context):
-        pass
-
+        ending = True
+        return struct_pb2.Value()
     def GetManagedHosts(self, request, context):
+        print("GetManagesHosts gets called!", flush=True)
         responseQuery = airmobisim_pb2.ResponseQuery()
         #print("GetManagedHosts get called")
         if not self._isRunning:
+            print("Simulation is not running", flush=True)
             self.startSimulation()
+            print("I started the simulation", flush=True) 
 
         for node in self.simulation_obj._managedNodes:
+            print("I am in the for loop", flush=True)
             if self._isInitialized:
                 node._mobility.makeMove()
                 self._isInitialized = True
             currentPos = node._mobility.getCurrentPos()
+            print("This is my currentPos")
+            print(currentPos)
             uav = airmobisim_pb2.Response(id=node._uid, x=currentPos.x, y=currentPos.y, z=currentPos.z,
-                                          speed=10)  # TODO: Make speed a correct parameter
+                                          speed=node.getMobility()._move.getSpeed(), angle=node.getMobility()._angle)  # TODO: Make speed a correct parameter
             responseQuery.responses.append(uav)
         return responseQuery
 
@@ -130,38 +140,63 @@ class AirMobiSim(airmobisim_pb2_grpc.AirMobiSimServicer):
         return AirMobiSim.index, AirMobiSim.x, AirMobiSim.y,AirMobiSim.z
 
 
+    def InsertUAV(self, request, context):
+        """
+        Method inserts an UAV in simulation
+        In the next timestep makeMove()
+        """
+        print("InsertUAV  gets called", flush=True)
+        self.simulation_obj._managedNodes.append(Uav(request.id, Point(request.coordinates[0].x, request.coordinates[0].y, request.coordinates[0].z), Point(request.coordinates[1].x, request.coordinates[1].y, request.coordinates[1].z), angle=request.angle, speed=request.speed))
+        
+        return struct_pb2.Value()
 
-def checkForParentProcess():
-    ppid = os.getppid()
-    print("checkForParentProcess!")
-    while True:
-        time.sleep(1)
-        #print("os.getppid() == ", os.getppid(), " / ppid == ",ppid)
-        if os.getppid() != ppid:
-            print("aaaawck! You're not my parent. Refusing to work for init, launchd, or the likes :-(")
-            sys.exit(1)
-            #_thread.interrupt_main()
-        else:
-            pass
-            #print("AirMobiSim-tick -> ", ppid)
-    pass
+    def DeleteUAV(self, request, context):
+       """
+       Delete UAV with the given Id
+       """
+       print("DeleteUAV gets called -> to delete", request.num, flush=True)
+       for node in range(len(self.simulation_obj._managedNodes)):
+           if self.simulation_obj._managedNodes[node]._uid == request.num:
+                self.simulation_obj._managedNodes.pop(node)
+                break
+
+       return struct_pb2.Value()
+
+    def getNumberCurrentUAV(self, request, context):
+      """
+       Return the number for current UAVs
+      """
+     
+      print("getNumberCurrentUAV gets called", flush=True)
+      currentUAV = len(self.simulation_obj._managedNodes) 
+
+      return airmobisim_pb2.Number(num=currentUAV)
+
 def startServer(simulation_object):
     """
         Start the AirMobiSim Server
     """
-
-    threading.Thread(target = checkForParentProcess).start()
-
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
-    airmobisim_pb2_grpc.add_AirMobiSimServicer_to_server(AirMobiSim(simulation_object), server)
+    airmobisim_object = AirMobiSim(simulation_object)
+    airmobisim_pb2_grpc.add_AirMobiSimServicer_to_server(airmobisim_object, server)
     server.add_insecure_port('localhost:50051')
     server.start()
 
-    print("AirMobiSim Server has started....")
+    print("AirMobiSim Server has started", flush=True) 
+    ppid = os.getppid()
+    omnetpp_pid_valid = False
+    grandparent_pid = psutil.Process(os.getppid()).ppid()
+    #print(grandparent_pid)
 
     try:
         while True:
-            time.sleep(1)
-    except KeyboardInterrupt:
+            time.sleep(1) 
+            #Check whether the Omnetpp-process is running
+            if psutil.Process(os.getppid()).ppid() != grandparent_pid:
+                #print("Parent died")
+                server.stop(0)
+                sys.exit(1)
+    except:
+        #time.sleep(1)
         server.stop(0)
-        print("Server has been stopped")
+        sys.exit(1)

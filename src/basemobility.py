@@ -18,19 +18,24 @@ class Basemobility(ABC):
         self._resultcollection =  Resultcollection()
         self._baseenergy = Baseenergy()
         self._startPos = startPos
-        self._endPos = endPos 
+        self._endPos = endPos
+        self._currentPos = Point(0,0,0) 
         pass
 
     def getMove(self):
         return self._move
 
+
     def getCurrentPos(self):
+        print("I am in Basemobility", flush=True)
         passedTime = (Simulationparameter.currentSimStep * Simulationparameter.stepLength) - self.getMove().getStartTime()
         if passedTime==0.0:
             return self._startPos
         else:
-
             currentDirection = self.getMove().getCurrentDirection()
+
+        #if self.getMove().getLinearMobilitySpFlag():
+            #currentDirection = self.getMove().getCurrentDirection()
             #if self.getMove().getLinearMobilitySpFlag():
 
                 # currentPos = self.getMove().getNextCoordinate()
@@ -52,7 +57,8 @@ class Basemobility(ABC):
             x = previousPos.x + (currentDirection.x*self.getMove().getSpeed()*Simulationparameter.stepLength)
             y = previousPos.y + (currentDirection.y*self.getMove().getSpeed()*Simulationparameter.stepLength)
             z = previousPos.z + (currentDirection.z*self.getMove().getSpeed()*Simulationparameter.stepLength)
-
+            print(x, flush=True)
+            print(y, flush=True)
             currentPos = Point(x,y,z)
             self.getMove().setTempStartPos(currentPos)
         
@@ -67,7 +73,6 @@ class Basemobility(ABC):
             currentPos = self.getMove().getNextCoordinate()
         # if (self.getMove().getFinalFlag()):
         #     currentPos = self.getMove().getNextCoordinate()
-
             return currentPos
 
         elif self.getMove().getFinalFlag():
@@ -75,9 +80,6 @@ class Basemobility(ABC):
             currentPos=Point(self.getMove().getNextCoordinate().x, self.getMove().getNextCoordinate().y, 0.0)
             # currentPos=Point(self.getMove().getNextCoordinate().x, self.getMove().getNextCoordinate().y, self.getMove().getNextCoordinate().z)
             # currentPos = self.getMove().getNextCoordinate()
-
-
-
 
 
         return currentPos

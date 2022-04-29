@@ -6,31 +6,32 @@ from .basemobility import Basemobility
 from .simulationparameter import Simulationparameter
 
 class Linearmobility(Basemobility):
-    def __init__(self, uid, angle, startPos, endPos):
+    def __init__(self, uid, startPos, endPos, angle,speed=10):
         super().__init__(uid, startPos, endPos)
         self._angle = angle
-        self._acceleration = 5
+        self._acceleration = 0 #acceleration not considered yet
         self._move.setStart(startPos, 0)
         self._move.setEndPos(endPos)
         self._move.setTempStartPos(startPos)
-
-        self._move.setSpeed(50)
+        self._move.setSpeed(speed)
+        self._move.setLastPos(startPos)
         self._uid = uid
         self._stepTarget = ""
         self._totalFlightTime= self.computeTotalFlightTime()
 
     def makeMove(self):
+        print("I am in makeMove")
         move = self.getMove()
         passedTime = (Simulationparameter.currentSimStep * Simulationparameter.stepLength) - self.getMove().getStartTime()
 
         move.setDirectionByTarget()
         newSpeed = move.getSpeed() + self._acceleration * Simulationparameter.stepLength
-
+        print(newSpeed)
         if passedTime>= self._totalFlightTime:
             newSpeed=0.0
             self._acceleration=0.0
-            self.getMove().setFinalFlag(True)
-         
+            self.getMove().setFinalFlag(True) 
+
         move.setSpeed(newSpeed)
         move.setPassedTime(passedTime)
         super().makeMove()
