@@ -1,7 +1,7 @@
 import math
 
 from .basemobility import Basemobility
-from .splinemobility import Splinemobility
+#from .splinemobility import Splinemobility
 from .linearmobility import Linearmobility
 
 class Uav:

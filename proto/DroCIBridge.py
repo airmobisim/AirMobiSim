@@ -8,7 +8,7 @@ from google.protobuf import struct_pb2
 from concurrent import futures
 from src.simulationparameter import Simulationparameter
 from shapely.geometry import Point
-#from src.uav import Uav
+from src.uav import Uav
 
 import time
 import sys
@@ -51,10 +51,9 @@ class AirMobiSim(airmobisim_pb2_grpc.AirMobiSimServicer):
         """
             Execute one timestep - Update the values (positions, velocity,...)
         """
-        print("Executing one Timestep", flush=True)
+        #print("Executing one Timestep", flush=True)
         responseQuery = airmobisim_pb2.ResponseQuery()
         if not self._isRunning:
-            print("I am in this not started Block")
             self.startSimulation()
             for node in self.simulation_obj._managedNodes:
                 startPos = node._mobility._startPos
@@ -65,7 +64,6 @@ class AirMobiSim(airmobisim_pb2_grpc.AirMobiSimServicer):
 
             return responseQuery
         else:
-            print("I am in the else/Block", flush=True)
             # rt = Repeatedtimer(1, self.printStatus, "World")
             if Simulationparameter.currentSimStep < self.simulation_obj._simulationSteps:
                 self._lastUavReport = []
@@ -89,21 +87,16 @@ class AirMobiSim(airmobisim_pb2_grpc.AirMobiSimServicer):
         ending = True
         return struct_pb2.Value()
     def GetManagedHosts(self, request, context):
-        print("GetManagesHosts gets called!", flush=True)
+        print("GetManagedHosts gets called!", flush=True)
         responseQuery = airmobisim_pb2.ResponseQuery()
         #print("GetManagedHosts get called")
         if not self._isRunning:
-            print("Simulation is not running", flush=True)
-            self.startSimulation()
-            print("I started the simulation", flush=True) 
-
+            self.startSimulation() 
         for node in self.simulation_obj._managedNodes:
-            print("I am in the for loop", flush=True)
             if self._isInitialized:
                 node._mobility.makeMove()
                 self._isInitialized = True
             currentPos = node._mobility.getCurrentPos()
-            print("This is my currentPos")
             print(currentPos)
             uav = airmobisim_pb2.Response(id=node._uid, x=currentPos.x, y=currentPos.y, z=currentPos.z,
                                           speed=node.getMobility()._move.getSpeed(), angle=node.getMobility()._angle)  # TODO: Make speed a correct parameter

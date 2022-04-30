@@ -65,7 +65,6 @@ class Simulation:
         self.finishSimulation()
 
     def initializeNodes(self):
-       # print(len(self._startUavs))
         for uav in self._startUavs:
             # print(type(self.getNextUid()))
             nextUid = self.getNextUid()
@@ -77,11 +76,8 @@ class Simulation:
 
             # for linearmobility
             else:
-                #print(self._startUavs, flush=True)
-                #print("I am in the linearmobility", flush=True)
-                self._managedNodes.append(Uav(nextUid, Point(uav['startPosX'], uav['startPosY'], uav['startPosZ']),
-                                              Point(uav['endPosX'], uav['endPosY'], uav['endPosZ'])))
-            break
+                self._managedNodes.append(Uav(nextUid, Point(uav['startPosX'], uav['startPosY'], uav['startPosZ']),Point(uav['endPosX'], uav['endPosY'], uav['endPosZ'])))
+
     def processNextStep(self):
         Simulationparameter.incrementCurrentSimStep()
 

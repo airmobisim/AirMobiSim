@@ -27,7 +27,6 @@ class Basemobility(ABC):
 
 
     def getCurrentPos(self):
-        print("I am in Basemobility", flush=True)
         passedTime = (Simulationparameter.currentSimStep * Simulationparameter.stepLength) - self.getMove().getStartTime()
         if passedTime==0.0:
             return self._startPos

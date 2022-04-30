@@ -14,13 +14,11 @@ class Linearmobility(Basemobility):
         self._move.setEndPos(endPos)
         self._move.setTempStartPos(startPos)
         self._move.setSpeed(speed)
-        self._move.setLastPos(startPos)
         self._uid = uid
         self._stepTarget = ""
         self._totalFlightTime= self.computeTotalFlightTime()
 
     def makeMove(self):
-        print("I am in makeMove")
         move = self.getMove()
         passedTime = (Simulationparameter.currentSimStep * Simulationparameter.stepLength) - self.getMove().getStartTime()
 
@@ -38,6 +36,7 @@ class Linearmobility(Basemobility):
 
 
     def computeTotalFlightTime(self):
+        print()
         distance = math.sqrt((self._endPos.x - self._startPos.x) ** 2 + (self._endPos.y - self._startPos.y) ** 2 + (
                     self._endPos.z - self._startPos.z) ** 2)
         final_velocity = math.sqrt(self.getMove().getSpeed()**2 + 2*self._acceleration*distance) # v^2=u^2+2as
