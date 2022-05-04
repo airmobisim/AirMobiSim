@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 #
 # Copyright (C) 2021 Tobias Hardes <tobias.hardes@uni-paderborn.de>
 #
@@ -108,7 +108,7 @@ poetry install
 poetry run python -m grpc_tools.protoc --python_out=. --grpc_python_out=. proto/airmobisim.proto -I .
 export PATH="$HOME/.poetry/bin:$PATH"
 
-pip3 install --user conan # We need a lokal installation outside poetry, since conan is required for the OMNeT++ part
+pip3 install conan # We need a lokal installation outside poetry, since conan is required for the OMNeT++ part
 AIRMOBISIMDIR=$(pwd)
 ################################################################
 #__     __   _             ____       _               
