@@ -39,7 +39,7 @@ class Splinemobility(Basemobility):
         self._totalFlightTime = self._waypointTime[-1]
         self._polygon_file_path = polygon_file_path
         self._obstrackelDetector_flag = False
-        self._collisionAction = 2  # 1= warn, 2 = no action 3=remove uav
+        self._collisionAction = 3  # 1= warn, 2 = no action 3=remove uav
         self._obstracles= self.ParsePolygonFileToObstracles()
 
 
@@ -223,7 +223,7 @@ class Splinemobility(Basemobility):
 
         self._obstrackelDetector_flag= True if detectObstrackel== True else self._obstrackelDetector_flag
 
-        pass
+
 
 
 
