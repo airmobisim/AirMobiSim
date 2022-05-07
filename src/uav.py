@@ -7,7 +7,7 @@ from .linearmobility import Linearmobility
 class Uav:
     _uid = -1
     _mobility = Basemobility
-    def __init__(self, uid, startPos, endPos, angle=0, speed=20):
+    def __init__(self, uid, startPos, endPos, angle=0, speed=0.8):
         self._uid = uid
         self._angle = self.calculateAngle(startPos, endPos) 
         self._mobility  =  Linearmobility(uid, startPos, endPos, self._angle, speed)

@@ -56,8 +56,8 @@ class Basemobility(ABC):
             x = previousPos.x + (currentDirection.x*self.getMove().getSpeed()*Simulationparameter.stepLength)
             y = previousPos.y + (currentDirection.y*self.getMove().getSpeed()*Simulationparameter.stepLength)
             z = previousPos.z + (currentDirection.z*self.getMove().getSpeed()*Simulationparameter.stepLength)
-            print(x, flush=True)
-            print(y, flush=True)
+            # print(x, flush=True)
+            # print(y, flush=True)
             currentPos = Point(x,y,z)
             self.getMove().setTempStartPos(currentPos)
         

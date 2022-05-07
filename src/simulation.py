@@ -54,8 +54,8 @@ class Simulation:
 
         elapsed = (Simulationparameter.current_milli_time() - Simulationparameter.simStartTime) / 1000
         p = 100 / Simulationparameter.simTimeLimit * t
-        print("t=" + str(t) + "   Elapsed: " + str(elapsed) + "  " + str(p) + "% completed\n" +
-              "Speed: simsec/sec=72.8271")
+        # print("t=" + str(t) + "   Elapsed: " + str(elapsed) + "  " + str(p) + "% completed\n" +
+        #       "Speed: simsec/sec=72.8271")
 
     def manageSimulation(self):
         rt = Repeatedtimer(1, self.printStatus, "World")
