@@ -90,6 +90,8 @@ def initializeSimulation(config, directory, linearMobilityFlag,splineMobilityFla
     else:
         print("Launch linear mobility")
         #simulation = Simulation.from_config_linmob(config, linearMobilityFlag, splineMobilityFlag, directory)
+        polygon_file = config['files']['polygon']
+        polygon_file_path = str(pathlib.Path().resolve()) + '/' + polygon_file
         
         simulation = Simulation( directory,
                                  config['simulation']['stepLength'],
@@ -99,7 +101,9 @@ def initializeSimulation(config, directory, linearMobilityFlag,splineMobilityFla
                                  config['simulation']['playgroundSizeZ'],
                                  linearMobilityFlag,
                                  splineMobilityFlag,
-                                 config['uav'])
+                                 config['uav'],
+                                 polygon_file_path)
+
         #                         speed,
         #                         waypointX,
         #                         waypointY,

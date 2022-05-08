@@ -18,8 +18,8 @@ class Simulation:
     _highestUid = -1
 
     def __init__(self, directory, stepLength, simTimeLimit, playgroundSizeX, playgroundSizeY, playgroundSizeZ,
-                 linearMobilityFlag, splineMobilityFlag, uavs, speed=None, waypointX=None, waypointY=None,
-                 waypointZ=None, polygon_file_path=None):
+                 linearMobilityFlag, splineMobilityFlag, uavs, polygon_file_path=None, speed=None, waypointX=None, waypointY=None,
+                 waypointZ=None):
 
         print("Initializing...")
         Simulationparameter.stepLength = stepLength
@@ -76,13 +76,26 @@ class Simulation:
 
             # for linearmobility
             else:
-                self._managedNodes.append(Uav(nextUid, Point(uav['startPosX'], uav['startPosY'], uav['startPosZ']),Point(uav['endPosX'], uav['endPosY'], uav['endPosZ'])))
+
+                self._managedNodes.append(Uav(nextUid, Point(uav['startPosX'], uav['startPosY'], uav['startPosZ']),
+                                              Point(uav['endPosX'], uav['endPosY'], uav['endPosZ']), self._polygon_file_path))
+
 
     def processNextStep(self):
         Simulationparameter.incrementCurrentSimStep()
+        if self._splineMobilityFlag:
+            for node in self._managedNodes:
+                removeNode = node._mobility.makeMove()   # building ahead
+                if removeNode:
+                    print('removing uav', node._uid)
+                    self._managedNodes.remove(node)      # obstracle so remove
 
-        for node in self._managedNodes:
-            node._mobility.makeMove()
+        else:
+            for node in self._managedNodes:
+                removeNode = node._mobility.makeMove()
+                if removeNode:
+                    print('removing uav', node._uid)
+                    self._managedNodes.remove(node)
 
     def finishSimulation(self):
         print(
@@ -120,15 +133,18 @@ class Simulation:
             config)
 
         return cls(directory, stepLength, simTimeLimit, playgroundSizeX, playgroundSizeY, playgroundSizeZ,
-                   linearMobilityFlag, splineMobilityFlag, uavs, speed, waypointX, waypointY, waypointZ, polygon_file_path)
+                   linearMobilityFlag, splineMobilityFlag, uavs, polygon_file_path, speed, waypointX, waypointY, waypointZ)
 
     @classmethod  # for linear mobility
     def from_config_linmob(cls, config, linearMobilityFlag, splineMobilityFlag, directory):
+        polygon_file = config['files']['polygon']
+        polygon_file_path = str(pathlib.Path().resolve()) + '/' + polygon_file
+
         uavs = config['uav']
         stepLength, simTimeLimit, playgroundSizeX, playgroundSizeY, playgroundSizeZ = Simulation.load_common_parameters_from_config(
             config)
         return cls(directory, stepLength, simTimeLimit, playgroundSizeX, playgroundSizeY, playgroundSizeZ,
-                   linearMobilityFlag, splineMobilityFlag, uavs)
+                   linearMobilityFlag, splineMobilityFlag, uavs, polygon_file_path)
 
     @staticmethod  # load data from config file
     def load_common_parameters_from_config(config):

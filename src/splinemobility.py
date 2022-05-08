@@ -38,7 +38,9 @@ class Splinemobility(Basemobility):
         self._waypointTime = self.insertWaypointTime()
         self._totalFlightTime = self._waypointTime[-1]
         self._polygon_file_path = polygon_file_path
-        # self.ParsePolygonFileToBuildings()
+        self._obstrackelDetector_flag = False
+        self._collisionAction = 3  # 1= warn, 2 = no action 3=remove uav
+        self._obstracles= self.ParsePolygonFileToObstracles()
 
 
 
@@ -66,6 +68,8 @@ class Splinemobility(Basemobility):
 
                 nextCoordinate= Point(spl_x(passedTime), spl_y(passedTime), spl_z(passedTime))
                 move.setNextCoordinate(nextCoordinate)
+                if self._collisionAction != 2:
+                    self.manageObstracles(spl_x,spl_y,spl_z, passedTime)
 
 
 
@@ -78,6 +82,7 @@ class Splinemobility(Basemobility):
 
         move.setPassedTime(passedTime)
         super().makeMove()
+        return True if self._obstrackelDetector_flag and self._collisionAction==3 else False
 
     def updateWaypointsByIndex(self):
 
@@ -166,10 +171,10 @@ class Splinemobility(Basemobility):
         return distance_of_segments
 
 
-    def ParsePolygonFileToBuildings(self):
+    def ParsePolygonFileToObstracles(self):
         parsedFile= minidom.parse(self._polygon_file_path)
         polygons = parsedFile.getElementsByTagName('poly')
-        building=[]
+        buildings=[]
         for polygon in polygons:
             shape_of_polygon = polygon.attributes['shape'].value
             vertex_corordinates= shape_of_polygon.split(' ')       #coordinates are of string type
@@ -180,14 +185,17 @@ class Splinemobility(Basemobility):
                 list_of_coordinates.append([float(single_vertex.split(',')[0]),float(single_vertex.split(',')[1])]) # x and y coordinates are seperated and converted to float
 
             # print(list_of_coordinates)
-            building.append(mplPath.Path(np.array(list_of_coordinates)))     # forming shape of polyson by joining the polygon coordinates and appended to building list
+            buildings.append(mplPath.Path(np.array(list_of_coordinates)))     # forming shape of polyson by joining the polygon coordinates and appended to building list
 
-        point = (9.5, -10)
-        print(point, " is in polygon: ", building[0].contains_point(point))
+        return buildings
+
+
+        # point = (8.9, 8)
+        # print(point, " is in polygon: ", building[0].contains_point(point))
         # warnings.filterwarnings('error')
         # print(self.getMove().getPassedTime())
-        warnings.warn('prompt warning')
-        print(len(building))
+        # warnings.warn('prompt warning')
+        # print(len(building))
         '''
         # ex= polys[0].attributes['shape'].value.split(' ')
         # print([float(ex[0].split(',')[0]),float(ex[0].split(',')[1])])
@@ -199,6 +207,21 @@ class Splinemobility(Basemobility):
         # point = (9.5, -10)
         # print(point, " is in polygon: ", poly_path.contains_point(point))
         '''
+
+
+    def manageObstracles(self, spl_x, spl_y, spl_z, passedTime):
+        futureTime= passedTime + Simulationparameter.stepLength
+        futureCoordinate = (spl_x(futureTime), spl_y(futureTime))
+        # self._obstrackelDetector_flag= self._obstracles[0].contains_point(futureCoordinate)
+        # warnings.filterwarnings('once')
+        detectObstrackel = self._obstracles[0].contains_point(futureCoordinate)
+        if not self._obstrackelDetector_flag and detectObstrackel and self._collisionAction==1:
+            # warnings.warn('uav is going to collide in collide')
+            print('uav is going to collide to collide')
+            print(passedTime)
+            print(futureTime)
+
+        self._obstrackelDetector_flag= True if detectObstrackel== True else self._obstrackelDetector_flag
 
 
 
