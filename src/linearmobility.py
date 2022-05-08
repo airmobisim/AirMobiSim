@@ -22,7 +22,7 @@ class Linearmobility(Basemobility):
         self._uid = uid
         self._stepTarget = ""
         self._totalFlightTime= self.computeTotalFlightTime()
-        # print(speed)
+        print(speed)
         # for pilygon detection
         self._polygon_file_path = polygon_file_path
         self._obstrackelDetector_flag = False
