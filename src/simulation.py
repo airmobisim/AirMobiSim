@@ -94,7 +94,7 @@ class Simulation:
             for node in self._managedNodes:
                 removeNode = node._mobility.makeMove()
                 if removeNode:
-                    print('removing uav', node._uid)
+                    print('removing uav', node._uid, flush=True)
                     self._managedNodes.remove(node)
 
     def finishSimulation(self):

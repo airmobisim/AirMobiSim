@@ -68,7 +68,11 @@ class AirMobiSim(airmobisim_pb2_grpc.AirMobiSimServicer):
             if Simulationparameter.currentSimStep < self.simulation_obj._simulationSteps:
                 self._lastUavReport = []
                 for node in self.simulation_obj._managedNodes:
-                    node.getMobility().makeMove()
+                    flag = node.getMobility().makeMove()
+                    if flag:
+                        print('removing node',node._uid ,flush= True)
+                        self.simulation_obj._managedNodes.remove(node)
+
                     self._isInitialized = True
                     currentPos = node.getMobility().getCurrentPos()
                     uav = airmobisim_pb2.Response(id=node._uid, x=currentPos.x, y=currentPos.y, z=currentPos.z, speed=node.getMobility()._move.getSpeed(), angle=node.getMobility()._angle)
