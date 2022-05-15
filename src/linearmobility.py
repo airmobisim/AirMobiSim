@@ -45,7 +45,7 @@ class Linearmobility(Basemobility):
 
         if passedTime < self._totalFlightTime:
             if self._collisionAction != 2:
-                self.manageObstracles( passedTime)
+                self.manageObstacles( passedTime)
 
         return True if self._obstacleDetector_flag and self._collisionAction == 3 else False   # obstacle->remove/not remove node indicator
 
@@ -60,7 +60,7 @@ class Linearmobility(Basemobility):
         assert average_velocity !=0, 'avarage velocity can not be 0'
         return distance/average_velocity
 
-    def manageObstracles(self, passedTime):
+    def manageObstacles(self, passedTime):
         futureTime= passedTime + Simulationparameter.stepLength
 
         currentDirection = self.getMove().getCurrentDirection()

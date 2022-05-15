@@ -117,3 +117,6 @@ class Basemobility(ABC):
             buildings.append(mplPath.Path(np.array(list_of_coordinates)))     # forming shape of polygon by joining the polygon coordinates and appended to building list
 
         return buildings
+
+    def manageObstacles(self):
+        raise NotImplementedError
