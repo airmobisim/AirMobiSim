@@ -7,7 +7,6 @@ from .simulationparameter import Simulationparameter
 class Linearmobility(Basemobility):
 
     def __init__(self, uid, startPos, endPos, angle,speed=10, polygon_file_path=None):
-        print("Linearmobility -> We have an obstacle file = " + polygon_file_path)
         super().__init__(uid, startPos, endPos, polygon_file_path)
         self._angle = angle
         self._acceleration = 0 #acceleration not considered yet

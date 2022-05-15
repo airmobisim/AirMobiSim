@@ -24,7 +24,6 @@ class Basemobility(ABC):
         self._collisionAction = 1  # 1= warn, 2 = no action 3=remove uav
         self._obstacleDetector_flag = False
         self.polygon_file_path = polygon_file_path
-        print("polygon file path = " + self.polygon_file_path)
         self._obstacle= self.ParsePolygonFileToObstracles()
         pass
 
@@ -102,7 +101,6 @@ class Basemobility(ABC):
         pass
 
     def ParsePolygonFileToObstracles(self):
-        print("BaseMobility: We have an obstacle file = " + self.polygon_file_path)
         parsedFile= minidom.parse(self.polygon_file_path)
         polygons = parsedFile.getElementsByTagName('poly')
         buildings=[]
