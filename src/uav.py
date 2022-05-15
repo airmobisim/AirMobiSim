@@ -1,8 +1,8 @@
 import math
 
 from .basemobility import Basemobility
-#from .splinemobility import Splinemobility
 from .linearmobility import Linearmobility
+
 
 class Uav:
     _uid = -1
@@ -11,6 +11,7 @@ class Uav:
     def __init__(self, uid, startPos, endPos, polygon_file_path=None, angle=0, speed=10):
         self._uid = uid
         self._angle = self.calculateAngle(startPos, endPos) 
+        print("We have an obstacle file = " + polygon_file_path)
         self._mobility  =  Linearmobility(uid, startPos, endPos, self._angle, speed, polygon_file_path)
 
 
