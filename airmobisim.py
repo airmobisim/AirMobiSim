@@ -64,7 +64,10 @@ def initializeSimulation(config, directory, linearMobilityFlag,splineMobilityFla
         print("Launch linear mobility")
         #simulation = Simulation.from_config_linmob(config, linearMobilityFlag, splineMobilityFlag, directory)
         polygon_file = config['files']['polygon']
-        polygon_file_path = str(pathlib.Path().resolve()) + '/' + polygon_file
+        homePath = os.environ['AIRMOBISIMHOME']
+
+        polygon_file_path = homePath + '/' + polygon_file
+        
         print("Polygonfile is " + polygon_file_path)
         simulation = Simulation( directory,
                                  config['simulation']['stepLength'],
