@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #
 # Copyright (C) 2021 Tobias Hardes <tobias.hardes@uni-paderborn.de>
 #
@@ -124,7 +124,7 @@ if [  ! -d "airmobisimVeins" ]; then
   git clone https://git.cms-labs.org/git/hardes/airmobisimVeins
 fi
 cd airmobisimVeins
-AIRMOBISIMVEINS_PATH="$(pwd)/subprojects/veins_libairmobisim2"
+AIRMOBISIMVEINS_PATH="$(pwd)/subprojects/veins_libairmobisim"
 
 ./configure
 if [[  "$OSTYPE" == "darwin"* ]]; then
