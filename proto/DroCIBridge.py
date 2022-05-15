@@ -176,9 +176,7 @@ class AirMobiSim(airmobisim_pb2_grpc.AirMobiSimServicer):
         """
         for node in self.simulation_obj._managedNodes:
             if node._uid == request.id:
-                node.getMobility().setSpeed(request.speed)
-                print("I set the speed")
-                print(node.getMobility.getSpeed())
+                node.getMobility()._move.setSpeed(request.speed)
                 break
 
         return struct_pb2.Value()
