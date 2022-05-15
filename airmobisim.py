@@ -16,7 +16,7 @@ def main():
     global simulation
 
     parser = argparse.ArgumentParser(description='Importing configuration-file')
-    parser.add_argument('--plot', type=int, required=False, default=1, help='plot vs no plot')
+    parser.add_argument('--plot', type=int, required=False, default=0, help='plot vs no plot')
     parser.add_argument('--configuration', action='store', type=str,
                         default="examples/simpleSimulation/simulation.config", help='configuration')
     parser.add_argument('--omnetpp', action='store_true', help='Start the OmNet++ simulator')
