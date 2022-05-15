@@ -55,6 +55,16 @@ class AirMobiSimStub(object):
                 request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
                 response_deserializer=proto_dot_airmobisim__pb2.Number.FromString,
                 )
+        self.SetDesiredSpeed = channel.unary_unary(
+                '/airmobisim.AirMobiSim/SetDesiredSpeed',
+                request_serializer=proto_dot_airmobisim__pb2.UavSetSpeed.SerializeToString,
+                response_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+                )
+        self.UpdateWaypoints = channel.unary_unary(
+                '/airmobisim.AirMobiSim/UpdateWaypoints',
+                request_serializer=proto_dot_airmobisim__pb2.WaypointList.SerializeToString,
+                response_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+                )
 
 
 class AirMobiSimServicer(object):
@@ -108,6 +118,18 @@ class AirMobiSimServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def SetDesiredSpeed(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def UpdateWaypoints(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_AirMobiSimServicer_to_server(servicer, server):
     rpc_method_handlers = {
@@ -150,6 +172,16 @@ def add_AirMobiSimServicer_to_server(servicer, server):
                     servicer.getNumberCurrentUAV,
                     request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
                     response_serializer=proto_dot_airmobisim__pb2.Number.SerializeToString,
+            ),
+            'SetDesiredSpeed': grpc.unary_unary_rpc_method_handler(
+                    servicer.SetDesiredSpeed,
+                    request_deserializer=proto_dot_airmobisim__pb2.UavSetSpeed.FromString,
+                    response_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+            ),
+            'UpdateWaypoints': grpc.unary_unary_rpc_method_handler(
+                    servicer.UpdateWaypoints,
+                    request_deserializer=proto_dot_airmobisim__pb2.WaypointList.FromString,
+                    response_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -294,5 +326,39 @@ class AirMobiSim(object):
         return grpc.experimental.unary_unary(request, target, '/airmobisim.AirMobiSim/getNumberCurrentUAV',
             google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
             proto_dot_airmobisim__pb2.Number.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def SetDesiredSpeed(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/airmobisim.AirMobiSim/SetDesiredSpeed',
+            proto_dot_airmobisim__pb2.UavSetSpeed.SerializeToString,
+            google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def UpdateWaypoints(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/airmobisim.AirMobiSim/UpdateWaypoints',
+            proto_dot_airmobisim__pb2.WaypointList.SerializeToString,
+            google_dot_protobuf_dot_empty__pb2.Empty.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

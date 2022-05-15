@@ -21,11 +21,15 @@ service AirMobiSim{
     rpc DeleteUAV (Number) returns (google.protobuf.Empty);
 
     rpc getNumberCurrentUAV (google.protobuf.Empty) returns (Number);
-      
+    
+    rpc SetDesiredSpeed (UavSetSpeed) returns (google.protobuf.Empty);
+
+    rpc UpdateWaypoints (WaypointList) returns (google.protobuf.Empty);          
 }
 
 message WaypointList{
-    repeated Waypoint waypoint = 1;
+    int32 id = 1;
+    repeated Waypoint waypoint = 2;
 }
 
 message Waypoint
@@ -80,4 +84,10 @@ message Coordinates{
 
 message Number{
     int32 num = 1;
+}
+
+
+message UavSetSpeed{
+    int32 id = 1;
+    double speed = 2;
 }

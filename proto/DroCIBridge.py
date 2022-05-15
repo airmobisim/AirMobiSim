@@ -169,6 +169,30 @@ class AirMobiSim(airmobisim_pb2_grpc.AirMobiSimServicer):
 
       return airmobisim_pb2.Number(num=currentUAV)
 
+
+   def SetDesiredSpeed(self, request, context):
+    """
+     Set the desired speed for the given uav
+    """
+    for node in self.simulation_obj._managedNodes:
+        if node._uid == request.id:
+            node.getMobility().setSpeed(request.speed)
+            print("I set the speed")
+            print(node.getMobility.getSpeed())
+            break
+
+    return struct_pb2.Value()
+
+
+  def UpdateWaypoints(self, request, context):
+  """
+    Update waypoints for a given uav
+  """
+    print("Update waypoints is working")
+
+    return struct_pb2.Value()
+ 
+
 def startServer(simulation_object):
     """
         Start the AirMobiSim Server
