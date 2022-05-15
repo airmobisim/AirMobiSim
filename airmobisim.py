@@ -1,25 +1,14 @@
 #!/usr/bin/env python3
 
-import sys
 import argparse
-import pathlib
 import os
-
-
-from shapely.geometry import Point
-
-from src.simulation import Simulation
-from src.simpleapp import Simpleapp
-
-from src.yamlparser import Yamlparser
-
-from src.resultcollection import Resultcollection
-from src.plotting import  make_plot
-from pathlib import Path
+import pathlib
 
 from proto.DroCIBridge import startServer
-
-import time
+from src.plotting import make_plot
+from src.resultcollection import Resultcollection
+from src.simulation import Simulation
+from src.yamlparser import Yamlparser
 
 simulation: Simulation
 
@@ -27,7 +16,7 @@ def main():
     global simulation
 
     parser = argparse.ArgumentParser(description='Importing configuration-file')
-    parser.add_argument('--plot', type=int, required=False, default=1, help='plot vs no plot')
+    parser.add_argument('--plot', type=int, required=False, default=0, help='plot vs no plot')
     parser.add_argument('--configuration', action='store', type=str,
                         default="examples/simpleSimulation/simulation.config", help='configuration')
     parser.add_argument('--omnetpp', action='store_true', help='Start the OmNet++ simulator')
@@ -48,7 +37,7 @@ def main():
     # print(pathlib.Path().resolve().parent)
 
     directory = pathlib.Path(args.configuration).parent.resolve()
-    initializeSimulation(config, directory, linearMobilityFlag,splineMobilityFlag)
+    initializeSimulation(config, directory, linearMobilityFlag, splineMobilityFlag)
 
     # Start the DroCI Bridge - Listen to OmNet++ incomes
     if args.show:
@@ -70,29 +59,16 @@ def initializeSimulation(config, directory, linearMobilityFlag,splineMobilityFla
     if splineMobilityFlag:
         print("Launch spline mobility")
         simulation = Simulation.from_config_spmob(config, linearMobilityFlag, splineMobilityFlag, directory)
-        '''
-        # simulation = Simulation(config['simulation']['stepLength'],
-        #                         config['simulation']['simTimeLimit'],
-        #                         config['simulation']['playgroundSizeX'],
-        #                         config['simulation']['playgroundSizeY'],
-        #                         config['simulation']['playgroundSizeZ'],
-        #                         config['uavsp'],
-        #                         speed,
-        #                         waypointX,
-        #                         waypointY,
-        #                         waypointZ,
-        #                         linearMobilityFlag,
-        #                         splineMobilityFlag,
-        #                         directory,
-        #                         )
-        '''
 
     else:
         print("Launch linear mobility")
         #simulation = Simulation.from_config_linmob(config, linearMobilityFlag, splineMobilityFlag, directory)
         polygon_file = config['files']['polygon']
-        polygon_file_path = str(pathlib.Path().resolve()) + '/' + polygon_file
+        homePath = os.environ['AIRMOBISIMHOME']
+
+        polygon_file_path = homePath + '/' + polygon_file
         
+        print("Polygonfile is " + polygon_file_path)
         simulation = Simulation( directory,
                                  config['simulation']['stepLength'],
                                  config['simulation']['simTimeLimit'],
@@ -103,16 +79,6 @@ def initializeSimulation(config, directory, linearMobilityFlag,splineMobilityFla
                                  splineMobilityFlag,
                                  config['uav'],
                                  polygon_file_path)
-
-        #                         speed,
-        #                         waypointX,
-        #                         waypointY,
-        #                         waypointZ,
-        #                         linearMobilityFlag,
-        #                         splineMobilityFlag,
-        #                         directory,
-        #                         )
-        
 
 
 

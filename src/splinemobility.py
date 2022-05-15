@@ -1,26 +1,21 @@
 import math
 
-import geopandas
 import numpy as np
-import warnings
-from shapely.geometry import Point
-from .basemobility import Basemobility
-from scipy.interpolate import CubicSpline
-from xml.dom import minidom
-import matplotlib.path as mplPath
-
-from .simulationparameter import Simulationparameter
 from proto.DroCIBridge import AirMobiSim
+from scipy.interpolate import CubicSpline
+from shapely.geometry import Point
 
+from .basemobility import Basemobility
+from .simulationparameter import Simulationparameter
 
 
 class Splinemobility(Basemobility):
-    def __init__(self, uid, waypointX, waypointY, waypointZ, speed, polygon_file_path):
+    def __init__(self, uid, waypointX, waypointY, waypointZ, speed, polygon_file_path=None):
         self._startpos=Point(waypointX[0],waypointY[0],waypointZ[0])
         self._endpos=Point(waypointX[-1],waypointY[-1],waypointZ[-1])
         # self._totalFlightTime = waypointTime[-1]
 
-        super().__init__(uid, self._startpos, self._endpos)
+        super().__init__(uid, self._startpos, self._endpos, polygon_file_path)
         self._waypointX = waypointX
         self._waypointY = waypointY
         self._waypointZ = waypointZ
@@ -37,12 +32,6 @@ class Splinemobility(Basemobility):
         self._speed= speed
         self._waypointTime = self.insertWaypointTime()
         self._totalFlightTime = self._waypointTime[-1]
-        self._polygon_file_path = polygon_file_path
-        self._obstrackelDetector_flag = False
-        self._collisionAction = 1  # 1= warn, 2 = no action 3=remove uav
-        self._obstracles= self.ParsePolygonFileToObstracles()
-
-
 
     def makeMove(self):
         #object of Movement
@@ -59,20 +48,14 @@ class Splinemobility(Basemobility):
                 reduce computation by passing the following lines in constructor
                 '''
 
-
                 spl_x = CubicSpline(self._waypointTime, self._waypointX)
                 spl_y = CubicSpline(self._waypointTime, self._waypointY)
                 spl_z = CubicSpline(self._waypointTime, self._waypointZ)
 
-
-
                 nextCoordinate= Point(spl_x(passedTime), spl_y(passedTime), spl_z(passedTime))
                 move.setNextCoordinate(nextCoordinate)
                 if self._collisionAction != 2:
-                    self.manageObstracles(spl_x,spl_y,spl_z, passedTime)
-
-
-
+                    self.manageObstacles(spl_x,spl_y,spl_z, passedTime)
 
             elif passedTime>= self._totalFlightTime :
                 move.setFinalFlag(True)
@@ -82,7 +65,7 @@ class Splinemobility(Basemobility):
 
         move.setPassedTime(passedTime)
         super().makeMove()
-        return True if self._obstrackelDetector_flag and self._collisionAction==3 else False
+        return True if self._obstacleDetector_flag and self._collisionAction==3 else False
 
     def updateWaypointsByIndex(self):
 
@@ -112,10 +95,6 @@ class Splinemobility(Basemobility):
             self._waypointZ = z
             print('waypoint inserted')
 
-
-
-
-
     def insertWaypointTime(self):
         distance_of_segments= Splinemobility.computeSplineDistance(self._waypointX, self._waypointY, self._waypointZ)
         total_spline_distance=np.sum(distance_of_segments)
@@ -137,9 +116,6 @@ class Splinemobility(Basemobility):
 
 
         return waypointTime
-
-
-
 
     @staticmethod         # this functions returns area of segments for each waypoint segments
     def computeSplineDistance(waypointX,waypointY,waypointZ):
@@ -167,69 +143,18 @@ class Splinemobility(Basemobility):
 
         # print(np.sum(area_of_segment))
 
-
         return distance_of_segments
 
-
-    def ParsePolygonFileToObstracles(self):
-        parsedFile= minidom.parse(self._polygon_file_path)
-        polygons = parsedFile.getElementsByTagName('poly')
-        buildings=[]
-        for polygon in polygons:
-            shape_of_polygon = polygon.attributes['shape'].value
-            vertex_corordinates= shape_of_polygon.split(' ')       #coordinates are of string type
-            # print("hello")
-            # print(vertex_corordinates)
-            list_of_coordinates=[]
-            for single_vertex in vertex_corordinates:
-                list_of_coordinates.append([float(single_vertex.split(',')[0]),float(single_vertex.split(',')[1])]) # x and y coordinates are seperated and converted to float
-
-            # print(list_of_coordinates)
-            buildings.append(mplPath.Path(np.array(list_of_coordinates)))     # forming shape of polyson by joining the polygon coordinates and appended to building list
-
-        return buildings
-
-
-        # point = (8.9, 8)
-        # print(point, " is in polygon: ", building[0].contains_point(point))
-        # warnings.filterwarnings('error')
-        # print(self.getMove().getPassedTime())
-        # warnings.warn('prompt warning')
-        # print(len(building))
-        '''
-        # ex= polys[0].attributes['shape'].value.split(' ')
-        # print([float(ex[0].split(',')[0]),float(ex[0].split(',')[1])])
-        # vertex_coordinate= [float(ex[0].split(',')[0]),float(ex[0].split(',')[1])]
-        # print(type(vertex_coordinate[0]))
-        # test_list= [[0, 0], [1, 0], [1, 1], [0, 1], [0, 0]]
-        # poly_path = mplPath.Path(np.array(test_list))
-        # print(poly_path)
-        # point = (9.5, -10)
-        # print(point, " is in polygon: ", poly_path.contains_point(point))
-        '''
-
-
-    def manageObstracles(self, spl_x, spl_y, spl_z, passedTime):
+    def manageObstacles(self, spl_x, spl_y, spl_z, passedTime):
         futureTime= passedTime + Simulationparameter.stepLength
         futureCoordinate = (spl_x(futureTime), spl_y(futureTime))
         # self._obstrackelDetector_flag= self._obstracles[0].contains_point(futureCoordinate)
         # warnings.filterwarnings('once')
-        detectObstrackel = self._obstracles[0].contains_point(futureCoordinate)
-        if not self._obstrackelDetector_flag and detectObstrackel and self._collisionAction==1:
+        detectObstacle = self._obstacle[0].contains_point(futureCoordinate)
+        if not self._obstacleDetector_flag and detectObstacle and self._collisionAction==1:
             # warnings.warn('uav is going to collide in collide')
             print('uav is going to collide to collide')
             print(passedTime)
             print(futureTime)
 
-        self._obstrackelDetector_flag= True if detectObstrackel== True else self._obstrackelDetector_flag
-
-
-
-
-
-
-
-
-
-
-
+        self._obstacleDetector_flag= True if detectObstacle == True else self._obstacleDetector_flag

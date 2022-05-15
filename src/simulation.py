@@ -38,7 +38,7 @@ class Simulation:
         self._linearMobilityFlag = linearMobilityFlag
         self._splineMobilityFlag = splineMobilityFlag
         self._polygon_file_path= polygon_file_path
-
+        
     def startSimulation(self):
         if self._isRunnig == True or Simulationparameter.currentSimStep != -1:
             print("Simulation is already running")
@@ -76,7 +76,6 @@ class Simulation:
 
             # for linearmobility
             else:
-
                 self._managedNodes.append(Uav(nextUid, Point(uav['startPosX'], uav['startPosY'], uav['startPosZ']),
                                               Point(uav['endPosX'], uav['endPosY'], uav['endPosZ']), self._polygon_file_path))
 

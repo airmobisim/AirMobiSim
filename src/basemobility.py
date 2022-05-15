@@ -1,18 +1,19 @@
-import geopandas
-import numpy as np
+from abc import ABC
+from xml.dom import minidom
 
-from abc import ABC, abstractmethod
+import numpy as np
 from shapely.geometry import Point
 
+from .baseenergy import Baseenergy
 from .movement import Movement
 from .resultcollection import Resultcollection
 from .simulationparameter import Simulationparameter
+import matplotlib.path as mplPath
 
-from .baseenergy import Baseenergy 
 
 class Basemobility(ABC):
-    
-    def __init__(self, uid,  startPos, endPos):
+    polygon_file_path = None
+    def __init__(self, uid,  startPos, endPos, polygon_file_path):
         self._uid = uid
         self._move = Movement()
         self._resultcollection =  Resultcollection()
@@ -20,11 +21,14 @@ class Basemobility(ABC):
         self._startPos = startPos
         self._endPos = endPos
         self._currentPos = Point(0,0,0) 
+        self._collisionAction = 1  # 1= warn, 2 = no action 3=remove uav
+        self._obstacleDetector_flag = False
+        self.polygon_file_path = polygon_file_path
+        self._obstacle= self.ParsePolygonFileToObstracles()
         pass
 
     def getMove(self):
         return self._move
-
 
     def getCurrentPos(self):
         passedTime = (Simulationparameter.currentSimStep * Simulationparameter.stepLength) - self.getMove().getStartTime()
@@ -79,10 +83,7 @@ class Basemobility(ABC):
             currentPos=Point(self.getMove().getNextCoordinate().x, self.getMove().getNextCoordinate().y, 0.0)
             # currentPos=Point(self.getMove().getNextCoordinate().x, self.getMove().getNextCoordinate().y, self.getMove().getNextCoordinate().z)
             # currentPos = self.getMove().getNextCoordinate()
-
-
         return currentPos
-
 
     def makeMove(self):
         self.doLog()
@@ -97,5 +98,25 @@ class Basemobility(ABC):
         currentEnergy = self._baseenergy.getcurrentEnergy(self.getMove().getSpeed(), (Simulationparameter.currentSimStep * Simulationparameter.stepLength) - self.getMove().getStartTime())
 
         self._resultcollection.logCurrentEnergy(self._uid,currentEnergy[0], currentEnergy[1])
-
         pass
+
+    def ParsePolygonFileToObstracles(self):
+        parsedFile= minidom.parse(self.polygon_file_path)
+        polygons = parsedFile.getElementsByTagName('poly')
+        buildings=[]
+        for polygon in polygons:
+            shape_of_polygon = polygon.attributes['shape'].value
+            vertex_corordinates= shape_of_polygon.split(' ')       #coordinates are of string type
+            # print("hello")
+            # print(vertex_corordinates)
+            list_of_coordinates=[]
+            for single_vertex in vertex_corordinates:
+                list_of_coordinates.append([float(single_vertex.split(',')[0]),float(single_vertex.split(',')[1])]) # x and y coordinates are seperated and converted to float
+
+            # print(list_of_coordinates)
+            buildings.append(mplPath.Path(np.array(list_of_coordinates)))     # forming shape of polygon by joining the polygon coordinates and appended to building list
+
+        return buildings
+
+    def manageObstacles(self):
+        raise NotImplementedError
