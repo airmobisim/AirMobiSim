@@ -17,6 +17,7 @@ class Linearmobility(Basemobility):
         self._uid = uid
         self._stepTarget = ""
         self._totalFlightTime= self.computeTotalFlightTime()
+        # print('speed is',speed)
 
     def makeMove(self):
         move = self.getMove()
@@ -52,6 +53,9 @@ class Linearmobility(Basemobility):
 
     def computeTotalFlightTime(self):
         # print()
+        move = self.getMove()
+        if self._acceleration==0 and move.getSpeed()==0.0:
+            return  0.0
         
         distance = math.sqrt((self._endPos.x - self._startPos.x) ** 2 + (self._endPos.y - self._startPos.y) ** 2 + (
                     self._endPos.z - self._startPos.z) ** 2)
