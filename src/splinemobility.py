@@ -146,9 +146,11 @@ class Splinemobility(Basemobility):
         return distance_of_segments
 
     def manageObstacles(self, spl_x, spl_y, spl_z, passedTime):
+        if self._obstacle == None:
+            return
         futureTime= passedTime + Simulationparameter.stepLength
         futureCoordinate = (spl_x(futureTime), spl_y(futureTime))
-        # self._obstrackelDetector_flag= self._obstracles[0].contains_point(futureCoordinate)
+        # self._obstackelDetector_flag= self._obstacles[0].contains_point(futureCoordinate)
         # warnings.filterwarnings('once')
         detectObstacle = self._obstacle[0].contains_point(futureCoordinate)
         if not self._obstacleDetector_flag and detectObstacle and self._collisionAction==1:

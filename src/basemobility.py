@@ -1,4 +1,5 @@
 from abc import ABC
+import os
 from xml.dom import minidom
 
 import numpy as np
@@ -24,7 +25,7 @@ class Basemobility(ABC):
         self._collisionAction = 1  # 1= warn, 2 = no action 3=remove uav
         self._obstacleDetector_flag = False
         self.polygon_file_path = polygon_file_path
-        self._obstacle= self.ParsePolygonFileToObstracles()
+        self._obstacle = self.ParsePolygonFileToObstracles()
         pass
 
     def getMove(self):
@@ -101,6 +102,9 @@ class Basemobility(ABC):
         pass
 
     def ParsePolygonFileToObstracles(self):
+        if self.polygon_file_path == None or not os.path.exists(self.polygon_file_path):
+            return None
+        print("self.polygon_file_path: " + str(self.polygon_file_path))
         parsedFile= minidom.parse(self.polygon_file_path)
         polygons = parsedFile.getElementsByTagName('poly')
         buildings=[]

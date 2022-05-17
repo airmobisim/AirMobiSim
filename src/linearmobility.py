@@ -61,6 +61,8 @@ class Linearmobility(Basemobility):
         return distance/average_velocity
 
     def manageObstacles(self, passedTime):
+        if self._obstacle == None:
+            return
         futureTime= passedTime + Simulationparameter.stepLength
 
         currentDirection = self.getMove().getCurrentDirection()
