@@ -56,7 +56,8 @@ class Basemobility(ABC):
             previousPos = self.getMove().getTempStartPos()
 
             if self.getMove().getFinalFlag():
-                return Point(previousPos.x,previousPos.y,0.0)
+                # return Point(previousPos.x,previousPos.y,0.0)
+                return previousPos
 
             x = previousPos.x + (currentDirection.x*self.getMove().getSpeed()*Simulationparameter.stepLength)
             y = previousPos.y + (currentDirection.y*self.getMove().getSpeed()*Simulationparameter.stepLength)
@@ -71,19 +72,17 @@ class Basemobility(ABC):
     # current position function for spline mobility
     def getCurrentPosSp(self):
         passedTime = (Simulationparameter.currentSimStep * Simulationparameter.stepLength) - self.getMove().getStartTime()
+        if passedTime==0:
+            return self._startPos
         # currenPos = Point(0, 0, 0)
         if not self.getMove().getFinalFlag():
-
             currentPos = self.getMove().getNextCoordinate()
-        # if (self.getMove().getFinalFlag()):
-        #     currentPos = self.getMove().getNextCoordinate()
             return currentPos
 
         elif self.getMove().getFinalFlag():
-            # currentPos=Point(self.getMove().getTempStartPos().x, self.getMove().getTempStartPos().y, 0.0)
-            currentPos=Point(self.getMove().getNextCoordinate().x, self.getMove().getNextCoordinate().y, 0.0)
             # currentPos=Point(self.getMove().getNextCoordinate().x, self.getMove().getNextCoordinate().y, self.getMove().getNextCoordinate().z)
-            # currentPos = self.getMove().getNextCoordinate()
+            currentPos = self.getMove().getNextCoordinate()
+
         return currentPos
 
     def makeMove(self):

@@ -23,7 +23,8 @@ class Splinemobility(Basemobility):
         self._uid = uid
         self._move.setStart(self._startpos, 0)
         self._move.setEndPos(self._endpos)
-        self._move.setTempStartPos(self._startpos) # holds each intermediate points of linear in each iteration
+        # self._move.setTempStartPos(self._startpos) # holds each intermediate points of linear in each iteration
+        self._move.setNextCoordinate(self._startpos) # holds each intermediate points of linear in each iteration
 
         # since spline so fixing it to true, this flag is used to separate some code from other mobility
         self._move.setLinearMobilitySpFlag(True)
@@ -31,7 +32,10 @@ class Splinemobility(Basemobility):
         # self.updateWaypointsByIndex()     # uncomment this line when you want to use insertion of waypoints
         self._speed= speed
         self._waypointTime = self.insertWaypointTime()
-        self._totalFlightTime = self._waypointTime[-1]
+        # self._totalFlightTime = self._waypointTime[-1]
+        self._totalFlightTime = self.computeTotalFlightTime(0.0, speed, 0)
+        print('speed: ', speed, 'total flightTime:', self._totalFlightTime)
+        print('startpos: ', self._startpos)
 
     def makeMove(self):
         #object of Movement
@@ -41,13 +45,14 @@ class Splinemobility(Basemobility):
         passedTime = (Simulationparameter.currentSimStep * Simulationparameter.stepLength) - self.getMove().getStartTime()
 
         # for linear mobility with cubic spline
-        if move.getLinearMobilitySpFlag():
+        # if move.getLinearMobilitySpFlag():
 
-            if 0.0 <= passedTime < self._totalFlightTime :
-                '''
-                reduce computation by passing the following lines in constructor
-                '''
-
+        if 0.0 <= passedTime < self._totalFlightTime :
+        # if passedTime !=0 and passedTime < self._totalFlightTime :
+            '''
+            reduce computation by passing the following lines in constructor
+            '''
+            if passedTime !=0.0:
                 spl_x = CubicSpline(self._waypointTime, self._waypointX)
                 spl_y = CubicSpline(self._waypointTime, self._waypointY)
                 spl_z = CubicSpline(self._waypointTime, self._waypointZ)
@@ -57,10 +62,10 @@ class Splinemobility(Basemobility):
                 if self._collisionAction != 2:
                     self.manageObstacles(spl_x,spl_y,spl_z, passedTime)
 
-            elif passedTime>= self._totalFlightTime :
-                move.setFinalFlag(True)
-                # move.setLinearMobilitySpFlag(False)
-                # move.setSpeed(0.0)
+        elif passedTime>= self._totalFlightTime :
+            move.setFinalFlag(True)
+            # move.setLinearMobilitySpFlag(False)
+            # move.setSpeed(0.0)
 
 
         move.setPassedTime(passedTime)
@@ -160,3 +165,15 @@ class Splinemobility(Basemobility):
 
 
         self._obstacleDetector_flag= True if detectObstacle == True else self._obstacleDetector_flag
+
+
+
+    def computeTotalFlightTime(self, currentTime, speed, acceleration):
+        if speed==0 and acceleration==0:
+            return 0
+        distance = np.sum(Splinemobility.computeSplineDistance(self._waypointX, self._waypointY, self._waypointZ))
+        final_velocity = math.sqrt(speed ** 2 + 2 * acceleration * distance)  # v^2=u^2+2as
+        average_velocity = (speed + final_velocity) / 2
+        assert average_velocity != 0, 'avarage velocity can not be 0'
+        flightTime = distance / average_velocity + currentTime
+        return flightTime
