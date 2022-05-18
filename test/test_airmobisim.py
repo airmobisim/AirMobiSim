@@ -194,6 +194,14 @@ class TestAirmobisim(unittest.TestCase):
         self.assertTrue(mock_doLog.called , 'The model did not call doLog function. It should!')
         self.assertTrue(mock_getLinearMobilitySpFlag.called_once(), 'The model did not call getLinearMobilitySpFlag function. It should!')
 
+    @patch('src.movement.Movement.getLinearMobilitySpFlag', return_value=True)
+    @patch('src.resultcollection.Resultcollection.logCurrentPosition')
+    def test_logCurrentPosition_sp_mob(self, mock_logCurrentPosition, mock_getflag):
+        sp_obj = Splinemobility(0, TestAirmobisim.waypointX[0], TestAirmobisim.waypointY[0],
+                                TestAirmobisim.waypointZ[0], TestAirmobisim.speed[0], None)
+        sp_obj.makeMove()
+        self.assertTrue(mock_logCurrentPosition.called)
+
 
     @patch('src.movement.Movement.getLinearMobilitySpFlag', return_value=False)
     @patch('src.basemobility.Basemobility.doLog')
@@ -213,24 +221,17 @@ class TestAirmobisim(unittest.TestCase):
 
     # self.assertEqual(validInputSp,True)
 
-
-    @patch('src.movement.Movement.getLinearMobilitySpFlag', return_value=True)
-    @patch('src.resultcollection.Resultcollection.logCurrentPosition')
-    def test_logCurrentPosition_sp_mob(self, mock_logCurrentPosition, mock_getflag):
-        sp_obj = Splinemobility(0, TestAirmobisim.speed[0], TestAirmobisim.waypointX[0], TestAirmobisim.waypointY[0],
-                                TestAirmobisim.waypointZ[0])
-        sp_obj.makeMove()
-        self.assertTrue(mock_logCurrentPosition.called)
-
-
-
     @patch('src.movement.Movement.getLinearMobilitySpFlag', return_value=False)
     @patch('src.resultcollection.Resultcollection.logCurrentPosition')
     def test_logCurrentPosition_lin_mob(self, mock_logCurrentPosition, mock_getflag):
-
-        lin_obj = Linearmobility(0, 1, TestAirmobisim.startPos[0], TestAirmobisim.endPos[0])
+        angle = 0
+        polygon_file_path = None
+        lin_obj = Linearmobility(0, TestAirmobisim.startPos[0], TestAirmobisim.endPos[0],angle,TestAirmobisim.speed_lin[0], polygon_file_path)
         lin_obj.makeMove()
         self.assertTrue(mock_logCurrentPosition.called, 'logCurrentPosition should be called')
+
+
+
 
     def test_model_selection_input(self):
 
@@ -240,8 +241,8 @@ class TestAirmobisim(unittest.TestCase):
 
     def test_waypointTime_generated_splinemobility(self):
         for uav in range(len(TestAirmobisim.uavsSpline)):   # check for all uavs
-            sp_obj = Splinemobility(uav, TestAirmobisim.speed[uav], TestAirmobisim.waypointX[uav], TestAirmobisim.waypointY[uav],
-                                    TestAirmobisim.waypointZ[uav])
+            sp_obj = Splinemobility(uav, TestAirmobisim.waypointX[uav], TestAirmobisim.waypointY[uav],
+                                    TestAirmobisim.waypointZ[uav], TestAirmobisim.speed[uav],None)
             print(sp_obj._waypointTime)
             for item in sp_obj._waypointTime:     # test for each entry in waypointTime list
                 self.assertEqual([value for value in sp_obj._waypointTime].count(item), 1,
