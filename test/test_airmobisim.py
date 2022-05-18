@@ -46,11 +46,13 @@ class TestAirmobisim(unittest.TestCase):
         # inputs for linear mobility
         cls.startPos = []
         cls.endPos = []
+        cls.speed_lin=[]
 
         for uavlin in cls.uavsLinear:
             # print(uavlin['startPosX'])
             cls.startPos.append(Point(uavlin['startPosX'], uavlin['startPosY'], uavlin['startPosZ']))
             cls.endPos.append(Point(uavlin['endPosX'], uavlin['endPosY'], uavlin['endPosZ']))
+            cls.speed_lin.append(uavlin['speed'])
 
         # print('hello')
         # print(cls.startPos[0])
@@ -102,8 +104,8 @@ class TestAirmobisim(unittest.TestCase):
 
     def test_speed_limit_sp(self):
         for index, uavsp in enumerate(TestAirmobisim.uavsSpline):
-            splineObj = Splinemobility(index, TestAirmobisim.speed[index], TestAirmobisim.waypointX[index],
-                                       TestAirmobisim.waypointY[index], TestAirmobisim.waypointZ[index])
+            splineObj = Splinemobility(index,  TestAirmobisim.waypointX[index],
+                                       TestAirmobisim.waypointY[index], TestAirmobisim.waypointZ[index], TestAirmobisim.speed[index],None)
             print('total flight time')
             print(splineObj._totalFlightTime)
             self.assertTrue(splineObj._totalFlightTime <= TestAirmobisim.simTimeLimit,
@@ -180,11 +182,15 @@ class TestAirmobisim(unittest.TestCase):
 
     @patch('src.basemobility.Basemobility.doLog')
     @patch('src.movement.Movement.getLinearMobilitySpFlag', return_value=True)
-    def test_doLog_sp_mob(self, mock_doLog, mock_getLinearMobilitySpFlag):
-        sp_obj = Splinemobility(0, TestAirmobisim.speed[0], TestAirmobisim.waypointX[0], TestAirmobisim.waypointY[0],
-                                TestAirmobisim.waypointZ[0])
+    def test_doLog_sp_mob(self, mock_getLinearMobilitySpFlag, mock_doLog):
+        sp_obj = Splinemobility(0, TestAirmobisim.waypointX[0], TestAirmobisim.waypointY[0],
+                                TestAirmobisim.waypointZ[0], TestAirmobisim.speed[0], None)
 
         sp_obj.makeMove()
+        # print(sp_obj._waypointX)
+        # print(sp_obj._waypointY)
+        # print(sp_obj._waypointZ)
+        # print(sp_obj._speed)
         self.assertTrue(mock_doLog.called , 'The model did not call doLog function. It should!')
         self.assertTrue(mock_getLinearMobilitySpFlag.called_once(), 'The model did not call getLinearMobilitySpFlag function. It should!')
 
@@ -193,7 +199,9 @@ class TestAirmobisim(unittest.TestCase):
     @patch('src.basemobility.Basemobility.doLog')
     def test_doLog_lin_mob(self, mock_doLog, mock_getLinearMobilitySpFlag):
         # angle = math.atan2(TestAirmobisim.endPos[0].y - TestAirmobisim.startPos[0].y, TestAirmobisim.endPos[0].x - TestAirmobisim.startPos[0].x) * 180 / math.pi
-        lin_obj = Linearmobility(0, 1, TestAirmobisim.startPos[0], TestAirmobisim.endPos[0])
+        angle=0
+        polygon_file_path=None
+        lin_obj = Linearmobility(0, TestAirmobisim.startPos[0], TestAirmobisim.endPos[0],angle,TestAirmobisim.speed_lin[0], polygon_file_path)
         # mock_getLinearMobilitySpFlag.retuned_value = True
         lin_obj.makeMove()
 
