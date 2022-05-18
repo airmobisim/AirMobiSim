@@ -32,7 +32,7 @@ class TestAirmobisim(unittest.TestCase):
         cls.kenetic_model=config['kinetic_model']
 
         # inputs for splinemobility
-        cls.speed = []
+        cls.speed_sp = []
         cls.waypointX = []
         cls.waypointY = []
         cls.waypointZ = []
@@ -41,7 +41,7 @@ class TestAirmobisim(unittest.TestCase):
             cls.waypointX.append(uavsp['waypointX'])
             cls.waypointY.append(uavsp['waypointY'])
             cls.waypointZ.append(uavsp['waypointZ'])
-            cls.speed.append(uavsp['speed'])
+            cls.speed_sp.append(uavsp['speed'])
 
         # inputs for linear mobility
         cls.startPos = []
@@ -70,7 +70,7 @@ class TestAirmobisim(unittest.TestCase):
         # print('after every test')
         pass
 
-    def test_config_input_sp_mob(self):  # all inputs need to be positive and inside the playground
+    def test_waypoints_spline_mob(self):  # all inputs need to be positive and inside the playground
 
         self.assertTrue(len(TestAirmobisim.waypointX) == len(TestAirmobisim.waypointY) == len(TestAirmobisim.waypointZ),
                         'input waypoint length for x,y and z should be same')
@@ -86,7 +86,7 @@ class TestAirmobisim(unittest.TestCase):
             self.assertTrue(all(0 <= item <= TestAirmobisim.playgroundSizeZ for item in TestAirmobisim.waypointZ[i]),
                             'waypoint z should be within playgroundZ')
 
-    def test_config_input_lin_mob(self):  # all inputs need to be positive and inside the playground
+    def test_waypoints_linear_mob(self):  # all inputs need to be positive and inside the playground
 
         self.assertTrue(len(TestAirmobisim.waypointX) == len(TestAirmobisim.waypointY) == len(TestAirmobisim.waypointZ),
                         'input waypoint length for x,y and z should be same')
@@ -105,7 +105,7 @@ class TestAirmobisim(unittest.TestCase):
     def test_speed_limit_sp(self):
         for index, uavsp in enumerate(TestAirmobisim.uavsSpline):
             splineObj = Splinemobility(index,  TestAirmobisim.waypointX[index],
-                                       TestAirmobisim.waypointY[index], TestAirmobisim.waypointZ[index], TestAirmobisim.speed[index],None)
+                                       TestAirmobisim.waypointY[index], TestAirmobisim.waypointZ[index], TestAirmobisim.speed_lin[index],None)
             print('total flight time')
             print(splineObj._totalFlightTime)
             self.assertTrue(splineObj._totalFlightTime <= TestAirmobisim.simTimeLimit,
@@ -184,7 +184,7 @@ class TestAirmobisim(unittest.TestCase):
     @patch('src.movement.Movement.getLinearMobilitySpFlag', return_value=True)
     def test_doLog_sp_mob(self, mock_getLinearMobilitySpFlag, mock_doLog):
         sp_obj = Splinemobility(0, TestAirmobisim.waypointX[0], TestAirmobisim.waypointY[0],
-                                TestAirmobisim.waypointZ[0], TestAirmobisim.speed[0], None)
+                                TestAirmobisim.waypointZ[0], TestAirmobisim.speed_sp[0], None)
 
         sp_obj.makeMove()
         # print(sp_obj._waypointX)
@@ -198,7 +198,7 @@ class TestAirmobisim(unittest.TestCase):
     @patch('src.resultcollection.Resultcollection.logCurrentPosition')
     def test_logCurrentPosition_sp_mob(self, mock_logCurrentPosition, mock_getflag):
         sp_obj = Splinemobility(0, TestAirmobisim.waypointX[0], TestAirmobisim.waypointY[0],
-                                TestAirmobisim.waypointZ[0], TestAirmobisim.speed[0], None)
+                                TestAirmobisim.waypointZ[0], TestAirmobisim.speed_sp[0], None)
         sp_obj.makeMove()
         self.assertTrue(mock_logCurrentPosition.called)
 
@@ -206,7 +206,8 @@ class TestAirmobisim(unittest.TestCase):
     @patch('src.movement.Movement.getLinearMobilitySpFlag', return_value=False)
     @patch('src.basemobility.Basemobility.doLog')
     def test_doLog_lin_mob(self, mock_doLog, mock_getLinearMobilitySpFlag):
-        # angle = math.atan2(TestAirmobisim.endPos[0].y - TestAirmobisim.startPos[0].y, TestAirmobisim.endPos[0].x - TestAirmobisim.startPos[0].x) * 180 / math.pi
+        # angle = math.atan2(TestAirmobisim.endPos[0].y - TestAirmobisim.startPos[0].y, TestAirmobisim.endPos[0].x -
+        # TestAirmobisim.startPos[0].x) * 180 / math.pi
         angle=0
         polygon_file_path=None
         lin_obj = Linearmobility(0, TestAirmobisim.startPos[0], TestAirmobisim.endPos[0],angle,TestAirmobisim.speed_lin[0], polygon_file_path)
@@ -226,8 +227,12 @@ class TestAirmobisim(unittest.TestCase):
     def test_logCurrentPosition_lin_mob(self, mock_logCurrentPosition, mock_getflag):
         angle = 0
         polygon_file_path = None
+
+
         lin_obj = Linearmobility(0, TestAirmobisim.startPos[0], TestAirmobisim.endPos[0],angle,TestAirmobisim.speed_lin[0], polygon_file_path)
+        # print(lin_obj._move.getLinearMobilitySpFlag())
         lin_obj.makeMove()
+
         self.assertTrue(mock_logCurrentPosition.called, 'logCurrentPosition should be called')
 
 
@@ -242,11 +247,19 @@ class TestAirmobisim(unittest.TestCase):
     def test_waypointTime_generated_splinemobility(self):
         for uav in range(len(TestAirmobisim.uavsSpline)):   # check for all uavs
             sp_obj = Splinemobility(uav, TestAirmobisim.waypointX[uav], TestAirmobisim.waypointY[uav],
-                                    TestAirmobisim.waypointZ[uav], TestAirmobisim.speed[uav],None)
+                                    TestAirmobisim.waypointZ[uav], TestAirmobisim.speed_sp[uav],None)
             print(sp_obj._waypointTime)
             for item in sp_obj._waypointTime:     # test for each entry in waypointTime list
                 self.assertEqual([value for value in sp_obj._waypointTime].count(item), 1,
                              "waypointTime should contain unique timestamp without reperation ")       # test uniqueness of waypointTime entry
+
+    def test_negative_speed(self):
+        self.assertTrue(all(speed >=0  for speed in TestAirmobisim.speed_sp),
+                        'Speed can not be negative for splinemobility model')
+
+        self.assertTrue(all(speed >=0  for speed in TestAirmobisim.speed_lin),
+                        'Speed can not be negative for linearmobility model')
+
 
 if __name__ == '__main__':
     unittest.main()
