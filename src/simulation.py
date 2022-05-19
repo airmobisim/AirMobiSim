@@ -87,7 +87,7 @@ class Simulation:
                 removeNode = node._mobility.makeMove()   # building ahead
                 if removeNode:
                     print('removing uav', node._uid)
-                    self._managedNodes.remove(node)      # obstracle so remove
+                    self._managedNodes.remove(node)      # obstacle so remove
 
         else:
             for node in self._managedNodes:

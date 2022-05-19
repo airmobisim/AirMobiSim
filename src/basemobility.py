@@ -25,7 +25,7 @@ class Basemobility(ABC):
         self._collisionAction = 1  # 1= warn, 2 = no action 3=remove uav
         self._obstacleDetector_flag = False
         self.polygon_file_path = polygon_file_path
-        self._obstacle = self.ParsePolygonFileToObstracles()
+        self._obstacle = self.ParsePolygonFileToObstacles()
         pass
 
     def getMove(self):
@@ -101,7 +101,7 @@ class Basemobility(ABC):
         self._resultcollection.logCurrentEnergy(self._uid,currentEnergy[0], currentEnergy[1])
         pass
 
-    def ParsePolygonFileToObstracles(self):
+    def ParsePolygonFileToObstacles(self):
         if self.polygon_file_path == None or not os.path.exists(self.polygon_file_path):
             return None
         print("self.polygon_file_path: " + str(self.polygon_file_path))
