@@ -2,6 +2,8 @@
 
 import argparse
 import os
+import sys
+from os.path import exists
 import pathlib
 
 from proto.DroCIBridge import startServer
@@ -28,8 +30,15 @@ def main():
         homePath = os.environ['AIRMOBISIMHOME']
     except KeyError:
         print("AIRMOBISIMHOME-Variable missing. Please do run 'export AIRMOBISIMHOME=" + str(pathlib.Path().resolve()) + "' or copy the statement to your .bashrc, .profile, or .zshrc")
+        sys.exit()
 
-    p = Yamlparser(homePath + "/" + args.configuration)
+
+
+    configPath = homePath + "/123123/" + args.configuration
+    if not exists(configPath):
+        print("The configuration file " + configPath + " does not exist. Please check the path or run AirMobiSim with the --help option ")
+        sys.exit()    
+    p = Yamlparser(configPath)
     config = p.readConfig()
 
     # flags to refer kinetic model selection
