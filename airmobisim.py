@@ -24,7 +24,10 @@ def main():
 
     print("""AirMobiSim Simulation  (C) 2021 Chair of Networked Systems Modelling TU Dresden.\nVersion: 0.0.1\nSee the license for distribution terms and warranty disclaimer""", flush=True)
     args = parser.parse_args()
-    homePath = os.environ['AIRMOBISIMHOME']
+    try:
+        homePath = os.environ['AIRMOBISIMHOME']
+    except KeyError:
+        print("AIRMOBISIMHOME-Variable missing. Please do run 'export AIRMOBISIMHOME=" + str(pathlib.Path().resolve()) + "' or copy the statement to your .bashrc, .profile, or .zshrc")
 
     p = Yamlparser(homePath + "/" + args.configuration)
     config = p.readConfig()
