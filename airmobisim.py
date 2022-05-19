@@ -34,7 +34,7 @@ def main():
 
 
 
-    configPath = homePath + "/123123/" + args.configuration
+    configPath = homePath + "/" + args.configuration
     if not exists(configPath):
         print("The configuration file " + configPath + " does not exist. Please check the path or run AirMobiSim with the --help option ")
         sys.exit()    
