@@ -175,6 +175,12 @@ fi
 
 echo "Everything worked"
 echo ""
+echo ""
 echo "Your PATH does not contain \"\$HOME/.poetry/bin:\$PATH\""
-echo "Please run      'export PATH="\$HOME/.poetry/bin:\$PATH"' or add it to your .bashrc/.zshrc/..."
+echo "Please run the following commands of add them to your .bashrc/.zshrc/..."
+echo "-"
+echo "'export PATH="\$HOME/.poetry/bin:\$PATH"'"
+echo "'export AIRMOBISIMHOME=$AIRMOBISIMDIR'"
+echo "-"
+
 echo "You can run AirMobiSim with the command 'poetry run ./airmobisim.py'"
