@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 #
 # Copyright (C) 2021 Tobias Hardes <tobias.hardes@uni-paderborn.de>
 #
