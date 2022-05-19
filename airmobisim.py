@@ -41,6 +41,8 @@ def main():
     p = Yamlparser(configPath)
     config = p.readConfig()
 
+    validateConfiguration(config)
+
     # flags to refer kinetic model selection
     linearMobilityFlag = config['kinetic_model']['linearMobility']
     splineMobilityFlag = config['kinetic_model']['splineMobility']
@@ -65,6 +67,22 @@ def main():
         if args.plot:
             make_plot()
 
+def validateConfiguration(config):
+    linearMobilityFlag = config['kinetic_model']['linearMobility']
+    splineMobilityFlag = config['kinetic_model']['splineMobility']
+    if linearMobilityFlag == splineMobilityFlag:
+        print("Please select either linear or spline mobility")
+        sys.exit()
+    if config['simulation']['simTimeLimit'] < 0:
+        print("Please select a positive simulation time limit")
+        sys.exit()
+    
+    if config['simulation']['stepLength'] < 0:
+        print("Please select a positive step length")
+        sys.exit()
+    if config['simulation']['playgroundSizeX'] <0 or config['simulation']['playgroundSizeY'] <0 or config['simulation']['playgroundSizeZ'] < 0:
+        print("Please select a positive playground size")
+        sys.exit()
 
 def initializeSimulation(config, directory, linearMobilityFlag,splineMobilityFlag):
     global simulation
@@ -80,7 +98,6 @@ def initializeSimulation(config, directory, linearMobilityFlag,splineMobilityFla
 
         polygon_file_path = homePath + '/' + polygon_file
         
-        print("Polygonfile is " + polygon_file_path)
         simulation = Simulation( directory,
                                  config['simulation']['stepLength'],
                                  config['simulation']['simTimeLimit'],
