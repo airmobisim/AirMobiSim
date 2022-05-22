@@ -1,7 +1,7 @@
 import os
 import matplotlib.pyplot as plt
 import pandas as pd
-import numpy as np
+
 import os.path
 
 from .singleton import Singleton
@@ -23,13 +23,18 @@ class Resultcollection(metaclass=Singleton):
         logfile = self._logDir + "positionResults.csv"
         if self._firstLog:
             print("creating new log", flush=True)
-            f = open(logfile, "w")
-            f.write("uid" + self._logDelimiter + "passedTime" + self._logDelimiter + "posX" + self._logDelimiter + "posY" + self._logDelimiter + "posZ"+"\n")
+            with open(logfile, "w") as f:
+                f.write("uid" + self._logDelimiter + "passedTime" + self._logDelimiter + "posX" + self._logDelimiter + "posY" + self._logDelimiter + "posZ"+"\n")
+            # f.close()
             #self._firstLog = False
-        f = open(logfile, "a")
-        f.write(str(uid) + self._logDelimiter + str(movement.getPassedTime()) + self._logDelimiter + str(
-            position.x) + self._logDelimiter + str(position.y) + self._logDelimiter + str(position.z) + "\n")
-        f.close()
+        # f = open(logfile, "a")
+        # f.write(str(uid) + self._logDelimiter + str(movement.getPassedTime()) + self._logDelimiter + str(
+        #     position.x) + self._logDelimiter + str(position.y) + self._logDelimiter + str(position.z) + "\n")
+        # f.close()
+        with open(logfile, "a") as f:
+            f.write(str(uid) + self._logDelimiter + str(movement.getPassedTime()) + self._logDelimiter + str(
+                position.x) + self._logDelimiter + str(position.y) + self._logDelimiter + str(position.z) + "\n")
+            # f.close()
 
 
     def logCurrentEnergy(self,uid,distance, energy):
@@ -38,12 +43,15 @@ class Resultcollection(metaclass=Singleton):
         """
         logfile_2 = self._logDir + "energyResults.csv"
         if self._firstLog:
-            fl = open(logfile_2, "w")
-            fl.write("uid" + self._logDelimiter + "travelled distance" + self._logDelimiter + "energy"+ "\n")
+            with open(logfile_2, "w") as fl:
+                fl.write("uid" + self._logDelimiter + "travelled distance" + self._logDelimiter + "energy"+ "\n")
             self._firstLog = False
-        fl = open(logfile_2, "a")
-        fl.write(str(uid) + self._logDelimiter + str(distance) + self._logDelimiter + str(energy) + "\n")
-        fl.close()
+        # fl = open(logfile_2, "a")
+        # fl.write(str(uid) + self._logDelimiter + str(distance) + self._logDelimiter + str(energy) + "\n")
+        # fl.close()
+        with open(logfile_2, "a") as fl:
+            fl.write(str(uid) + self._logDelimiter + str(distance) + self._logDelimiter + str(energy) + "\n")
+            # fl.close()
 
     def showEnergy(self):
         """
