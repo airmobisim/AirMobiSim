@@ -269,7 +269,7 @@ class TestAirmobisim(unittest.TestCase):
                         'Speed can not be negative for linearmobility model')
 
     # @patch('src.simulationparameter.Simulationparameter.stepLength',cls.step)
-    def test_obstacle_for_spline(self):
+    def test_obstacle_for_spline(self):                         #todo complete this test case
         Simulationparameter.stepLength = TestAirmobisim.stepLength
         self._simulationSteps = TestAirmobisim.simTimeLimit / Simulationparameter.stepLength
 
