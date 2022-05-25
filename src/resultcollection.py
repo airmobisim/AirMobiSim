@@ -27,10 +27,7 @@ class Resultcollection(metaclass=Singleton):
                 f.write("uid" + self._logDelimiter + "passedTime" + self._logDelimiter + "posX" + self._logDelimiter + "posY" + self._logDelimiter + "posZ"+"\n")
             # f.close()
             #self._firstLog = False
-        # f = open(logfile, "a")
-        # f.write(str(uid) + self._logDelimiter + str(movement.getPassedTime()) + self._logDelimiter + str(
-        #     position.x) + self._logDelimiter + str(position.y) + self._logDelimiter + str(position.z) + "\n")
-        # f.close()
+
         with open(logfile, "a") as f:
             f.write(str(uid) + self._logDelimiter + str(movement.getPassedTime()) + self._logDelimiter + str(
                 position.x) + self._logDelimiter + str(position.y) + self._logDelimiter + str(position.z) + "\n")
@@ -46,9 +43,7 @@ class Resultcollection(metaclass=Singleton):
             with open(logfile_2, "w") as fl:
                 fl.write("uid" + self._logDelimiter + "travelled distance" + self._logDelimiter + "energy"+ "\n")
             self._firstLog = False
-        # fl = open(logfile_2, "a")
-        # fl.write(str(uid) + self._logDelimiter + str(distance) + self._logDelimiter + str(energy) + "\n")
-        # fl.close()
+
         with open(logfile_2, "a") as fl:
             fl.write(str(uid) + self._logDelimiter + str(distance) + self._logDelimiter + str(energy) + "\n")
             # fl.close()
