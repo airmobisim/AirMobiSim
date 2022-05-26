@@ -28,6 +28,5 @@ class Uav:
        
         if result < 0: 
            result =  360 + result
-        # print("I am calculating the angle", flush=True)
-        # print(result, flush=True)
+
         return result
