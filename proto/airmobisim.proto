@@ -24,7 +24,9 @@ service AirMobiSim{
     
     rpc SetDesiredSpeed (UavSetSpeed) returns (google.protobuf.Empty);
 
-    rpc UpdateWaypoints (WaypointList) returns (google.protobuf.Empty);          
+    rpc UpdateWaypoints (WaypointList) returns (google.protobuf.Empty);
+
+    rpc DeleteWaypoint (WaypointList) returns (google.protobuf.Empty);          
 }
 
 message WaypointList{
@@ -91,3 +93,5 @@ message UavSetSpeed{
     int32 id = 1;
     double speed = 2;
 }
+
+

@@ -189,7 +189,10 @@ class AirMobiSim(airmobisim_pb2_grpc.AirMobiSimServicer):
         print("Update waypoints is working")
 
         return struct_pb2.Value()
- 
+   
+  def DeleteWaypoint(self, request, context):
+        pass
+        return struct_pb2.Value() 
 
 def startServer(simulation_object):
     """
