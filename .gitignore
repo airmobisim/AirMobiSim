@@ -25,6 +25,8 @@ share/python-wheels/
 .installed.cfg
 *.egg
 
+# AirMobiSim logs
+logfile.log
 
 # Installer logs
 pip-log.txt
