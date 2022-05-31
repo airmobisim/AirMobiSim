@@ -57,8 +57,8 @@ class Simulation:
 
         elapsed = (Simulationparameter.current_milli_time() - Simulationparameter.simStartTime) / 1000
         p = 100 / Simulationparameter.simTimeLimit * t
-        logging.debug("t=" + str(t) + "   Elapsed: " + str(elapsed) + "  " + str(p) + "% completed\n" +
-              "Speed: simsec/sec=72.8271")
+        logging.debug("t=%s   Elapsed: %s   %s %completed; Speed: simsec/sec=72.8271", str(t), str(elapsed), str(p))
+
 
     def manageSimulation(self):
         rt = Repeatedtimer(1, self.printStatus, "World")
@@ -88,19 +88,19 @@ class Simulation:
             for node in self._managedNodes:
                 removeNode = node._mobility.makeMove()   # building ahead
                 if removeNode:
-                    logging.debug('removing uav', node._uid)
+                    logging.debug('removing uav %s', str(node._uid))
                     self._managedNodes.remove(node)      # obstacle so remove
 
         else:
             for node in self._managedNodes:
                 removeNode = node._mobility.makeMove()
                 if removeNode:
-                    logging.debug('removing uav', node._uid, flush=True)
+                    logging.debug("removing uav %s", str(node._uid))
                     self._managedNodes.remove(node)
 
     def finishSimulation(self):
         logging.debug(
-            "exiting -- at t=" + str(Simulationparameter.currentSimStep * Simulationparameter.stepLength) + ", event ?")
+            "exiting -- at t=%s, event?", str(Simulationparameter.currentSimStep * Simulationparameter.stepLength))
 
     def getNextUid(self):
         self._highestUid += 1

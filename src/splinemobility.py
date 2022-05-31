@@ -35,8 +35,8 @@ class Splinemobility(Basemobility):
         self._waypointTime = self.insertWaypointTime()
         # self._totalFlightTime = self._waypointTime[-1]
         self._totalFlightTime = self.computeTotalFlightTime(0.0, speed, 0)
-        logging.debug('speed: ', speed, 'total flightTime:', self._totalFlightTime)
-        logging.debug('startpos: ', self._startpos)
+        logging.debug("speed: %s; total flightTime: %s", str(speed), str(self._totalFlightTime))
+        logging.debug("startpos: %s", self._startpos)
 
     def makeMove(self):
         #object of Movement
@@ -159,7 +159,7 @@ class Splinemobility(Basemobility):
         if not self._obstacleDetector_flag and detectObstacle and self._collisionAction==1:
             # warnings.warn('uav is going to collide in collide')
             logging.debug('WARNING!!!!')
-            logging.debug('currentTime:', passedTime, 'uav is going to collide at ', futureTime)
+            logging.debug("currentTime: %s; uav is going to collide at %s", str(passedTime), str(futureTime))
 
 
         self._obstacleDetector_flag= True if detectObstacle == True else self._obstacleDetector_flag

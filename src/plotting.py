@@ -46,10 +46,10 @@ def load_Data():
     z=[z1, z2]
 
     logging.debug('data')
-    logging.debug(x)
-    logging.debug(y)
-    logging.debug(z)
-    logging.debugs(speed)
+    logging.debug(str(x))
+    logging.debug(str(y))
+    logging.debug(str(z))
+    logging.debugs(str(speed))
 
 
     time1 = np.linspace(1,12,12)#[0, 15]
