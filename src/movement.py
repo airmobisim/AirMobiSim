@@ -1,9 +1,9 @@
-import geopandas
-import math 
+import math
 from shapely.geometry import Point
 import numpy as np
 
 class Movement:
+
 
     def __init__(self):
         self._startPos = Point(0, 0, 0)
@@ -16,12 +16,12 @@ class Movement:
         self._currentDirection = Point(0, 0, 0)
         self._speed = 0
         self._passedTime = 0
-        self._tempStartPos=Point(0,0,0)
+        self._tempStartPos=Point(0, 0, 0)
         self._nextCoordinate = Point(0, 0, 0)
         self._startPosCircle = Point(0, 0, 0)
         self._finalFlag = False
         self._linear_mobility_sp = False
-        self._waypointsInsertedFlag=False
+        self._waypointsInsertedFlag = False
 
     def setFinalFlag(self, flag):
         self._finalFlag = flag
@@ -91,15 +91,6 @@ class Movement:
         self._currentDirection = currentDirection
     
     def setDirectionByTarget(self):
-        '''
-        print("Target.x: " + str(target.x))
-        print("Target.y: " + str(target.y))
-        print("Target.z: " + str(target.z))
-        print("Start.x: " + str(self._startPos.x))
-        print("Start.y: " + str(self._startPos.y))
-        print("Start.z: " + str(self._startPos.z))
-        '''
-
         direction = Point(self._endPos.x - self._startPos.x, self._endPos.y - self._startPos.y, self._endPos.z - self._startPos.z)
         distance = math.sqrt((self._endPos.x - self._startPos.x)**2 + (self._endPos.y - self._startPos.y)**2 + (self._endPos.z - self._startPos.z)**2)
  
@@ -108,7 +99,7 @@ class Movement:
 
         array = np.divide(direction, distance)
         newDirection = Point(round(array[0],2), round(array[1],2), round(array[2],2))
-        #print("old direction: " + str(direction) + " new direction " + str(newDirection))
+
         self.setCurrentDirection(newDirection)
 
 

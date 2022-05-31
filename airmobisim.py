@@ -5,6 +5,7 @@ import os
 import sys
 from os.path import exists
 import pathlib
+import logging
 
 from proto.DroCIBridge import startServer
 from src.plotting import make_plot
@@ -15,6 +16,16 @@ from src.yamlparser import Yamlparser
 simulation: Simulation
 
 def main():
+
+    '''
+    Logging configuration. Valid loglevels are (ordered from most verbose to least verbose):
+    DEBUG
+    INFO
+    WARNING
+    ERROR
+    CRITICAL
+    '''
+    logging.basicConfig(filename='logfile.log', encoding='utf-8', level=logging.DEBUG)
     global simulation
 
     parser = argparse.ArgumentParser(description='Importing configuration-file')
@@ -30,6 +41,8 @@ def main():
         homePath = os.environ['AIRMOBISIMHOME']
     except KeyError:
         print("AIRMOBISIMHOME-Variable missing. Please do run 'export AIRMOBISIMHOME=" + str(pathlib.Path().resolve()) + "' or copy the statement to your .bashrc, .profile, or .zshrc")
+        logging.critical("AIRMOBISIMHOME-Variable missing. Please do run 'export AIRMOBISIMHOME=" + str(pathlib.Path().resolve()) + "' or copy the statement to your .bashrc, .profile, or .zshrc")
+
         sys.exit()
 
 
@@ -37,6 +50,8 @@ def main():
     configPath = homePath + "/" + args.configuration
     if not exists(configPath):
         print("The configuration file " + configPath + " does not exist. Please check the path or run AirMobiSim with the --help option ")
+        logging.critical("The configuration file " + configPath + " does not exist. Please check the path or run AirMobiSim with the --help option ")
+
         sys.exit()    
     p = Yamlparser(configPath)
     config = p.readConfig()
@@ -59,11 +74,11 @@ def main():
         result.showEnergy()
     else:
         if args.omnetpp:
-            print("Start the AirMobiSim Server.....", flush=True)
+            logging.info("Start the AirMobiSim Server.....")
             startServer(simulation)
         else:
             simulation.startSimulation()
-            print('FINISH')
+            logging.info('FINISH')
         if args.plot:
             make_plot()
 
@@ -72,26 +87,33 @@ def validateConfiguration(config):
     splineMobilityFlag = config['kinetic_model']['splineMobility']
     if linearMobilityFlag == splineMobilityFlag:
         print("Please select either linear or spline mobility")
+        logging.critical("Please select either linear or spline mobility")
+
         sys.exit()
     if config['simulation']['simTimeLimit'] < 0:
         print("Please select a positive simulation time limit")
+        logging.critical("Please select a positive simulation time limit")
+
         sys.exit()
     
     if config['simulation']['stepLength'] < 0:
         print("Please select a positive step length")
+        logging.critical("Please select a positive step length")
+
         sys.exit()
     if config['simulation']['playgroundSizeX'] <0 or config['simulation']['playgroundSizeY'] <0 or config['simulation']['playgroundSizeZ'] < 0:
         print("Please select a positive playground size")
+        logging.critical("Please select a positive playground size")
         sys.exit()
 
 def initializeSimulation(config, directory, linearMobilityFlag,splineMobilityFlag):
     global simulation
     if splineMobilityFlag:
-        print("Launch spline mobility")
+        logging.debug("Launch spline mobility")
         simulation = Simulation.from_config_spmob(config, linearMobilityFlag, splineMobilityFlag, directory)
 
     else:
-        print("Launch linear mobility")
+        logging.debug("Launch linear mobility")
         #simulation = Simulation.from_config_linmob(config, linearMobilityFlag, splineMobilityFlag, directory)
         polygon_file = config['files']['polygon']
         homePath = os.environ['AIRMOBISIMHOME']

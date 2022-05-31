@@ -10,6 +10,7 @@ from .movement import Movement
 from .resultcollection import Resultcollection
 from .simulationparameter import Simulationparameter
 import matplotlib.path as mplPath
+import logging
 
 
 class Basemobility(ABC):
@@ -38,21 +39,6 @@ class Basemobility(ABC):
         else:
             currentDirection = self.getMove().getCurrentDirection()
 
-        #if self.getMove().getLinearMobilitySpFlag():
-            #currentDirection = self.getMove().getCurrentDirection()
-            #if self.getMove().getLinearMobilitySpFlag():
-
-                # currentPos = self.getMove().getNextCoordinate()
-                # if (self.getMove().getFinalFlag()):
-                #     currentPos = self.getMove().getNextCoordinate()
-
-                #return currentPos
-
-            #elif self.getMove().getFinalFlag():
-                # currentPos=Point(self.getMove().getTempStartPos().x, self.getMove().getTempStartPos().y, 0.0)
-                #currentPos=Point(self.getMove().getNextCoordinate().x, self.getMove().getNextCoordinate().y, 0.0)
-                # currentPos = self.getMove().getNextCoordinate()
-
             previousPos = self.getMove().getTempStartPos()
 
             if self.getMove().getFinalFlag():
@@ -62,8 +48,6 @@ class Basemobility(ABC):
             x = previousPos.x + (currentDirection.x*self.getMove().getSpeed()*Simulationparameter.stepLength)
             y = previousPos.y + (currentDirection.y*self.getMove().getSpeed()*Simulationparameter.stepLength)
             z = previousPos.z + (currentDirection.z*self.getMove().getSpeed()*Simulationparameter.stepLength)
-            # print(x, flush=True)
-            # print(y, flush=True)
             currentPos = Point(x,y,z)
             self.getMove().setTempStartPos(currentPos)
         
@@ -103,7 +87,7 @@ class Basemobility(ABC):
     def ParsePolygonFileToObstacles(self):
         if self.polygon_file_path == None or not os.path.exists(self.polygon_file_path):
             return None
-        print("self.polygon_file_path: " + str(self.polygon_file_path))
+        logging.debug("self.polygon_file_path: " + str(self.polygon_file_path))
         parsedFile= minidom.parse(self.polygon_file_path)
         polygons = parsedFile.getElementsByTagName('poly')
         buildings=[]
