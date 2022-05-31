@@ -57,7 +57,7 @@ class Simulation:
 
         elapsed = (Simulationparameter.current_milli_time() - Simulationparameter.simStartTime) / 1000
         p = 100 / Simulationparameter.simTimeLimit * t
-        logging.debug("t=%s   Elapsed: %s   %s %completed; Speed: simsec/sec=72.8271", str(t), str(elapsed), str(p))
+        logging.debug("t= %s   Elapsed: %s   %s percent completed; Speed: simsec/sec=72.8271", str(t), str(elapsed), str(p))
 
 
     def manageSimulation(self):
