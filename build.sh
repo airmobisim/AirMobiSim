@@ -138,7 +138,7 @@ cd $AIRMOBISIMDIR
 if [  ! -f "$HOME/.conan/profiles/default" ]; then 
 	echo "Create new default conan profile"
 	mkdir -p "$HOME/.conan/profiles/"
-	poetry run conan profile new default --detect # the quotation marks created an error when running this on Linux
+	poetry run conan profile new default --detect 
 fi
 
 if [[ "$OSTYPE" == "linux-gnu"* ]]; then
@@ -147,8 +147,6 @@ if [[ "$OSTYPE" == "linux-gnu"* ]]; then
 else
 	echo "This is a Mac"
 	poetry run bash -c "conan profile update settings.compiler.version=13.0 default"
-	#poetry run bash -c "conan profile update settings.compiler.version=12.0 default"
-	#poetry run bash -c "conan profile update settings.compiler.libcxx=libstdc++ default"
 fi
 
 
