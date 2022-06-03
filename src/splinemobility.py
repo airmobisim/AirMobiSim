@@ -55,10 +55,11 @@ class Splinemobility(Basemobility):
                 nextCoordinate = Point(spl_x(passedTime), spl_y(passedTime), spl_z(passedTime))
                 move.setNextCoordinate(nextCoordinate)
                 if self._collisionAction != 2:
-                    move.setPassedTime(passedTime)
-                    move.setFutureTime(passedTime + Simulationparameter.stepLength)
-                    move.setFutureCoordinate((spl_x(move.getFuturedTime()),spl_y(move.getFuturedTime())))
-                    self.manageObstacles(passedTime)
+                    # move.setPassedTime(passedTime)
+                    # move.setFutureTime(passedTime + Simulationparameter.stepLength)
+                    future_time = passedTime + Simulationparameter.stepLength
+                    move.setFutureCoordinate((spl_x(future_time), spl_y(future_time)))
+                    self.manageObstacles(passedTime, future_time)
 
         elif passedTime >= self._totalFlightTime:
             move.setFinalFlag(True)

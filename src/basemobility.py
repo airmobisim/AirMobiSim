@@ -124,11 +124,11 @@ class Basemobility(ABC):
     # def manageObstacles(self):
     #     raise NotImplementedError
 
-    def manageObstacles(self, passedTime):
+    def manageObstacles(self, passedTime,futureTime):
         if self._obstacle == None:
             return
         # futureTime = passedTime + Simulationparameter.stepLength
-        futureTime = self._move.getFuturedTime()
+        # futureTime = self._move.getFuturedTime()
         futureCoordinate = self.getMove().getFuturedCoordinate()
         # self._obstackelDetector_flag= self._obstacles[0].contains_point(futureCoordinate)
         # warnings.filterwarnings('once')
