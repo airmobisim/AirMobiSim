@@ -46,6 +46,14 @@ class Linearmobility(Basemobility):
 
         if passedTime < self._totalFlightTime:
             if self._collisionAction != 2:
+                move.setFutureTime( passedTime + Simulationparameter.stepLength)
+
+                currentDirection = self.getMove().getCurrentDirection()
+                previousPos = self.getMove().getTempStartPos()
+                x = previousPos.x + (currentDirection.x * self.getMove().getSpeed() * Simulationparameter.stepLength)
+                y = previousPos.y + (currentDirection.y * self.getMove().getSpeed() * Simulationparameter.stepLength)
+                futureCoordinate = (x, y)
+                move.setFutureCoordinate(futureCoordinate)
                 self.manageObstacles( passedTime)
 
         return True if self._obstacleDetector_flag and self._collisionAction == 3 else False   # obstacle->remove/not remove node indicator
@@ -64,26 +72,26 @@ class Linearmobility(Basemobility):
         assert average_velocity !=0, 'avarage velocity can not be 0'
         return distance/average_velocity
 
-    def manageObstacles(self, passedTime):
-        if self._obstacle == None:
-            return
-        futureTime= passedTime + Simulationparameter.stepLength
-
-        currentDirection = self.getMove().getCurrentDirection()
-        previousPos = self.getMove().getTempStartPos()
-        x = previousPos.x + (currentDirection.x * self.getMove().getSpeed() * Simulationparameter.stepLength)
-        y = previousPos.y + (currentDirection.y * self.getMove().getSpeed() * Simulationparameter.stepLength)
-        # z = previousPos.z + (currentDirection.z * self.getMove().getSpeed() * Simulationparameter.stepLength) # no need since building height not given
-
-        futureCoordinate = (x, y)
-
-        # self._obstacleDetector_flag = self._obstracles[0].contains_point(futureCoordinate)
-        # warnings.filterwarnings('once')
-        detectObstacle = self._obstacle[0].contains_point(futureCoordinate)
-        if not self._obstacleDetector_flag and detectObstacle and self._collisionAction==1:
-            # warnings.warn('uav is going to collide in collide')
-            print('WARNING!!!!')
-            print('currentTime:',passedTime,'uav is going to collide at ', futureTime)
-
-        self._obstacleDetector_flag = True if detectObstacle == True else self._obstacleDetector_flag
+    # def manageObstacles(self, passedTime):
+    #     if self._obstacle == None:
+    #         return
+    #     futureTime= passedTime + Simulationparameter.stepLength
+    #
+    #     currentDirection = self.getMove().getCurrentDirection()
+    #     previousPos = self.getMove().getTempStartPos()
+    #     x = previousPos.x + (currentDirection.x * self.getMove().getSpeed() * Simulationparameter.stepLength)
+    #     y = previousPos.y + (currentDirection.y * self.getMove().getSpeed() * Simulationparameter.stepLength)
+    #     # z = previousPos.z + (currentDirection.z * self.getMove().getSpeed() * Simulationparameter.stepLength) # no need since building height not given
+    #
+    #     futureCoordinate = (x, y)
+    #
+    #     # self._obstacleDetector_flag = self._obstracles[0].contains_point(futureCoordinate)
+    #     # warnings.filterwarnings('once')
+    #     detectObstacle = self._obstacle[0].contains_point(futureCoordinate)
+    #     if not self._obstacleDetector_flag and detectObstacle and self._collisionAction==1:
+    #         # warnings.warn('uav is going to collide in collide')
+    #         print('WARNING!!!!')
+    #         print('currentTime:',passedTime,'uav is going to collide at ', futureTime)
+    #
+    #     self._obstacleDetector_flag = True if detectObstacle == True else self._obstacleDetector_flag
 
