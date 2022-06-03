@@ -35,14 +35,55 @@ echo -e "\n=====================================================================
 The open-source unmanned aerial vehicle simulation framework
 ====================================================================="
 echo "AirMobiSim requires the following software to be installed:"
-echo "OMNeT++ 6 Pre 10."
+echo "OMNeT++ 6"
 echo "conan.io - version: 1.44.1"
+echo "curl"
+echo "pyenv"
 
 echo "This setup installs all required Python packages (and poetry), loads the AirMobiSim extension from Veins, installs native binaries and libs from GRPC (version $GRPC_VERSION) and Protobuf ($PROTOC_VERSION) using conan.io.
 
 The complete source code is compiled afterwards.
 "
 read -p "Continue?" 
+
+
+###################################
+#                           
+# ____  ____  _____       ____ _               _        
+#|  _ \|  _ \| ____|     / ___| |__   ___  ___| | _____ 
+#| |_) | |_) |  _| _____| |   | '_ \ / _ \/ __| |/ / __|
+#|  __/|  _ <| |__|_____| |___| | | |  __/ (__|   <\__ \
+#|_|   |_| \_\_____|     \____|_| |_|\___|\___|_|\_\___/
+#                                                       
+#
+##################################
+
+
+if ! which curl >/dev/null ; then
+    echo ""
+    echo "Please install 'curl' to continue"
+    exit -1 
+fi
+
+
+if ! which pyenv >/dev/null ; then
+    echo ""
+    echo "Please install 'pyenv' to continue"
+    exit -1 
+fi
+
+if ! which conan >/dev/null ; then
+    echo ""
+    echo "Please install 'conan' to continue"
+    exit -1 
+fi
+
+
+if ! which opp_run >/dev/null ; then
+    echo ""
+    echo "Please install 'OMNeT++ ' to continue"
+    exit -1 
+fi
 
 ###################################
 #                           
