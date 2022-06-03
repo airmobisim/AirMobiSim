@@ -77,7 +77,7 @@ class Linearmobility(Basemobility):
 
         futureCoordinate = (x, y)
 
-        # self._obstacleDetector_flag = self._obstracles[0].contains_point(futureCoordinate)
+        # self._obstacleDetector_flag = self._obstacles[0].contains_point(futureCoordinate)
         # warnings.filterwarnings('once')
         detectObstacle = self._obstacle[0].contains_point(futureCoordinate)
         if not self._obstacleDetector_flag and detectObstacle and self._collisionAction==1:
