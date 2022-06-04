@@ -195,29 +195,24 @@ fi
 
 echo "Starting installation of conan dependencies"
 
-poetry run bash -c "cd $AIRMOBISIMVEINS_PATH && conan install . --build missing --profile=default"
+#poetry run bash -c "cd $AIRMOBISIMVEINS_PATH && conan install . --build missing --profile=default"
 
 
-cd
-cd .conan/data
-
-basePath=$(pwd)
+#cd
+#cd .conan/data
+#basePath=$(pwd)
 
 cd $AIRMOBISIMVEINS_PATH
 
 ./configure
 if [[  "$OSTYPE" == "darwin"* ]]; then
 	make -j$(sysctl -n hw.ncpu)
-	#make -j4
 else
 	make -j$(nproc)
 fi
 
 
 echo "Everything worked"
-echo ""
-echo ""
-echo "Your PATH does not contain \"\$HOME/.poetry/bin:\$PATH\""
 echo "Please run the following commands of add them to your .bashrc/.zshrc/..."
 echo "-"
 echo "'export PATH="\$HOME/.poetry/bin:\$PATH"'"
