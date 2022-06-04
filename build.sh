@@ -151,6 +151,8 @@ export PATH="$HOME/.poetry/bin:$PATH"
 
 pip3 install conan # We need a lokal installation outside poetry, since conan is required for the OMNeT++ part
 AIRMOBISIMDIR=$(pwd)
+
+export AIRMOBISIMHOME=$AIRMOBISIMDIR
 ################################################################
 #__     __   _             ____       _               
 #\ \   / /__(_)_ __  ___  / ___|  ___| |_ _   _ _ __  
