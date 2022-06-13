@@ -54,8 +54,10 @@ echo -e "\n=====================================================================
 The open-source unmanned aerial vehicle simulation framework
 ====================================================================="
 echo "AirMobiSim requires the following software to be installed:"
-echo "OMNeT++ 6 Pre 10."
+echo "OMNeT++ 6"
 echo "conan.io - version: 1.44.1"
+echo "curl"
+echo "pyenv"
 
 echo "This setup installs all required Python packages (and poetry), loads the AirMobiSim extension from Veins, installs native binaries and libs from GRPC (version $GRPC_VERSION) and Protobuf ($PROTOC_VERSION) using conan.io.
 
@@ -63,6 +65,45 @@ The complete source code is compiled afterwards."
 if ! $accept_all
 then
     read -p "Continue?" 
+fi
+
+
+###################################
+#                           
+# ____  ____  _____       ____ _               _        
+#|  _ \|  _ \| ____|     / ___| |__   ___  ___| | _____ 
+#| |_) | |_) |  _| _____| |   | '_ \ / _ \/ __| |/ / __|
+#|  __/|  _ <| |__|_____| |___| | | |  __/ (__|   <\__ \
+#|_|   |_| \_\_____|     \____|_| |_|\___|\___|_|\_\___/
+#                                                       
+#
+##################################
+
+
+if ! which curl >/dev/null ; then
+    echo ""
+    echo "Please install 'curl' to continue"
+    exit -1 
+fi
+
+
+if ! which pyenv >/dev/null ; then
+    echo ""
+    echo "Please install 'pyenv' to continue"
+    exit -1 
+fi
+
+if ! which conan >/dev/null ; then
+    echo ""
+    echo "Please install 'conan' to continue"
+    exit -1 
+fi
+
+
+if ! which opp_run >/dev/null ; then
+    echo ""
+    echo "Please install 'OMNeT++ ' to continue"
+    exit -1 
 fi
 
 ###################################
@@ -141,6 +182,8 @@ export PATH="$HOME/.poetry/bin:$PATH"
 
 pip3 install conan # We need a lokal installation outside poetry, since conan is required for the OMNeT++ part
 AIRMOBISIMDIR=$(pwd)
+
+export AIRMOBISIMHOME=$AIRMOBISIMDIR
 ################################################################
 #__     __   _             ____       _               
 #\ \   / /__(_)_ __  ___  / ___|  ___| |_ _   _ _ __  
@@ -169,7 +212,7 @@ cd $AIRMOBISIMDIR
 if [  ! -f "$HOME/.conan/profiles/default" ]; then 
 	echo "Create new default conan profile"
 	mkdir -p "$HOME/.conan/profiles/"
-	poetry run conan profile new default --detect # the quotation marks created an error when running this on Linux
+	poetry run conan profile new default --detect 
 fi
 
 if [[ "$OSTYPE" == "linux-gnu"* ]]; then
@@ -178,35 +221,28 @@ if [[ "$OSTYPE" == "linux-gnu"* ]]; then
 else
     echo "This is a Mac"
 	poetry run bash -c "conan profile update settings.compiler.version=13.0 default"
-	#poetry run bash -c "conan profile update settings.compiler.version=12.0 default"
-	#poetry run bash -c "conan profile update settings.compiler.libcxx=libstdc++ default"
 fi
 
 echo "Starting installation of conan dependencies"
 
-poetry run bash -c "cd $AIRMOBISIMVEINS_PATH && conan install . --build missing --profile=default"
+#poetry run bash -c "cd $AIRMOBISIMVEINS_PATH && conan install . --build missing --profile=default"
 
 
-cd
-cd .conan/data
-
-basePath=$(pwd)
+#cd
+#cd .conan/data
+#basePath=$(pwd)
 
 cd $AIRMOBISIMVEINS_PATH
 
 ./configure
 if [[  "$OSTYPE" == "darwin"* ]]; then
 	make -j$(sysctl -n hw.ncpu)
-	#make -j4
 else
 	make -j$(nproc)
 fi
 
 echo "Successfully installed AirMobiSim!"
-echo ""
-echo ""
-echo "Your PATH does not contain \"\$HOME/.poetry/bin:\$PATH\""
-echo "Please run the following commands or add them to your .bashrc/.zshrc/..."
+
 echo "-"
 echo "'export PATH="\$HOME/.poetry/bin:\$PATH"'"
 echo "'export AIRMOBISIMHOME=$AIRMOBISIMDIR'"

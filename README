@@ -1,12 +1,54 @@
 # AirmobiSim Project
 
-## Quick Start:
-AirMobiSim requires OMNeT++ 6 Pre 10 to be installed and part of your PATH.
-All required dependencies will be locally installed using pyenv and poetry by executing the ```build.sh``` script:
+# Pre-Installation
+
+AirMobiSim requires the following software to be installed 
+- OMNeT++ 6
+- conan
+- curl
+- pyenv
+
+## OMNeT 6 installation
+Please do follow the instructions from the official [OMNeT documentation](https://doc.omnetpp.org/omnetpp/InstallGuide.pdf)
+
+
+## Conan installation
+Please do follow the instructions from the official [conan documentation](https://docs.conan.io/en/latest/installation.html)
+
+
+
+## Curl installation
+To install curl please do execute:
+
+Linux/Debian
+```sudo apt install curl```
+
+
+MacOS
+```brew install curl```
+
+## Pyenv installation
+To install Pyenv please do execute:
+
+Linux / Debian: 
+```curl -L https://raw.githubusercontent.com/pyenv/pyenv-installer/master/bin/pyenv-installer | bash```
+
+
+MacOS:
+```brew install pyenv```
+
+---
+
+# AirMobiSim-Installation
+AirMobiSim requires all installations listed in the section above.
+All additional required dependencies will be locally installed using pyenv and poetry by executing the ```build.sh``` script:
 ```Bash
 ./build.sh
 ```
-## Run AirmobiSim
+
+---
+
+# Run AirmobiSim
 To run the project use the following command in 'poetry shell':
 ```Bash
 poetry run ./airmobisim.py
@@ -19,29 +61,11 @@ To run the simulation without plot use :
 poetry run ./airmobisim.py  --plot 0
 ```
 
-## Kinematic Models
+---
 
-AirMobiSim provides two different mobility model.
-1. Linear_mobility
-2. Spline_mobility
-
-To switch between mobility model you need to change boolean values of two attributes in 'airmobisim.py' file:
-1. linearMobilityFlag
-2. splineMobilityFlag
-
-Set the attribute value to 'True' depending on your choice of choice of model.
-
-## Configure a simulation
+# Configure a simulation
 The input parameters for the simulations are taken from a file named ```simulation.config```.
 An example is located in the ```examples``` directory.
 
 
-## Test Cases
-Test cases are located inside the `test` directory. The idea is to perform smoke test for the project. To run the test:
-
-```Bash
-- cd test
-- poetry run python3 test_airmobisim.py   or python3 -m unittest
-
-```
 
