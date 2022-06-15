@@ -10,7 +10,7 @@ from .movement import Movement
 from .resultcollection import Resultcollection
 from .simulationparameter import Simulationparameter
 import matplotlib.path as mplPath
-import logging
+import src.logWrapper as logWrapper
 
 
 class Basemobility(ABC):
@@ -87,7 +87,7 @@ class Basemobility(ABC):
     def ParsePolygonFileToObstacles(self):
         if self.polygon_file_path == None or not os.path.exists(self.polygon_file_path):
             return None
-        logging.debug("self.polygon_file_path: %s", str(self.polygon_file_path))
+        logWrapper.debug("self.polygon_file_path: %s", str(self.polygon_file_path))
         parsedFile= minidom.parse(self.polygon_file_path)
         polygons = parsedFile.getElementsByTagName('poly')
         buildings=[]

@@ -3,7 +3,7 @@
 import logging
 
 '''
-Logging configuration. Valid loglevels are (ordered from most verbose to least verbose):
+logWrapper configuration. Valid loglevels are (ordered from most verbose to least verbose):
 DEBUG
 INFO
 WARNING
@@ -14,25 +14,25 @@ CRITICAL
 
 
 def basicConfig(filename='logfile.log', encoding='utf-8', level=logging.DEBUG):
-    logging.basicConfig(filename, encoding, level)
+    logging.basicConfig(filename=filename, encoding=encoding, level=level)
 
 
-def debug(statement):
-    logging.debug(statement)
+def debug(statement, *args, **kwargs):
+    logging.debug(statement, *args, **kwargs)
 
 
-def info(statement):
-    logging.debug(statement)
+def info(statement, *args, **kwargs):
+    logging.debug(statement, *args, **kwargs)
 
 
-def warning(statement):
-    logging.warning(statement)
+def warning(statement, *args, **kwargs):
+    logging.warning(statement, *args, **kwargs)
 
 
-def error(statement):
-    logging.error(statement)
+def error(statement, *args, **kwargs):
+    logging.error(statement, *args, **kwargs)
 
 
-def critical( statement):
-    logging.critical(statement)
+def critical(statement, *args, **kwargs):
+    logging.critical(statement, *args, **kwargs)
     print("CRITICAL: " + statement)

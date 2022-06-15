@@ -7,7 +7,7 @@ import math
 import numpy as np
 from random import randint
 
-import logging
+import src.logWrapper as logWrapper
 
 df_position = pd.DataFrame()
 flight_time_considered = 0.0
@@ -45,11 +45,11 @@ def load_Data():
     y=[y1,y2]
     z=[z1, z2]
 
-    logging.debug('data')
-    logging.debug(str(x))
-    logging.debug(str(y))
-    logging.debug(str(z))
-    logging.debugs(str(speed))
+    logWrapper.debug('data')
+    logWrapper.debug(str(x))
+    logWrapper.debug(str(y))
+    logWrapper.debug(str(z))
+    logWrapper.debugs(str(speed))
 
 
     time1 = np.linspace(1,12,12)#[0, 15]

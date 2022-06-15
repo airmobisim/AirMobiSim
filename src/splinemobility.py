@@ -8,7 +8,7 @@ from shapely.geometry import Point
 from .basemobility import Basemobility
 from .simulationparameter import Simulationparameter
 
-import logging
+import src.logWrapper as logWrapper
 
 class Splinemobility(Basemobility):
     def __init__(self, uid, waypointX, waypointY, waypointZ, speed, polygon_file_path=None):
@@ -35,8 +35,8 @@ class Splinemobility(Basemobility):
         self._waypointTime = self.insertWaypointTime()
         # self._totalFlightTime = self._waypointTime[-1]
         self._totalFlightTime = self.computeTotalFlightTime(0.0, speed, 0)
-        logging.debug("speed: %s; total flightTime: %s", str(speed), str(self._totalFlightTime))
-        logging.debug("startpos: %s", self._startpos)
+        logWrapper.debug("speed: %s; total flightTime: %s", str(speed), str(self._totalFlightTime))
+        logWrapper.debug("startpos: %s", self._startpos)
 
     def makeMove(self):
         #object of Movement
@@ -99,7 +99,7 @@ class Splinemobility(Basemobility):
             self._waypointX = x
             self._waypointY = y
             self._waypointZ = z
-            logging.debug('waypoint inserted')
+            logWrapper.debug('waypoint inserted')
 
     def insertWaypointTime(self):
         distance_of_segments= Splinemobility.computeSplineDistance(self._waypointX, self._waypointY, self._waypointZ)
@@ -158,8 +158,8 @@ class Splinemobility(Basemobility):
         detectObstacle = self._obstacle[0].contains_point(futureCoordinate)
         if not self._obstacleDetector_flag and detectObstacle and self._collisionAction==1:
             # warnings.warn('uav is going to collide in collide')
-            logging.debug('WARNING!!!!')
-            logging.debug("currentTime: %s; uav is going to collide at %s", str(passedTime), str(futureTime))
+            logWrapper.debug('WARNING!!!!')
+            logWrapper.debug("currentTime: %s; uav is going to collide at %s", str(passedTime), str(futureTime))
 
 
         self._obstacleDetector_flag= True if detectObstacle == True else self._obstacleDetector_flag

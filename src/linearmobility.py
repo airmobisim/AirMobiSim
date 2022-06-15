@@ -3,7 +3,7 @@ import math
 from .basemobility import Basemobility
 from .simulationparameter import Simulationparameter
 
-import logging
+import src.logWrapper as logWrapper
 
 class Linearmobility(Basemobility):
 
@@ -73,8 +73,8 @@ class Linearmobility(Basemobility):
         detectObstacle = self._obstacle[0].contains_point(futureCoordinate)
         if not self._obstacleDetector_flag and detectObstacle and self._collisionAction==1:
             # warnings.warn('uav is going to collide in collide')
-            logging.debug('WARNING!!!!')
-            logging.debug('currentTime: %s, uav is going to collide at %s', str(passedTime), str(futureTime))
+            logWrapper.debug('WARNING!!!!')
+            logWrapper.debug('currentTime: %s, uav is going to collide at %s', str(passedTime), str(futureTime))
 
         self._obstacleDetector_flag = True if detectObstacle == True else self._obstacleDetector_flag
 

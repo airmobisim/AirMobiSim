@@ -9,7 +9,7 @@ from .simulationparameter import Simulationparameter
 from .repeatedtimer import Repeatedtimer
 from .uavsp import UavSp
 
-import logging
+import src.logWrapper as logWrapper
 
 class Simulation:
 
@@ -24,7 +24,7 @@ class Simulation:
                  linearMobilityFlag, splineMobilityFlag, uavs, polygon_file_path=None, speed=None, waypointX=None, waypointY=None,
                  waypointZ=None):
 
-        logging.debug("Initializing...")
+        logWrapper.debug("Initializing...")
         Simulationparameter.stepLength = stepLength
         Simulationparameter.directory = directory
         Simulationparameter.simStartTime = Simulationparameter.current_milli_time()
@@ -44,7 +44,7 @@ class Simulation:
         
     def startSimulation(self):
         if self._isRunnig == True or Simulationparameter.currentSimStep != -1:
-            logging.critical("Simulation is already running")
+            logWrapper.critical("Simulation is already running")
             sys.exit()
 
         self._isRunnig = True
@@ -57,7 +57,7 @@ class Simulation:
 
         elapsed = (Simulationparameter.current_milli_time() - Simulationparameter.simStartTime) / 1000
         p = 100 / Simulationparameter.simTimeLimit * t
-        logging.debug("t= %s   Elapsed: %s   %s percent completed; Speed: simsec/sec=72.8271", str(t), str(elapsed), str(p))
+        logWrapper.debug("t= %s   Elapsed: %s   %s percent completed; Speed: simsec/sec=72.8271", str(t), str(elapsed), str(p))
 
 
     def manageSimulation(self):
@@ -88,18 +88,18 @@ class Simulation:
             for node in self._managedNodes:
                 removeNode = node._mobility.makeMove()   # building ahead
                 if removeNode:
-                    logging.debug('removing uav %s', str(node._uid))
+                    logWrapper.debug('removing uav %s', str(node._uid))
                     self._managedNodes.remove(node)      # obstacle so remove
 
         else:
             for node in self._managedNodes:
                 removeNode = node._mobility.makeMove()
                 if removeNode:
-                    logging.debug("removing uav %s", str(node._uid))
+                    logWrapper.debug("removing uav %s", str(node._uid))
                     self._managedNodes.remove(node)
 
     def finishSimulation(self):
-        logging.debug(
+        logWrapper.debug(
             "exiting -- at t=%s, event?", str(Simulationparameter.currentSimStep * Simulationparameter.stepLength))
 
     def getNextUid(self):

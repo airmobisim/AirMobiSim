@@ -7,7 +7,7 @@ import os.path
 from .singleton import Singleton
 from .simulationparameter import Simulationparameter
 
-import logging
+import src.logWrapper as logWrapper
 
 class Resultcollection(metaclass=Singleton):
 
@@ -24,7 +24,7 @@ class Resultcollection(metaclass=Singleton):
         """
         logfile = self._logDir + "positionResults.csv"
         if self._firstLog:
-            logging.info("creating new log")
+            logWrapper.info("creating new log")
             with open(logfile, "w") as f:
                 f.write("uid" + self._logDelimiter + "passedTime" + self._logDelimiter + "posX" + self._logDelimiter + "posY" + self._logDelimiter + "posZ"+"\n")
             # f.close()
@@ -60,7 +60,7 @@ class Resultcollection(metaclass=Singleton):
             energyData.groupby("uid")["energy"].plot(legend=True, xlabel="Distance (m)", ylabel= "Energy (Joules)")
             plt.show()
         else:
-            logging.error("There is no such file called 'energyResults.csv'")
+            logWrapper.error("There is no such file called 'energyResults.csv'")
 
 
 
