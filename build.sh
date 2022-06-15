@@ -243,6 +243,8 @@ fi
 
 echo "Successfully installed AirMobiSim!"
 
+echo "Please run the following commands or add them to your .bashrc/.zshrc/..."
+
 echo "-"
 echo "'export PATH="\$HOME/.poetry/bin:\$PATH"'"
 echo "'export AIRMOBISIMHOME=$AIRMOBISIMDIR'"
