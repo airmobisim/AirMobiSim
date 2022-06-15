@@ -5,7 +5,7 @@ import os
 import sys
 from os.path import exists
 import pathlib
-import logging
+import src.logWrapper as logWrapper
 
 from proto.DroCIBridge import startServer
 from src.plotting import make_plot
@@ -17,14 +17,7 @@ simulation: Simulation
 
 def main():
 
-    '''
-    Logging configuration. Valid loglevels are (ordered from most verbose to least verbose):
-    DEBUG
-    INFO
-    WARNING
-    ERROR
-    CRITICAL
-    '''
+
     logging.basicConfig(filename='logfile.log', encoding='utf-8', level=logging.DEBUG)
     global simulation
 
