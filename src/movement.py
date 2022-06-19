@@ -3,6 +3,9 @@ import math
 from shapely.geometry import Point
 import numpy as np
 
+from src.simulationparameter import Simulationparameter
+
+
 class Movement:
 
     def __init__(self):
@@ -16,6 +19,8 @@ class Movement:
         self._currentDirection = Point(0, 0, 0)
         self._speed = 0
         self._passedTime = 0
+        self._futureTime = 0
+        self._futureCoordinate = (0.0, 0.0)
         self._tempStartPos=Point(0,0,0)
         self._nextCoordinate = Point(0, 0, 0)
         self._startPosCircle = Point(0, 0, 0)
@@ -78,6 +83,19 @@ class Movement:
     def getPassedTime(self):
         return self._passedTime
 
+    def setFutureTime(self, time):
+
+        self._futureTime = time
+
+    def getFuturedTime(self):
+        return self._futureTime
+
+    def setFutureCoordinate(self, coordinate):
+        self._futureCoordinate = coordinate
+
+    def getFuturedCoordinate(self):
+        return self._futureCoordinate
+
     def setSpeed(self, speed):
         self._speed = speed
 
@@ -107,7 +125,8 @@ class Movement:
         distance = np.array([distance, distance, distance]) 
 
         array = np.divide(direction, distance)
-        newDirection = Point(round(array[0],2), round(array[1],2), round(array[2],2))
+        # newDirection = Point(round(array[0],2), round(array[1],2), round(array[2],2))
+        newDirection = Point(round(array[0],7), round(array[1],7), round(array[2],7))
         #print("old direction: " + str(direction) + " new direction " + str(newDirection))
         self.setCurrentDirection(newDirection)
 
