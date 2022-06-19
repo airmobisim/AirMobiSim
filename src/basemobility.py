@@ -25,7 +25,7 @@ class Basemobility(ABC):
         self._collisionAction = 1  # 1= warn, 2 = no action 3=remove uav
         self._obstacleDetector_flag = False
         self.polygon_file_path = polygon_file_path
-        self._obstacle = self.ParsePolygonFileToObstacles()
+        self._obstacles = self.ParsePolygonFileToObstacles()
         pass
 
     def getMove(self):
@@ -125,14 +125,14 @@ class Basemobility(ABC):
     #     raise NotImplementedError
 
     def manageObstacles(self, passedTime,futureTime):
-        if self._obstacle == None:
+        if self._obstacles == None:
             return
         # futureTime = passedTime + Simulationparameter.stepLength
         # futureTime = self._move.getFuturedTime()
         futureCoordinate = self.getMove().getFuturedCoordinate()
         # self._obstackelDetector_flag= self._obstacles[0].contains_point(futureCoordinate)
         # warnings.filterwarnings('once')
-        detectObstacle = self._obstacle[0].contains_point(futureCoordinate)
+        detectObstacle = any(obstacle.contains_point(futureCoordinate) for obstacle in self._obstacles)
         if not self._obstacleDetector_flag and detectObstacle and self._collisionAction == 1:
             # warnings.warn('uav is going to collide in collide')
             print('WARNING!!!!')
