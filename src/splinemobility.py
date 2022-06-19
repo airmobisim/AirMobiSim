@@ -10,12 +10,12 @@ from .simulationparameter import Simulationparameter
 
 
 class Splinemobility(Basemobility):
-    def __init__(self, uid, waypointX, waypointY, waypointZ, speed, polygon_file_path=None):
+    def __init__(self, uid, waypointX, waypointY, waypointZ, speed, polygon_file_path=None, collision_action=None):
         self._startpos = Point(waypointX[0], waypointY[0], waypointZ[0])
         self._endpos = Point(waypointX[-1], waypointY[-1], waypointZ[-1])
         # self._totalFlightTime = waypointTime[-1]
 
-        super().__init__(uid, self._startpos, self._endpos, polygon_file_path)
+        super().__init__(uid, self._startpos, self._endpos, polygon_file_path,collision_action)
         self._waypointX = waypointX
         self._waypointY = waypointY
         self._waypointZ = waypointZ

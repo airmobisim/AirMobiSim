@@ -6,9 +6,9 @@ class UavSp:
     _uid = -1
     _mobility = Basemobility
 
-    def __init__(self, uid,  waypointX, waypointY, waypointZ,speed,polygon_file_path):
+    def __init__(self, uid,  waypointX, waypointY, waypointZ,speed,polygon_file_path,collision_action):
         self._uid = uid
-        self._mobility = Splinemobility(uid, waypointX, waypointY, waypointZ, speed, polygon_file_path)
+        self._mobility = Splinemobility(uid, waypointX, waypointY, waypointZ, speed, polygon_file_path,collision_action)
 
     # Should not be removed
     def getMobility(self):

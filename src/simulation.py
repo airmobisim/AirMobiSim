@@ -18,7 +18,8 @@ class Simulation:
     _highestUid = -1
 
     def __init__(self, directory, stepLength, simTimeLimit, playgroundSizeX, playgroundSizeY, playgroundSizeZ,
-                 linearMobilityFlag, splineMobilityFlag, uavs, polygon_file_path=None, speed=None, waypointX=None, waypointY=None,
+                 linearMobilityFlag, splineMobilityFlag, uavs, polygon_file_path=None, collision_action=None,
+                 speed=None, waypointX=None, waypointY=None,
                  waypointZ=None):
 
         print("Initializing...")
@@ -37,8 +38,9 @@ class Simulation:
         self._waypointZ = waypointZ
         self._linearMobilityFlag = linearMobilityFlag
         self._splineMobilityFlag = splineMobilityFlag
-        self._polygon_file_path= polygon_file_path
-        
+        self._polygon_file_path = polygon_file_path
+        self._collision_action = collision_action
+
     def startSimulation(self):
         if self._isRunnig == True or Simulationparameter.currentSimStep != -1:
             print("Simulation is already running")
@@ -72,22 +74,23 @@ class Simulation:
             if self._splineMobilityFlag:
                 self._managedNodes.append(
                     UavSp(nextUid, self._waypointX[nextUid],
-                        self._waypointY[nextUid], self._waypointZ[nextUid], self._speed[nextUid], self._polygon_file_path))
+                          self._waypointY[nextUid], self._waypointZ[nextUid], self._speed[nextUid],
+                          self._polygon_file_path, self._collision_action))
 
             # for linearmobility
             else:
                 self._managedNodes.append(Uav(nextUid, Point(uav['startPosX'], uav['startPosY'], uav['startPosZ']),
-                                              Point(uav['endPosX'], uav['endPosY'], uav['endPosZ']), uav['speed'], self._polygon_file_path))
-
+                                              Point(uav['endPosX'], uav['endPosY'], uav['endPosZ']), uav['speed'],
+                                              self._polygon_file_path, self._collision_action))
 
     def processNextStep(self):
         Simulationparameter.incrementCurrentSimStep()
         if self._splineMobilityFlag:
             for node in self._managedNodes:
-                removeNode = node._mobility.makeMove()   # building ahead
+                removeNode = node._mobility.makeMove()  # building ahead
                 if removeNode:
                     print('removing uav', node._uid)
-                    self._managedNodes.remove(node)      # obstacle so remove
+                    self._managedNodes.remove(node)  # obstacle so remove
 
         else:
             for node in self._managedNodes:
@@ -123,8 +126,9 @@ class Simulation:
             waypointZ.append(uavsp['waypointZ'])
             speed.append(uavsp['speed'])
 
-        polygon_file= config['files']['polygon']
-        polygon_file_path= str(pathlib.Path().resolve())+'/'+polygon_file
+        polygon_file = config['obstacle_detection']['polygon_file']
+        collision_action = config['obstacle_detection']['collision_action']
+        polygon_file_path = str(pathlib.Path().resolve()) + '/' + polygon_file
         # print(poly_file_path)
         # print(pathlib.Path().resolve().parent)
 
@@ -132,7 +136,8 @@ class Simulation:
             config)
 
         return cls(directory, stepLength, simTimeLimit, playgroundSizeX, playgroundSizeY, playgroundSizeZ,
-                   linearMobilityFlag, splineMobilityFlag, uavs, polygon_file_path, speed, waypointX, waypointY, waypointZ)
+                   linearMobilityFlag, splineMobilityFlag, uavs, polygon_file_path, collision_action, speed, waypointX,
+                   waypointY, waypointZ)
 
     @classmethod  # for linear mobility
     def from_config_linmob(cls, config, linearMobilityFlag, splineMobilityFlag, directory):

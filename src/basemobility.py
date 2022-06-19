@@ -14,7 +14,7 @@ import matplotlib.path as mplPath
 
 class Basemobility(ABC):
     polygon_file_path = None
-    def __init__(self, uid,  startPos, endPos, polygon_file_path):
+    def __init__(self, uid,  startPos, endPos, polygon_file_path,collision_action):
         self._uid = uid
         self._move = Movement()
         self._resultcollection =  Resultcollection()
@@ -22,7 +22,7 @@ class Basemobility(ABC):
         self._startPos = startPos
         self._endPos = endPos
         self._currentPos = Point(0,0,0) 
-        self._collisionAction = 1  # 1= warn, 2 = no action 3=remove uav
+        self._collisionAction = collision_action  # 1= warn, 2 = no action 3=remove uav; anything else is wrong
         self._obstacleDetector_flag = False
         self.polygon_file_path = polygon_file_path
         self._obstacles = self.ParsePolygonFileToObstacles()

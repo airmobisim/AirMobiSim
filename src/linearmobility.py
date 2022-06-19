@@ -6,8 +6,8 @@ from .simulationparameter import Simulationparameter
 
 class Linearmobility(Basemobility):
 
-    def __init__(self, uid, startPos, endPos, angle, speed=10, polygon_file_path=None):
-        super().__init__(uid, startPos, endPos, polygon_file_path)
+    def __init__(self, uid, startPos, endPos, angle, speed=10, polygon_file_path=None,collision_action=None):
+        super().__init__(uid, startPos, endPos, polygon_file_path,collision_action)
         self._angle = angle
         self._acceleration = 0  # acceleration not considered yet
         self._move.setStart(startPos, 0)
