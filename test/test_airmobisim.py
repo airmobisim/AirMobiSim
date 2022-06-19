@@ -300,6 +300,7 @@ class TestAirmobisim(unittest.TestCase):
 
 
     # print(sp_obj.polygon_file_path )
+    #todo write test case for collision_action
 
 
 def fake_func(self):
