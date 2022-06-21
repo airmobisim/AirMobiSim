@@ -29,7 +29,7 @@ class TestAirmobisim(unittest.TestCase):
         cls.collision_action = config['obstacle_detection']['collision_action']
         homePath = os.environ['AIRMOBISIMHOME']
         cls.polygon_file_path = homePath + '/' + polygon_file
-        print('polygon file path: ', cls.polygon_file_path)
+        # print('polygon file path: ', cls.polygon_file_path)
 
         cls.simTimeLimit = config['simulation']['simTimeLimit']
         cls.stepLength = config['simulation']['stepLength']
@@ -39,6 +39,7 @@ class TestAirmobisim(unittest.TestCase):
         cls.uavsSpline = config['uavsp']
         cls.uavsLinear = config['uav']
         cls.kenetic_model = config['kinetic_model']
+
 
         # inputs for splinemobility
         cls.speed_sp = []
@@ -185,6 +186,13 @@ class TestAirmobisim(unittest.TestCase):
                         'values can be either 0 or 1')
         self.assertEqual([value for value in TestAirmobisim.kenetic_model.values()].count(1), 1,
                          "Model selection value can contain only one 1 ")
+
+    def test_collision_action_input(self):  # check the validity of collision action input
+
+        self.assertTrue(TestAirmobisim.collision_action == 1 or TestAirmobisim.collision_action == 2 or TestAirmobisim.collision_action== 3,
+                        'collision action value can either be 1, 2 or 3. 1-> warning message. 2-> ignore everything. '
+                        '3-> remove uav in case of collision')
+
 
     def test_waypointTime_generated_splinemobility(self):
         for uav in range(len(TestAirmobisim.uavsSpline)):  # check for all uavs
