@@ -29,7 +29,7 @@ class TestAirmobisim(unittest.TestCase):
         cls.collision_action = config['obstacle_detection']['collision_action']
         homePath = os.environ['AIRMOBISIMHOME']
         cls.polygon_file_path = homePath + '/' + polygon_file
-        print('polygon file path: ',cls.polygon_file_path)
+        print('polygon file path: ', cls.polygon_file_path)
 
         cls.simTimeLimit = config['simulation']['simTimeLimit']
         cls.stepLength = config['simulation']['stepLength']
@@ -112,7 +112,8 @@ class TestAirmobisim(unittest.TestCase):
             self.assertTrue(0 <= (startpos.z and endpos.z) <= TestAirmobisim.playgroundSizeZ,
                             'waypoint z should be within playgroundZ')
 
-    def test_speed_limit_sp(self):
+    def test_speed_limit_sp(
+            self):  # not to use very small values of speed so that the simulation is not completed with in the time limit
         for index, uavsp in enumerate(TestAirmobisim.uavsSpline):
             splineObj = Splinemobility(index, TestAirmobisim.waypointX[index],
                                        TestAirmobisim.waypointY[index], TestAirmobisim.waypointZ[index],
@@ -121,74 +122,6 @@ class TestAirmobisim(unittest.TestCase):
             print(splineObj._totalFlightTime)
             self.assertTrue(splineObj._totalFlightTime <= TestAirmobisim.simTimeLimit,
                             'this speed will exceed the simTimeLimit consider reducing it')
-
-    def test_all_waypoints_simulated(self):
-        self.skipTest("not useful")
-        # run simulation sp
-        self.run_simulator_sp()
-        # get all uav_sp dataframe
-        df_simulation_uavs = self.process_result_file()  # result dataframe for each uav
-        # TestAirmobisim.waypointX[0].append(0.678822509939085)
-        # TestAirmobisim.waypointY[0].append(0.678822509939085)
-        # TestAirmobisim.waypointZ[0].append(3.0)
-        for index, df_uav in enumerate(df_simulation_uavs):  # loop through each uav dataframe
-            for x, y, z in zip(TestAirmobisim.waypointX[index], TestAirmobisim.waypointY[index],
-                               TestAirmobisim.waypointZ[index]):  # loop through input waypoints for each uav
-                # print(x)
-                # print(y)
-                # print(z)
-                value = 0.1
-                df_uav_conditional = df_uav.loc[
-                    (abs(df_uav['posX'] - x) <= value) & (abs(df_uav['posY'] - y) <= value) & (
-                            abs(df_uav['posZ'] - z) <= value)]  # search for rows with satisfied conditions
-                self.assertFalse(df_uav_conditional.empty, 'data frame should not be empty/ no such waypoint is found')
-                # print('testing')
-                # print(df_uav_conditional)
-                # print('end testing')
-
-    def run_simulator_sp(self):
-        config_path_abs = str(Path("../examples/simpleSimulation/simulation.config").resolve())
-
-        os.system('../airmobisim.py --configuration ' + config_path_abs + ' --plot 0')
-
-    def process_result_file(self):
-        '''
-        after running the simulation create seperate dataframe for each uid from resultant .csv file
-        '''
-        current_file = os.path.abspath(os.path.dirname(__file__))
-        csv_filename = os.path.join(current_file, '../examples/simpleSimulation/results/positionResults.csv')
-
-        df_simulation = pd.read_csv(csv_filename, sep=r'\t', skipinitialspace=True, engine='python')
-
-        max_uav_index = max(df_simulation['uid'])
-
-        df_simulation_uavs = []
-
-        for index in range(max_uav_index + 1):
-            df_simulation_uavs.append(df_simulation.loc[df_simulation['uid'] == index])
-
-        return df_simulation_uavs
-
-    def test_active_uav_count_sp(self):
-
-        self.skipTest("not useful")
-
-        '''
-        number of spline uav active
-        '''
-        self.assertEqual(len(TestAirmobisim.uavsSpline), 1, 'should be 1 check config')
-
-    def test_simulation_finish_time(self):
-        df_simulation_uavs = self.process_result_file()  # result dataframe for each uav
-
-        for df_uav in df_simulation_uavs:
-            df_uav_conditional = df_uav.loc[(df_uav['posZ'] == df_uav['posZ'].to_numpy()[-1]) &
-                                            (df_uav['posY'] == df_uav['posY'].to_numpy()[-1]) &
-                                            (df_uav['posX'] == df_uav['posX'].to_numpy()[
-                                                -1])]  # search for rows which are similar as the last entry/ finish line
-
-            self.assertTrue(df_uav_conditional['passedTime'].to_numpy()[0] <= TestAirmobisim.simTimeLimit,
-                            'check simulation finish time')
 
     @patch('src.basemobility.Basemobility.doLog')
     @patch('src.movement.Movement.getLinearMobilitySpFlag', return_value=True)
@@ -246,7 +179,7 @@ class TestAirmobisim(unittest.TestCase):
 
         self.assertTrue(mock_logCurrentPosition.called, 'logCurrentPosition should be called')
 
-    def test_model_selection_input(self):
+    def test_model_selection_input(self):  # check the validity for model selection input
 
         self.assertTrue(all((value == 1 or value == 0) for value in TestAirmobisim.kenetic_model.values()),
                         'values can be either 0 or 1')
@@ -269,17 +202,15 @@ class TestAirmobisim(unittest.TestCase):
         self.assertTrue(all(speed >= 0 for speed in TestAirmobisim.speed_lin),
                         'Speed can not be negative for linearmobility model')
 
-
-    def test_obstacle_fileLoaded_spline(self):     # test obstacle file loaded for spline mobility
+    def test_obstacle_fileLoaded_spline(self):  # test obstacle file loaded for spline mobility
         sp_obj = Splinemobility(0, TestAirmobisim.waypointX[0], TestAirmobisim.waypointY[0],
                                 TestAirmobisim.waypointZ[0], TestAirmobisim.speed_sp[0],
                                 TestAirmobisim.polygon_file_path)
 
-
         self.assertTrue(sp_obj.polygon_file_path != None, 'poly file is not loaded')
-        self.assertTrue(os.path.exists(sp_obj.polygon_file_path), 'No such polygon file exists according to the provided '
-                                                                  'path')
-
+        self.assertTrue(os.path.exists(sp_obj.polygon_file_path),
+                        'No such polygon file exists according to the provided '
+                        'path')
 
     def test_obstacle_fileLoaded_linear(self):  # test obstacle file loaded for linear mobility
         angle = 0
@@ -289,12 +220,12 @@ class TestAirmobisim(unittest.TestCase):
                                  TestAirmobisim.speed_lin[0], polygon_file_path)
 
         self.assertTrue(lin_obj.polygon_file_path != None, 'poly file is not loaded')
-        self.assertTrue(os.path.exists(lin_obj.polygon_file_path), 'No such polygon file exists according to the provided '
-                                                                  'path')
-
+        self.assertTrue(os.path.exists(lin_obj.polygon_file_path),
+                        'No such polygon file exists according to the provided '
+                        'path')
 
     # @patch('src.simulationparameter.Simulationparameter.stepLength',cls.step)
-    def test_obstacle_for_spline(self):                         #todo complete this test case
+    def test_obstacle_for_spline(self):  # todo complete this test case
         Simulationparameter.stepLength = TestAirmobisim.stepLength
         self._simulationSteps = TestAirmobisim.simTimeLimit / Simulationparameter.stepLength
 
@@ -310,7 +241,6 @@ class TestAirmobisim(unittest.TestCase):
                 break;
                 # self._managedNodes.remove(node)
 
-
         # print(Simulationparameter.stepLength)
         # Simulationparameter.incrementCurrentSimStep()
         # print(Simulationparameter.currentSimStep)
@@ -323,9 +253,8 @@ class TestAirmobisim(unittest.TestCase):
         #     print(Simulationparameter.currentSimStep)
         # passedTime =(Simulationparameter.currentSimStep * Simulationparameter.stepLength)
 
-
     # print(sp_obj.polygon_file_path )
-    #todo write test case for collision_action
+    # todo write test case for collision_action
 
 
 def fake_func(self):
