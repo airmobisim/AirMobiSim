@@ -25,10 +25,11 @@ class TestAirmobisim(unittest.TestCase):
         p = Yamlparser("../examples/simpleSimulation/simulation.config")
         config = p.readConfig()
         # print(config)
-        polygon_file = config['files']['polygon']
+        polygon_file = config['obstacle_detection']['polygon_file']
+        cls.collision_action = config['obstacle_detection']['collision_action']
         homePath = os.environ['AIRMOBISIMHOME']
-        polygon_file_path = homePath + '/' + polygon_file
-        print(polygon_file_path)
+        cls.polygon_file_path = homePath + '/' + polygon_file
+        print('polygon file path: ',cls.polygon_file_path)
 
         cls.simTimeLimit = config['simulation']['simTimeLimit']
         cls.stepLength = config['simulation']['stepLength']
@@ -267,6 +268,30 @@ class TestAirmobisim(unittest.TestCase):
 
         self.assertTrue(all(speed >= 0 for speed in TestAirmobisim.speed_lin),
                         'Speed can not be negative for linearmobility model')
+
+
+    def test_obstacle_fileLoaded_spline(self):     # test obstacle file loaded for spline mobility
+        sp_obj = Splinemobility(0, TestAirmobisim.waypointX[0], TestAirmobisim.waypointY[0],
+                                TestAirmobisim.waypointZ[0], TestAirmobisim.speed_sp[0],
+                                TestAirmobisim.polygon_file_path)
+
+
+        self.assertTrue(sp_obj.polygon_file_path != None, 'poly file is not loaded')
+        self.assertTrue(os.path.exists(sp_obj.polygon_file_path), 'No such polygon file exists according to the provided '
+                                                                  'path')
+
+
+    def test_obstacle_fileLoaded_linear(self):  # test obstacle file loaded for linear mobility
+        angle = 0
+        polygon_file_path = TestAirmobisim.polygon_file_path
+
+        lin_obj = Linearmobility(0, TestAirmobisim.startPos[0], TestAirmobisim.endPos[0], angle,
+                                 TestAirmobisim.speed_lin[0], polygon_file_path)
+
+        self.assertTrue(lin_obj.polygon_file_path != None, 'poly file is not loaded')
+        self.assertTrue(os.path.exists(lin_obj.polygon_file_path), 'No such polygon file exists according to the provided '
+                                                                  'path')
+
 
     # @patch('src.simulationparameter.Simulationparameter.stepLength',cls.step)
     def test_obstacle_for_spline(self):                         #todo complete this test case

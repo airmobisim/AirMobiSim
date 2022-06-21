@@ -34,8 +34,8 @@ class Splinemobility(Basemobility):
         self._waypointTime = self.insertWaypointTime()
         # self._totalFlightTime = self._waypointTime[-1]
         self._totalFlightTime = self.computeTotalFlightTime(0.0, speed, 0)
-        print('speed: ', speed, 'total flightTime:', self._totalFlightTime)
-        print('startpos: ', self._startpos)
+        # print('speed: ', speed, 'total flightTime:', self._totalFlightTime)
+        # print('startpos: ', self._startpos)
 
     def makeMove(self):
         # object of Movement

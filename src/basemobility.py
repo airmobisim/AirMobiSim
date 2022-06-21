@@ -103,7 +103,7 @@ class Basemobility(ABC):
     def ParsePolygonFileToObstacles(self):
         if self.polygon_file_path == None or not os.path.exists(self.polygon_file_path):
             return None
-        print("self.polygon_file_path: " + str(self.polygon_file_path))
+        # print("self.polygon_file_path: " + str(self.polygon_file_path))
         parsedFile= minidom.parse(self.polygon_file_path)
         polygons = parsedFile.getElementsByTagName('poly')
         buildings=[]
