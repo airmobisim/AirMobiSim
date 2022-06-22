@@ -19,7 +19,7 @@ class Splinemobility(Basemobility):
         self._waypointX = waypointX
         self._waypointY = waypointY
         self._waypointZ = waypointZ
-
+        self._move.setTotalDistance(np.sum(Splinemobility.computeSplineDistance(self._waypointX, self._waypointY, self._waypointZ)))
         self._uid = uid
         self._move.setStart(self._startpos, 0)
         self._move.setEndPos(self._endpos)
@@ -161,12 +161,12 @@ class Splinemobility(Basemobility):
     #
     #     self._obstacleDetector_flag = True if detectObstacle == True else self._obstacleDetector_flag
 
-    def computeTotalFlightTime(self, currentTime, speed, acceleration):
-        if speed == 0 and acceleration == 0:
-            return 0
-        distance = np.sum(Splinemobility.computeSplineDistance(self._waypointX, self._waypointY, self._waypointZ))
-        final_velocity = math.sqrt(speed ** 2 + 2 * acceleration * distance)  # v^2=u^2+2as
-        average_velocity = (speed + final_velocity) / 2
-        assert average_velocity != 0, 'avarage velocity can not be 0'
-        flightTime = distance / average_velocity + currentTime
-        return flightTime
+    # def computeTotalFlightTime(self, currentTime, speed, acceleration):
+    #     if speed == 0 and acceleration == 0:
+    #         return 0
+    #     distance = np.sum(Splinemobility.computeSplineDistance(self._waypointX, self._waypointY, self._waypointZ))
+    #     final_velocity = math.sqrt(speed ** 2 + 2 * acceleration * distance)  # v^2=u^2+2as
+    #     average_velocity = (speed + final_velocity) / 2
+    #     assert average_velocity != 0, 'avarage velocity can not be 0'
+    #     flightTime = distance / average_velocity + currentTime
+    #     return flightTime

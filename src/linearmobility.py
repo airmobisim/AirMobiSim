@@ -16,7 +16,8 @@ class Linearmobility(Basemobility):
         self._move.setSpeed(speed)
         self._uid = uid
         self._stepTarget = ""
-        self._totalFlightTime = self.computeTotalFlightTime()
+        self._move.setTotalDistance(self.computeTotalDistance())
+        self._totalFlightTime = self.computeTotalFlightTime(0.0,speed,self._acceleration)
         # print('speed is',speed)
 
     def makeMove(self):
@@ -54,19 +55,22 @@ class Linearmobility(Basemobility):
 
         return True if self._obstacleDetector_flag and self._collisionAction == 3 else False  # obstacle->remove/not remove node indicator
 
-    def computeTotalFlightTime(self):
-        # print()
-        move = self.getMove()
-        if self._acceleration == 0 and move.getSpeed() == 0.0:
-            return 0.0
+    # def computeTotalFlightTime(self):
+    #     # print()
+    #     move = self.getMove()
+    #     if self._acceleration == 0 and move.getSpeed() == 0.0:
+    #         return 0.0
+    #
+    #     distance = math.sqrt((self._endPos.x - self._startPos.x) ** 2 + (self._endPos.y - self._startPos.y) ** 2 + (
+    #             self._endPos.z - self._startPos.z) ** 2)
+    #     final_velocity = math.sqrt(self.getMove().getSpeed() ** 2 + 2 * self._acceleration * distance)  # v^2=u^2+2as
+    #     average_velocity = (self.getMove().getSpeed() + final_velocity) / 2
+    #     assert average_velocity != 0, 'avarage velocity can not be 0'
+    #     return distance / average_velocity
 
-        distance = math.sqrt((self._endPos.x - self._startPos.x) ** 2 + (self._endPos.y - self._startPos.y) ** 2 + (
+    def computeTotalDistance(self):
+        return math.sqrt((self._endPos.x - self._startPos.x) ** 2 + (self._endPos.y - self._startPos.y) ** 2 + (
                 self._endPos.z - self._startPos.z) ** 2)
-        final_velocity = math.sqrt(self.getMove().getSpeed() ** 2 + 2 * self._acceleration * distance)  # v^2=u^2+2as
-        average_velocity = (self.getMove().getSpeed() + final_velocity) / 2
-        assert average_velocity != 0, 'avarage velocity can not be 0'
-        return distance / average_velocity
-
     # set future x,y coordinate for building detection
     def setFutureCoordinate(self):
         currentDirection = self.getMove().getCurrentDirection()

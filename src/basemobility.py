@@ -1,3 +1,4 @@
+import math
 from abc import ABC
 import os
 from xml.dom import minidom
@@ -123,6 +124,16 @@ class Basemobility(ABC):
 
     # def manageObstacles(self):
     #     raise NotImplementedError
+
+    def computeTotalFlightTime(self, currentTime, speed, acceleration):
+        if speed == 0 and acceleration == 0:
+            return 0
+        distance = self.getMove().getTotalDistance()
+        final_velocity = math.sqrt(speed ** 2 + 2 * acceleration * distance)  # v^2=u^2+2as
+        average_velocity = (speed + final_velocity) / 2
+        assert average_velocity != 0, 'avarage velocity can not be 0'
+        flightTime = distance / average_velocity + currentTime
+        return flightTime
 
     def manageObstacles(self, passedTime,futureTime):
         if self._obstacles == None:

@@ -27,6 +27,7 @@ class Movement:
         self._finalFlag = False
         self._linear_mobility_sp = False
         self._waypointsInsertedFlag=False
+        self._totalDistance=0.0
 
     def setFinalFlag(self, flag):
         self._finalFlag = flag
@@ -101,6 +102,12 @@ class Movement:
 
     def getSpeed(self):
         return self._speed
+
+    def setTotalDistance(self, distance):
+        self._totalDistance = distance
+
+    def getTotalDistance(self):
+        return self._totalDistance
 
     def getCurrentDirection(self):
         return self._currentDirection
