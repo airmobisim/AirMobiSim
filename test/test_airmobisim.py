@@ -40,6 +40,9 @@ class TestAirmobisim(unittest.TestCase):
         cls.uavsLinear = config['uav']
         cls.kenetic_model = config['kinetic_model']
 
+        assert len(cls.uavsSpline) !=0, 'No Spline mobility uav is selected for testing in the config file'
+        assert len(cls.uavsLinear) !=0, 'No Linear mobility uav is selected for testing in the config file'
+
 
         # inputs for splinemobility
         cls.speed_sp = []
@@ -81,7 +84,7 @@ class TestAirmobisim(unittest.TestCase):
         # print('after every test')
         pass
 
-    def test_waypoints_spline_mob(self):  # all inputs need to be positive and inside the playground
+    def test_config_waypoints_spline_mob(self):  # all inputs need to be positive and inside the playground
 
         self.assertTrue(len(TestAirmobisim.waypointX) == len(TestAirmobisim.waypointY) == len(TestAirmobisim.waypointZ),
                         'input waypoint length for x,y and z should be same')
@@ -97,7 +100,7 @@ class TestAirmobisim(unittest.TestCase):
             self.assertTrue(all(0 <= item <= TestAirmobisim.playgroundSizeZ for item in TestAirmobisim.waypointZ[i]),
                             'waypoint z should be within playgroundZ')
 
-    def test_waypoints_linear_mob(self):  # all inputs need to be positive and inside the playground
+    def test_config_waypoints_linear_mob(self):  # all inputs need to be positive and inside the playground
 
         self.assertTrue(len(TestAirmobisim.waypointX) == len(TestAirmobisim.waypointY) == len(TestAirmobisim.waypointZ),
                         'input waypoint length for x,y and z should be same')
@@ -113,22 +116,40 @@ class TestAirmobisim(unittest.TestCase):
             self.assertTrue(0 <= (startpos.z and endpos.z) <= TestAirmobisim.playgroundSizeZ,
                             'waypoint z should be within playgroundZ')
 
-    def test_speed_limit_sp(
+    def test_speed_limit_spline(
             self):  # not to use very small values of speed so that the simulation is not completed with in the time limit
         for index, uavsp in enumerate(TestAirmobisim.uavsSpline):
             splineObj = Splinemobility(index, TestAirmobisim.waypointX[index],
                                        TestAirmobisim.waypointY[index], TestAirmobisim.waypointZ[index],
-                                       TestAirmobisim.speed_lin[index], None)
+                                       TestAirmobisim.speed_sp[index], None)
             print('total flight time')
             print(splineObj._totalFlightTime)
+
             self.assertTrue(splineObj._totalFlightTime <= TestAirmobisim.simTimeLimit,
-                            'this speed will exceed the simTimeLimit consider reducing it')
+                            f'In spline mobility the {index}th UAV: time required to complete simulation= {splineObj._totalFlightTime}s. The speed={TestAirmobisim.speed_sp[index]}m/s will exceed the simTimeLimit={TestAirmobisim.simTimeLimit}s consider increasing the speed to finish simulation within time simTime')
+
+
+    def test_speed_limit_linear(
+            self):  # not to use very small values of speed so that the simulation is not completed with in the time limit
+        angle = 0  # does not matter
+        polygon_file_path = None
+        for index, uavlin in enumerate(TestAirmobisim.uavsLinear):
+
+            lin_obj = Linearmobility(index, TestAirmobisim.startPos[index], TestAirmobisim.endPos[index], angle,
+                                     TestAirmobisim.speed_lin[index], polygon_file_path)
+            print('total flight time')
+            print(lin_obj._totalFlightTime)
+
+            self.assertTrue(lin_obj._totalFlightTime <= TestAirmobisim.simTimeLimit,
+                            f'In linear mobility the {index}th UAV: time required to complete simulation= {lin_obj._totalFlightTime}s. The speed={TestAirmobisim.speed_lin[index]}m/s will exceed the simTimeLimit={TestAirmobisim.simTimeLimit}s consider increasing the speed to finish simulation within time simTime')
+
 
     @patch('src.basemobility.Basemobility.doLog')
     @patch('src.movement.Movement.getLinearMobilitySpFlag', return_value=True)
     def test_doLog_sp_mob(self, mock_getLinearMobilitySpFlag, mock_doLog):
         sp_obj = Splinemobility(0, TestAirmobisim.waypointX[0], TestAirmobisim.waypointY[0],
                                 TestAirmobisim.waypointZ[0], TestAirmobisim.speed_sp[0], None)
+
 
         sp_obj.makeMove()
         # print(sp_obj._waypointX)
