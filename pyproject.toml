@@ -2,7 +2,7 @@
 name = "airmobisim"
 version = "0.1.0"
 description = ""
-authors = ["Your Name <you@example.com>"]
+authors = ["Tobias Hardes <tobias.hardes@uni-paderborn.de"]
 
 [tool.poetry.dependencies]
 python = "3.9.0"
