@@ -105,6 +105,13 @@ def validateConfiguration(config):
         sys.exit('No uavsp is present in the config file for using spline mobility')
 
 
+    if any(uav['speed'] < 0 for uav in linearUavs):
+        sys.exit('Speed can not be negative for uav. check config file.')
+
+    if any(uavsp['speed'] < 0 for uavsp in splineUavs):
+        sys.exit('Speed can not be negative for uavsp. check config file.')
+
+
 def initializeSimulation(config, directory, linearMobilityFlag, splineMobilityFlag):
     global simulation
     if splineMobilityFlag:
