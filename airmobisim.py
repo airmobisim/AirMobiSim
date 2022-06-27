@@ -14,6 +14,7 @@ from src.yamlparser import Yamlparser
 
 simulation: Simulation
 
+
 def main():
     global simulation
 
@@ -24,20 +25,22 @@ def main():
     parser.add_argument('--omnetpp', action='store_true', help='Start the OmNet++ simulator')
     parser.add_argument('--show', action='store_true', help='Show the Energy as Plot')
 
-    print("""AirMobiSim Simulation  (C) 2021 Chair of Networked Systems Modelling TU Dresden.\nVersion: 0.0.1\nSee the license for distribution terms and warranty disclaimer""", flush=True)
+    print(
+        """AirMobiSim Simulation  (C) 2021 Chair of Networked Systems Modelling TU Dresden.\nVersion: 0.0.1\nSee the license for distribution terms and warranty disclaimer""",
+        flush=True)
     args = parser.parse_args()
     try:
         homePath = os.environ['AIRMOBISIMHOME']
     except KeyError:
-        print("AIRMOBISIMHOME-Variable missing. Please do run 'export AIRMOBISIMHOME=" + str(pathlib.Path().resolve()) + "' or copy the statement to your .bashrc, .profile, or .zshrc")
+        print("AIRMOBISIMHOME-Variable missing. Please do run 'export AIRMOBISIMHOME=" + str(
+            pathlib.Path().resolve()) + "' or copy the statement to your .bashrc, .profile, or .zshrc")
         sys.exit()
-
-
 
     configPath = homePath + "/" + args.configuration
     if not exists(configPath):
-        print("The configuration file " + configPath + " does not exist. Please check the path or run AirMobiSim with the --help option ")
-        sys.exit()    
+        print(
+            "The configuration file " + configPath + " does not exist. Please check the path or run AirMobiSim with the --help option ")
+        sys.exit()
     p = Yamlparser(configPath)
     config = p.readConfig()
 
@@ -67,24 +70,31 @@ def main():
         if args.plot:
             make_plot()
 
+
 def validateConfiguration(config):
     linearMobilityFlag = config['kinetic_model']['linearMobility']
     splineMobilityFlag = config['kinetic_model']['splineMobility']
+    if not ((linearMobilityFlag == 0 or linearMobilityFlag == 1) and (
+            splineMobilityFlag == 0 or splineMobilityFlag == 1)):
+        print('Please only use value 0 or 1 for selecting kinetic model')
+        sys.exit()
     if linearMobilityFlag == splineMobilityFlag:
         print("Please select either linear or spline mobility")
         sys.exit()
     if config['simulation']['simTimeLimit'] < 0:
         print("Please select a positive simulation time limit")
         sys.exit()
-    
+
     if config['simulation']['stepLength'] < 0:
         print("Please select a positive step length")
         sys.exit()
-    if config['simulation']['playgroundSizeX'] <0 or config['simulation']['playgroundSizeY'] <0 or config['simulation']['playgroundSizeZ'] < 0:
+    if config['simulation']['playgroundSizeX'] < 0 or config['simulation']['playgroundSizeY'] < 0 or \
+            config['simulation']['playgroundSizeZ'] < 0:
         print("Please select a positive playground size")
         sys.exit()
 
-def initializeSimulation(config, directory, linearMobilityFlag,splineMobilityFlag):
+
+def initializeSimulation(config, directory, linearMobilityFlag, splineMobilityFlag):
     global simulation
     if splineMobilityFlag:
         print("Launch spline mobility")
@@ -92,25 +102,24 @@ def initializeSimulation(config, directory, linearMobilityFlag,splineMobilityFla
 
     else:
         print("Launch linear mobility")
-        #simulation = Simulation.from_config_linmob(config, linearMobilityFlag, splineMobilityFlag, directory)
+        # simulation = Simulation.from_config_linmob(config, linearMobilityFlag, splineMobilityFlag, directory)
         polygon_file = config['obstacle_detection']['polygon_file']
         homePath = os.environ['AIRMOBISIMHOME']
 
         polygon_file_path = homePath + '/' + polygon_file
-        
-        simulation = Simulation( directory,
-                                 config['simulation']['stepLength'],
-                                 config['simulation']['simTimeLimit'],
-                                 config['simulation']['playgroundSizeX'],
-                                 config['simulation']['playgroundSizeY'],
-                                 config['simulation']['playgroundSizeZ'],
-                                 linearMobilityFlag,
-                                 splineMobilityFlag,
-                                 config['uav'],
-                                 polygon_file_path,
-                                 config['obstacle_detection']['collision_action'])
+
+        simulation = Simulation(directory,
+                                config['simulation']['stepLength'],
+                                config['simulation']['simTimeLimit'],
+                                config['simulation']['playgroundSizeX'],
+                                config['simulation']['playgroundSizeY'],
+                                config['simulation']['playgroundSizeZ'],
+                                linearMobilityFlag,
+                                splineMobilityFlag,
+                                config['uav'],
+                                polygon_file_path,
+                                config['obstacle_detection']['collision_action'])
 
 
-
-if __name__ == "__main__":    
+if __name__ == "__main__":
     main()
