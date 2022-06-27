@@ -74,24 +74,27 @@ def main():
 def validateConfiguration(config):
     linearMobilityFlag = config['kinetic_model']['linearMobility']
     splineMobilityFlag = config['kinetic_model']['splineMobility']
+    collision_action = config['obstacle_detection']['collision_action']
+
     if not ((linearMobilityFlag == 0 or linearMobilityFlag == 1) and (
             splineMobilityFlag == 0 or splineMobilityFlag == 1)):
-        print('Please only use value 0 or 1 for selecting kinetic model')
-        sys.exit()
+        sys.exit('Please only use value 0 or 1 for selecting kinetic model')
+
     if linearMobilityFlag == splineMobilityFlag:
-        print("Please select either linear or spline mobility")
-        sys.exit()
+        sys.exit('Please select either linear or spline mobility')
+
     if config['simulation']['simTimeLimit'] < 0:
-        print("Please select a positive simulation time limit")
-        sys.exit()
+        sys.exit('Please select a positive simulation time limit')
 
     if config['simulation']['stepLength'] < 0:
-        print("Please select a positive step length")
-        sys.exit()
+        sys.exit('Please select a positive step length')
+
     if config['simulation']['playgroundSizeX'] < 0 or config['simulation']['playgroundSizeY'] < 0 or \
             config['simulation']['playgroundSizeZ'] < 0:
-        print("Please select a positive playground size")
-        sys.exit()
+        sys.exit("Please select a positive playground size")
+
+    if not (collision_action == 1 or collision_action == 2 or collision_action== 3):
+        sys.exit('The value of collision_action can either be 1, 2 or 3')
 
 
 def initializeSimulation(config, directory, linearMobilityFlag, splineMobilityFlag):
