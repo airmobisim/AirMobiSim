@@ -75,6 +75,8 @@ def validateConfiguration(config):
     linearMobilityFlag = config['kinetic_model']['linearMobility']
     splineMobilityFlag = config['kinetic_model']['splineMobility']
     collision_action = config['obstacle_detection']['collision_action']
+    splineUavs = config['uavsp']
+    linearUavs = config['uav']
 
     if not ((linearMobilityFlag == 0 or linearMobilityFlag == 1) and (
             splineMobilityFlag == 0 or splineMobilityFlag == 1)):
@@ -93,8 +95,14 @@ def validateConfiguration(config):
             config['simulation']['playgroundSizeZ'] < 0:
         sys.exit("Please select a positive playground size")
 
-    if not (collision_action == 1 or collision_action == 2 or collision_action== 3):
+    if not (collision_action == 1 or collision_action == 2 or collision_action == 3):
         sys.exit('The value of collision_action can either be 1, 2 or 3')
+
+    if linearMobilityFlag == 1 and  linearUavs is None:
+        sys.exit('No uav is present in the config file for using linear mobility')
+
+    if splineMobilityFlag == 1 and  splineUavs is None:
+        sys.exit('No uavsp is present in the config file for using spline mobility')
 
 
 def initializeSimulation(config, directory, linearMobilityFlag, splineMobilityFlag):
