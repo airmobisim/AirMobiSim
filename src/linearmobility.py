@@ -15,28 +15,17 @@ class Linearmobility(Basemobility):
         self._move.setTempStartPos(startPos)
         self._move.setSpeed(speed)
         self._uid = uid
-        self._stepTarget = ""
         self._move.setTotalDistance(self.computeTotalDistance())
         self._totalFlightTime = self.computeTotalFlightTime(0.0,speed,self._acceleration)
-        # print('speed is',speed)
 
     def makeMove(self):
         move = self.getMove()
-        passedTime = (
-                             Simulationparameter.currentSimStep * Simulationparameter.stepLength) - self.getMove().getStartTime()
+        passedTime = (Simulationparameter.currentSimStep * Simulationparameter.stepLength) - self.getMove().getStartTime()
 
         move.setDirectionByTarget()
         newSpeed = move.getSpeed() + self._acceleration * Simulationparameter.stepLength
         # print(newSpeed)
         if passedTime >= self._totalFlightTime:
-            # if 0.0 <= passedTime < self._totalFlightTime:
-            #     move.setDirectionByTarget()
-            #     newSpeed = move.getSpeed() + self._acceleration * Simulationparameter.stepLength
-            #
-            #
-            #
-            # elif passedTime>= self._totalFlightTime:
-
             newSpeed = 0.0
             self._acceleration = 0.0
             self.getMove().setFinalFlag(True)
@@ -55,22 +44,11 @@ class Linearmobility(Basemobility):
 
         return True if self._obstacleDetector_flag and self._collisionAction == 3 else False  # obstacle->remove/not remove node indicator
 
-    # def computeTotalFlightTime(self):
-    #     # print()
-    #     move = self.getMove()
-    #     if self._acceleration == 0 and move.getSpeed() == 0.0:
-    #         return 0.0
-    #
-    #     distance = math.sqrt((self._endPos.x - self._startPos.x) ** 2 + (self._endPos.y - self._startPos.y) ** 2 + (
-    #             self._endPos.z - self._startPos.z) ** 2)
-    #     final_velocity = math.sqrt(self.getMove().getSpeed() ** 2 + 2 * self._acceleration * distance)  # v^2=u^2+2as
-    #     average_velocity = (self.getMove().getSpeed() + final_velocity) / 2
-    #     assert average_velocity != 0, 'avarage velocity can not be 0'
-    #     return distance / average_velocity
 
     def computeTotalDistance(self):
         return math.sqrt((self._endPos.x - self._startPos.x) ** 2 + (self._endPos.y - self._startPos.y) ** 2 + (
                 self._endPos.z - self._startPos.z) ** 2)
+
     # set future x,y coordinate for building detection
     def setFutureCoordinate(self):
         currentDirection = self.getMove().getCurrentDirection()
@@ -81,26 +59,5 @@ class Linearmobility(Basemobility):
 
         self.getMove().setFutureCoordinate(futureCoordinate)
 
-    # def manageObstacles(self, passedTime):
-    #     if self._obstacle == None:
-    #         return
-    #     futureTime= passedTime + Simulationparameter.stepLength
-    #
-    #     currentDirection = self.getMove().getCurrentDirection()
-    #     previousPos = self.getMove().getTempStartPos()
-    #     x = previousPos.x + (currentDirection.x * self.getMove().getSpeed() * Simulationparameter.stepLength)
-    #     y = previousPos.y + (currentDirection.y * self.getMove().getSpeed() * Simulationparameter.stepLength)
-    #     # z = previousPos.z + (currentDirection.z * self.getMove().getSpeed() * Simulationparameter.stepLength) # no need since building height not given
-    #
-    #     futureCoordinate = (x, y)
-    #
-    #     # self._obstacleDetector_flag = self._obstracles[0].contains_point(futureCoordinate)
-    #     # warnings.filterwarnings('once')
-    #     detectObstacle = self._obstacle[0].contains_point(futureCoordinate)
-    #     if not self._obstacleDetector_flag and detectObstacle and self._collisionAction==1:
-    #         # warnings.warn('uav is going to collide in collide')
-    #         print('WARNING!!!!')
-    #         print('currentTime:',passedTime,'uav is going to collide at ', futureTime)
-    #
-    #     self._obstacleDetector_flag = True if detectObstacle == True else self._obstacleDetector_flag
+
 

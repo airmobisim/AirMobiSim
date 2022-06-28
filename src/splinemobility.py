@@ -13,8 +13,6 @@ class Splinemobility(Basemobility):
     def __init__(self, uid, waypointX, waypointY, waypointZ, speed, polygon_file_path=None, collision_action=None):
         self._startpos = Point(waypointX[0], waypointY[0], waypointZ[0])
         self._endpos = Point(waypointX[-1], waypointY[-1], waypointZ[-1])
-        # self._totalFlightTime = waypointTime[-1]
-
         super().__init__(uid, self._startpos, self._endpos, polygon_file_path,collision_action)
         self._waypointX = waypointX
         self._waypointY = waypointY
@@ -34,16 +32,13 @@ class Splinemobility(Basemobility):
         self._waypointTime = self.insertWaypointTime()
         # self._totalFlightTime = self._waypointTime[-1]
         self._totalFlightTime = self.computeTotalFlightTime(0.0, speed, 0)
-        # print('speed: ', speed, 'total flightTime:', self._totalFlightTime)
-        # print('startpos: ', self._startpos)
 
     def makeMove(self):
         # object of Movement
         move = self.getMove()
 
         # calculate the time elapsed
-        passedTime = (
-                             Simulationparameter.currentSimStep * Simulationparameter.stepLength) - self.getMove().getStartTime()
+        passedTime = (Simulationparameter.currentSimStep * Simulationparameter.stepLength) - self.getMove().getStartTime()
 
         if 0.0 <= passedTime < self._totalFlightTime:
 
@@ -55,8 +50,6 @@ class Splinemobility(Basemobility):
                 nextCoordinate = Point(spl_x(passedTime), spl_y(passedTime), spl_z(passedTime))
                 move.setNextCoordinate(nextCoordinate)
                 if self._collisionAction != 2:
-                    # move.setPassedTime(passedTime)
-                    # move.setFutureTime(passedTime + Simulationparameter.stepLength)
                     future_time = passedTime + Simulationparameter.stepLength
                     move.setFutureCoordinate((spl_x(future_time), spl_y(future_time)))
                     self.manageObstacles(passedTime, future_time)
@@ -99,8 +92,6 @@ class Splinemobility(Basemobility):
         distance_of_segments = Splinemobility.computeSplineDistance(self._waypointX, self._waypointY, self._waypointZ)
         total_spline_distance = np.sum(distance_of_segments)
         total_flight_time = total_spline_distance / self._speed
-        # print(' func insertWaypointTime total flight time')
-        # print(total_flight_time)
 
         waypointTime = []
         # now put time stamp for each waypoint
@@ -116,7 +107,7 @@ class Splinemobility(Basemobility):
 
         return waypointTime
 
-    @staticmethod  # this functions returns area of segments for each waypoint segments
+    @staticmethod  # this function returns area of  waypoint segments
     def computeSplineDistance(waypointX, waypointY, waypointZ):
         waypointCount = len(waypointX)
         waypointIndex = np.linspace(0, waypointCount - 1, num=waypointCount)
@@ -142,31 +133,5 @@ class Splinemobility(Basemobility):
 
             distance_of_segments.append(segments_distance)
 
-        # print(np.sum(area_of_segment))
-
         return distance_of_segments
 
-    # def manageObstacles(self, spl_x, spl_y, spl_z, passedTime):
-    #     if self._obstacle == None:
-    #         return
-    #     futureTime = passedTime + Simulationparameter.stepLength
-    #     futureCoordinate = (spl_x(futureTime), spl_y(futureTime))
-    #     # self._obstackelDetector_flag= self._obstacles[0].contains_point(futureCoordinate)
-    #     # warnings.filterwarnings('once')
-    #     detectObstacle = self._obstacle[0].contains_point(futureCoordinate)
-    #     if not self._obstacleDetector_flag and detectObstacle and self._collisionAction == 1:
-    #         # warnings.warn('uav is going to collide in collide')
-    #         print('WARNING!!!!')
-    #         print('currentTime:', passedTime, 'uav is going to collide at ', futureTime)
-    #
-    #     self._obstacleDetector_flag = True if detectObstacle == True else self._obstacleDetector_flag
-
-    # def computeTotalFlightTime(self, currentTime, speed, acceleration):
-    #     if speed == 0 and acceleration == 0:
-    #         return 0
-    #     distance = np.sum(Splinemobility.computeSplineDistance(self._waypointX, self._waypointY, self._waypointZ))
-    #     final_velocity = math.sqrt(speed ** 2 + 2 * acceleration * distance)  # v^2=u^2+2as
-    #     average_velocity = (speed + final_velocity) / 2
-    #     assert average_velocity != 0, 'avarage velocity can not be 0'
-    #     flightTime = distance / average_velocity + currentTime
-    #     return flightTime

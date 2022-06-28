@@ -1,5 +1,5 @@
 import geopandas
-import math 
+import math
 from shapely.geometry import Point
 import numpy as np
 
@@ -11,7 +11,7 @@ class Movement:
     def __init__(self):
         self._startPos = Point(0, 0, 0)
         self._endPos = Point(0, 0, 0)
-        self._lastPos =  Point(0, 0, 0)
+        self._lastPos = Point(0, 0, 0)
         self._startTime = 0
         self._orientationX = 0
         self._orientationY = 0
@@ -21,13 +21,13 @@ class Movement:
         self._passedTime = 0
         self._futureTime = 0
         self._futureCoordinate = (0.0, 0.0)
-        self._tempStartPos=Point(0,0,0)
+        self._tempStartPos = Point(0, 0, 0)
         self._nextCoordinate = Point(0, 0, 0)
         self._startPosCircle = Point(0, 0, 0)
         self._finalFlag = False
-        self._linear_mobility_sp = False
-        self._waypointsInsertedFlag=False
-        self._totalDistance=0.0
+        self._linear_mobility_sp = False  # spline mobility model in use?
+        self._waypointsInsertedFlag = False
+        self._totalDistance = 0.0
 
     def setFinalFlag(self, flag):
         self._finalFlag = flag
@@ -50,10 +50,10 @@ class Movement:
     def setStart(self, startPos, startTime):
         self._startPos = startPos
         self._startTime = startTime
-    
+
     def getStartTime(self):
         return self._startTime
-    
+
     def getStartPos(self):
         return self._startPos
 
@@ -85,16 +85,15 @@ class Movement:
         return self._passedTime
 
     def setFutureTime(self, time):
-
         self._futureTime = time
 
-    def getFuturedTime(self):
+    def getFutureTime(self):
         return self._futureTime
 
     def setFutureCoordinate(self, coordinate):
         self._futureCoordinate = coordinate
 
-    def getFuturedCoordinate(self):
+    def getFutureCoordinate(self):
         return self._futureCoordinate
 
     def setSpeed(self, speed):
@@ -111,30 +110,20 @@ class Movement:
 
     def getCurrentDirection(self):
         return self._currentDirection
-    
-    def setCurrentDirection(self,currentDirection):
-        self._currentDirection = currentDirection
-    
-    def setDirectionByTarget(self):
-        '''
-        print("Target.x: " + str(target.x))
-        print("Target.y: " + str(target.y))
-        print("Target.z: " + str(target.z))
-        print("Start.x: " + str(self._startPos.x))
-        print("Start.y: " + str(self._startPos.y))
-        print("Start.z: " + str(self._startPos.z))
-        '''
 
-        direction = Point(self._endPos.x - self._startPos.x, self._endPos.y - self._startPos.y, self._endPos.z - self._startPos.z)
-        distance = math.sqrt((self._endPos.x - self._startPos.x)**2 + (self._endPos.y - self._startPos.y)**2 + (self._endPos.z - self._startPos.z)**2)
- 
+    def setCurrentDirection(self, currentDirection):
+        self._currentDirection = currentDirection
+
+    def setDirectionByTarget(self):
+        direction = Point(self._endPos.x - self._startPos.x, self._endPos.y - self._startPos.y,
+                          self._endPos.z - self._startPos.z)
+        distance = math.sqrt((self._endPos.x - self._startPos.x) ** 2 + (self._endPos.y - self._startPos.y) ** 2 + (
+                    self._endPos.z - self._startPos.z) ** 2)
+
         direction = np.array([direction.x, direction.y, direction.z])
-        distance = np.array([distance, distance, distance]) 
+        distance = np.array([distance, distance, distance])
 
         array = np.divide(direction, distance)
         # newDirection = Point(round(array[0],2), round(array[1],2), round(array[2],2))
-        newDirection = Point(round(array[0],7), round(array[1],7), round(array[2],7))
-        #print("old direction: " + str(direction) + " new direction " + str(newDirection))
+        newDirection = Point(round(array[0], 7), round(array[1], 7), round(array[2], 7))
         self.setCurrentDirection(newDirection)
-
-
