@@ -102,8 +102,8 @@ class TestAirmobisim(unittest.TestCase):
 
     def test_config_waypoints_linear_mob(self):  # all inputs need to be positive and inside the playground
 
-        self.assertTrue(len(TestAirmobisim.waypointX) == len(TestAirmobisim.waypointY) == len(TestAirmobisim.waypointZ),
-                        'input waypoint length for x,y and z should be same')
+        # self.assertTrue(len(TestAirmobisim.waypointX) == len(TestAirmobisim.waypointY) == len(TestAirmobisim.waypointZ),
+        #                 'input waypoint length for x,y and z should be same')
         # print(TestAirmobisim.startPos[0])
         # print(TestAirmobisim.endPos[0])
         for startpos, endpos in zip(TestAirmobisim.startPos,

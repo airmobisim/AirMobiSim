@@ -123,12 +123,11 @@ def validateConfiguration(config):
     if not (collision_action == 1 or collision_action == 2 or collision_action == 3):
         sys.exit('The value of collision_action can either be 1, 2 or 3')
 
-    if linearMobilityFlag == 1 and  linearUavs is None:
+    if linearMobilityFlag == 1 and linearUavs is None:
         sys.exit('No uav is present in the config file for using linear mobility')
 
-    if splineMobilityFlag == 1 and  splineUavs is None:
+    if splineMobilityFlag == 1 and splineUavs is None:
         sys.exit('No uavsp is present in the config file for using spline mobility')
-
 
     if linearMobilityFlag == 1 and any(uav['speed'] < 0 for uav in linearUavs):
         sys.exit('Speed can not be negative for uav. check config file.')
@@ -143,15 +142,24 @@ def validateConfiguration(config):
 
         for i, v in enumerate(waypointX):  # use zip function correct it later on
 
-            if not(len(waypointX[i]) == len(waypointY[i]) == len(waypointZ[i])):
-                sys.exit( f'for uav {i} waypoint x,y,z should be same for each uav')
-            if not(all(0 <= item <= config['simulation']['playgroundSizeX'] for item in waypointX[i])):
-                sys.exit(f'for uav {i} waypoint x should be within playgroundX.check playground size in  config file')
-            if not(all(0 <= item <= config['simulation']['playgroundSizeY'] for item in waypointY[i])):
-                            sys.exit(f'for uav {i} waypoint y should be within playgroundY.check playground size in  config file')
-            if not(all(0 <= item <= config['simulation']['playgroundSizeZ'] for item in waypointZ[i])):
-                            sys.exit(f'for uav {i} waypoint z should be within playgroundZ. check playground size in  config file')
-    #######
+            if not (len(waypointX[i]) == len(waypointY[i]) == len(waypointZ[i])):
+                sys.exit(f'for uav {i} waypoint x,y,z should be same for each uav')
+            if not (all(0 <= item <= config['simulation']['playgroundSizeX'] for item in waypointX[i])):
+                sys.exit(f'for uav {i} waypoint x should be within playgroundX.check playground size in config file')
+            if not (all(0 <= item <= config['simulation']['playgroundSizeY'] for item in waypointY[i])):
+                sys.exit(f'for uav {i} waypoint y should be within playgroundY.check playground size in config file')
+            if not (all(0 <= item <= config['simulation']['playgroundSizeZ'] for item in waypointZ[i])):
+                sys.exit(f'for uav {i} waypoint z should be within playgroundZ. check playground size in config file')
+                #######
+    if linearMobilityFlag:
+        for startpos, endpos in zip(startPos, endPos):
+
+            if not (0 <= (startpos.x and endpos.x) <= config['simulation']['playgroundSizeX']):
+                sys.exit('waypoint x should be within playgroundX. Please check config file.')
+            if not (0 <= (startpos.y and endpos.y) <= config['simulation']['playgroundSizeY']):
+                sys.exit('waypoint y should be within playgroundY. Please check config file.')
+            if not (0 <= (startpos.z and endpos.z) <= config['simulation']['playgroundSizeZ']):
+                sys.exit('waypoint z should be within playgroundZ. Please check config file.')
 
 
 def initializeSimulation(config, directory, linearMobilityFlag, splineMobilityFlag):
