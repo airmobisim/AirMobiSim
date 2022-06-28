@@ -75,6 +75,11 @@ def validateConfiguration(config):
     collision_action = config['obstacle_detection']['collision_action']
     splineUavs = config['uavsp']
     linearUavs = config['uav']
+    polygon_file = config['obstacle_detection']['polygon_file']
+    if polygon_file is None:
+        sys.exit('polygon file path is not provided')
+    homePath = os.environ['AIRMOBISIMHOME']
+    polygon_file_path = homePath + '/' + polygon_file
 
     # inputs for splinemobility
     speed_sp = []
@@ -159,6 +164,10 @@ def validateConfiguration(config):
                 sys.exit('waypoint y should be within playgroundY. Please check config file.')
             if not (0 <= (startpos.z and endpos.z) <= config['simulation']['playgroundSizeZ']):
                 sys.exit('waypoint z should be within playgroundZ. Please check config file.')
+
+    if not(os.path.exists(polygon_file_path)):
+        sys.exit('no polygon file is found in the path')
+
 
 
 def initializeSimulation(config, directory, linearMobilityFlag, splineMobilityFlag):

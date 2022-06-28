@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
-import math
-import pathlib
+
 import unittest
 from unittest.mock import patch, Mock, MagicMock
 
@@ -14,8 +13,6 @@ from src.simulationparameter import Simulationparameter
 
 import airmobisim
 import os
-from pathlib import Path
-import pandas as pd
 
 
 class TestAirmobisim(unittest.TestCase):
@@ -40,9 +37,8 @@ class TestAirmobisim(unittest.TestCase):
         cls.uavsLinear = config['uav']
         cls.kenetic_model = config['kinetic_model']
 
-        assert len(cls.uavsSpline) !=0, 'No Spline mobility uav is selected for testing in the config file'
-        assert len(cls.uavsLinear) !=0, 'No Linear mobility uav is selected for testing in the config file'
-
+        assert len(cls.uavsSpline) != 0, 'No Spline mobility uav is selected for testing in the config file'
+        assert len(cls.uavsLinear) != 0, 'No Linear mobility uav is selected for testing in the config file'
 
         # inputs for splinemobility
         cls.speed_sp = []
@@ -89,8 +85,7 @@ class TestAirmobisim(unittest.TestCase):
         self.assertTrue(len(TestAirmobisim.waypointX) == len(TestAirmobisim.waypointY) == len(TestAirmobisim.waypointZ),
                         'input waypoint length for x,y and z should be same')
 
-        for i, v in enumerate(TestAirmobisim.waypointX):  # use zip function correct it later on
-            # validInputSp=all(0 <= item <=playgroundSizeX for item in v)
+        for i, v in enumerate(TestAirmobisim.waypointX):
             self.assertTrue(len(TestAirmobisim.waypointX[i]) == len(TestAirmobisim.waypointY[i]) == len(
                 TestAirmobisim.waypointZ[i]), 'waypoint x,y,z should be same for each uav')
             self.assertTrue(all(0 <= item <= TestAirmobisim.playgroundSizeX for item in TestAirmobisim.waypointX[i]),
@@ -102,13 +97,8 @@ class TestAirmobisim(unittest.TestCase):
 
     def test_config_waypoints_linear_mob(self):  # all inputs need to be positive and inside the playground
 
-        # self.assertTrue(len(TestAirmobisim.waypointX) == len(TestAirmobisim.waypointY) == len(TestAirmobisim.waypointZ),
-        #                 'input waypoint length for x,y and z should be same')
-        # print(TestAirmobisim.startPos[0])
-        # print(TestAirmobisim.endPos[0])
         for startpos, endpos in zip(TestAirmobisim.startPos,
-                                    TestAirmobisim.endPos):  # use zip function correct it later on
-
+                                    TestAirmobisim.endPos):
             self.assertTrue(0 <= (startpos.x and endpos.x) <= TestAirmobisim.playgroundSizeX,
                             'waypoint x should be within playgroundX')
             self.assertTrue(0 <= (startpos.y and endpos.y) <= TestAirmobisim.playgroundSizeY,
@@ -116,8 +106,7 @@ class TestAirmobisim(unittest.TestCase):
             self.assertTrue(0 <= (startpos.z and endpos.z) <= TestAirmobisim.playgroundSizeZ,
                             'waypoint z should be within playgroundZ')
 
-    def test_speed_limit_spline(
-            self):  # not to use very small values of speed so that the simulation is not completed with in the time limit
+    def test_speed_limit_spline(self):  # check speed to  finish simulation within timelimit
         for index, uavsp in enumerate(TestAirmobisim.uavsSpline):
             splineObj = Splinemobility(index, TestAirmobisim.waypointX[index],
                                        TestAirmobisim.waypointY[index], TestAirmobisim.waypointZ[index],
@@ -128,13 +117,10 @@ class TestAirmobisim(unittest.TestCase):
             self.assertTrue(splineObj._totalFlightTime <= TestAirmobisim.simTimeLimit,
                             f'In spline mobility the {index}th UAV: time required to complete simulation= {splineObj._totalFlightTime}s. The speed={TestAirmobisim.speed_sp[index]}m/s will exceed the simTimeLimit={TestAirmobisim.simTimeLimit}s consider increasing the speed to finish simulation within time simTime')
 
-
-    def test_speed_limit_linear(
-            self):  # not to use very small values of speed so that the simulation is not completed with in the time limit
+    def test_speed_limit_linear(self):  # check speed to  finish simulation within timelimit
         angle = 0  # does not matter
         polygon_file_path = None
         for index, uavlin in enumerate(TestAirmobisim.uavsLinear):
-
             lin_obj = Linearmobility(index, TestAirmobisim.startPos[index], TestAirmobisim.endPos[index], angle,
                                      TestAirmobisim.speed_lin[index], polygon_file_path)
             print('total flight time')
@@ -143,13 +129,11 @@ class TestAirmobisim(unittest.TestCase):
             self.assertTrue(lin_obj._totalFlightTime <= TestAirmobisim.simTimeLimit,
                             f'In linear mobility the {index}th UAV: time required to complete simulation= {lin_obj._totalFlightTime}s. The speed={TestAirmobisim.speed_lin[index]}m/s will exceed the simTimeLimit={TestAirmobisim.simTimeLimit}s consider increasing the speed to finish simulation within time simTime')
 
-
     @patch('src.basemobility.Basemobility.doLog')
     @patch('src.movement.Movement.getLinearMobilitySpFlag', return_value=True)
     def test_doLog_sp_mob(self, mock_getLinearMobilitySpFlag, mock_doLog):
         sp_obj = Splinemobility(0, TestAirmobisim.waypointX[0], TestAirmobisim.waypointY[0],
                                 TestAirmobisim.waypointZ[0], TestAirmobisim.speed_sp[0], None)
-
 
         sp_obj.makeMove()
         # print(sp_obj._waypointX)
@@ -171,8 +155,6 @@ class TestAirmobisim(unittest.TestCase):
     @patch('src.movement.Movement.getLinearMobilitySpFlag', return_value=False)
     @patch('src.basemobility.Basemobility.doLog')
     def test_doLog_lin_mob(self, mock_doLog, mock_getLinearMobilitySpFlag):
-        # angle = math.atan2(TestAirmobisim.endPos[0].y - TestAirmobisim.startPos[0].y, TestAirmobisim.endPos[0].x -
-        # TestAirmobisim.startPos[0].x) * 180 / math.pi
         angle = 0
         polygon_file_path = None
         lin_obj = Linearmobility(0, TestAirmobisim.startPos[0], TestAirmobisim.endPos[0], angle,
@@ -180,13 +162,8 @@ class TestAirmobisim(unittest.TestCase):
         # mock_getLinearMobilitySpFlag.retuned_value = True
         lin_obj.makeMove()
 
-        # self.assertTrue(mock_logCurrentPosition.called)
         self.assertTrue(mock_doLog.called)
         self.assertTrue(mock_getLinearMobilitySpFlag.called_once())
-        # print(mock_getLinearMobilitySpFlag.call_count)
-        # self.assertTrue(mock_getLinearMobilitySpFlag.called)
-
-    # self.assertEqual(validInputSp,True)
 
     @patch('src.movement.Movement.getLinearMobilitySpFlag', return_value=False)
     @patch('src.resultcollection.Resultcollection.logCurrentPosition')
@@ -210,10 +187,10 @@ class TestAirmobisim(unittest.TestCase):
 
     def test_collision_action_input(self):  # check the validity of collision action input
 
-        self.assertTrue(TestAirmobisim.collision_action == 1 or TestAirmobisim.collision_action == 2 or TestAirmobisim.collision_action== 3,
-                        'collision action value can either be 1, 2 or 3. 1-> warning message. 2-> ignore everything. '
-                        '3-> remove uav in case of collision')
-
+        self.assertTrue(
+            TestAirmobisim.collision_action == 1 or TestAirmobisim.collision_action == 2 or TestAirmobisim.collision_action == 3,
+            'collision action value can either be 1, 2 or 3. 1-> warning message. 2-> ignore everything. '
+            '3-> remove uav in case of collision')
 
     def test_waypointTime_generated_splinemobility(self):
         for uav in range(len(TestAirmobisim.uavsSpline)):  # check for all uavs
