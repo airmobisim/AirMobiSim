@@ -50,9 +50,6 @@ def main():
     # flags to refer kinetic model selection
     linearMobilityFlag = config['kinetic_model']['linearMobility']
     splineMobilityFlag = config['kinetic_model']['splineMobility']
-    # polygon_file= config['files']['polygon']
-    # poly_file_path= str(pathlib.Path().resolve())+'/'+polygon_file
-    # print(pathlib.Path().resolve().parent)
 
     directory = pathlib.Path(args.configuration).parent.resolve()
     initializeSimulation(config, directory, linearMobilityFlag, splineMobilityFlag)
@@ -78,30 +75,32 @@ def validateConfiguration(config):
     collision_action = config['obstacle_detection']['collision_action']
     splineUavs = config['uavsp']
     linearUavs = config['uav']
-    ############
+
     # inputs for splinemobility
     speed_sp = []
     waypointX = []
     waypointY = []
     waypointZ = []
 
-    for uavsp in splineUavs:
-        waypointX.append(uavsp['waypointX'])
-        waypointY.append(uavsp['waypointY'])
-        waypointZ.append(uavsp['waypointZ'])
-        speed_sp.append(uavsp['speed'])
+    if splineUavs is not None:
+        for uavsp in splineUavs:
+            waypointX.append(uavsp['waypointX'])
+            waypointY.append(uavsp['waypointY'])
+            waypointZ.append(uavsp['waypointZ'])
+            speed_sp.append(uavsp['speed'])
 
     # inputs for linear mobility
     startPos = []
     endPos = []
     speed_lin = []
 
-    for uavlin in linearUavs:
-        startPos.append(Point(uavlin['startPosX'], uavlin['startPosY'], uavlin['startPosZ']))
-        endPos.append(Point(uavlin['endPosX'], uavlin['endPosY'], uavlin['endPosZ']))
-        speed_lin.append(uavlin['speed'])
+    if linearUavs is not None:
+        for uavlin in linearUavs:
+            startPos.append(Point(uavlin['startPosX'], uavlin['startPosY'], uavlin['startPosZ']))
+            endPos.append(Point(uavlin['endPosX'], uavlin['endPosY'], uavlin['endPosZ']))
+            speed_lin.append(uavlin['speed'])
 
-    ############
+
 
     if not ((linearMobilityFlag == 0 or linearMobilityFlag == 1) and (
             splineMobilityFlag == 0 or splineMobilityFlag == 1)):
@@ -124,10 +123,10 @@ def validateConfiguration(config):
         sys.exit('The value of collision_action can either be 1, 2 or 3')
 
     if linearMobilityFlag == 1 and linearUavs is None:
-        sys.exit('No uav is present in the config file for using linear mobility')
+        sys.exit('No uav is present in the config file to use linear mobility')
 
     if splineMobilityFlag == 1 and splineUavs is None:
-        sys.exit('No uavsp is present in the config file for using spline mobility')
+        sys.exit('No uavsp is present in the config file to use spline mobility')
 
     if linearMobilityFlag == 1 and any(uav['speed'] < 0 for uav in linearUavs):
         sys.exit('Speed can not be negative for uav. check config file.')
@@ -135,12 +134,12 @@ def validateConfiguration(config):
     if splineMobilityFlag == 1 and any(uavsp['speed'] < 0 for uavsp in splineUavs):
         sys.exit('Speed can not be negative for uavsp. check config file.')
 
-    #######
+
     if splineMobilityFlag:
         if not (len(waypointX) == len(waypointY) == len(waypointZ)):
             sys.exit('input waypoint length for x,y and z should be same for spline uav')
 
-        for i, v in enumerate(waypointX):  # use zip function correct it later on
+        for i, v in enumerate(waypointX):
 
             if not (len(waypointX[i]) == len(waypointY[i]) == len(waypointZ[i])):
                 sys.exit(f'for uav {i} waypoint x,y,z should be same for each uav')
@@ -150,7 +149,7 @@ def validateConfiguration(config):
                 sys.exit(f'for uav {i} waypoint y should be within playgroundY.check playground size in config file')
             if not (all(0 <= item <= config['simulation']['playgroundSizeZ'] for item in waypointZ[i])):
                 sys.exit(f'for uav {i} waypoint z should be within playgroundZ. check playground size in config file')
-                #######
+
     if linearMobilityFlag:
         for startpos, endpos in zip(startPos, endPos):
 
