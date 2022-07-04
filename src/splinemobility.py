@@ -22,11 +22,8 @@ class Splinemobility(Basemobility):
         self._uid = uid
         self._move.setStart(self._startpos, 0)
         self._move.setEndPos(self._endpos)
-        # self._move.setTempStartPos(self._startpos) # holds each intermediate points of linear in each iteration
-        self._move.setNextCoordinate(self._startpos)  # holds each intermediate points of linear in each iteration
-
-        # since spline so fixing it to true, this flag is used to separate some code from other mobility
-        self._move.setLinearMobilitySpFlag(True)
+        self._move.setNextCoordinate(self._startpos)  # holds intermediate point/ current position
+        self._move.setLinearMobilitySpFlag(True)    # spline mobility model in use indicator
         # self._waypointsInsertedFlag=True     # this decides calling of updateWaypointsByIndex()
         # self.updateWaypointsByIndex()     # uncomment this line when you want to use insertion of waypoints
         self._speed = speed
@@ -72,8 +69,6 @@ class Splinemobility(Basemobility):
         waypointsIndex, waypointsX, waypointsY, waypointsZ = AirMobiSim.getWaypointsByIndex()
 
         if waypointsIndex != None:
-            # print('hello hello')
-            # time = list(self._waypointTime.copy())
             x = self._waypointX.copy()
             y = self._waypointY.copy()
             z = self._waypointZ.copy()
@@ -82,8 +77,6 @@ class Splinemobility(Basemobility):
             z = [float(i) for i in z]
 
             for idx_new, x_new, y_new, z_new in zip(waypointsIndex, waypointsX, waypointsY, waypointsZ):
-                # print('vertex: ',v)
-                # time.insert(v, (time[v] + time[v - 1]) / 2)
                 x = np.insert(x, idx_new, x_new)
                 y = np.insert(y, idx_new, y_new)
                 z = np.insert(z, idx_new, z_new)
