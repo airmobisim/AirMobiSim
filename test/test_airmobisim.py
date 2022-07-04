@@ -247,28 +247,13 @@ class TestAirmobisim(unittest.TestCase):
                 break;
                 # self._managedNodes.remove(node)
 
-        # print(Simulationparameter.stepLength)
-        # Simulationparameter.incrementCurrentSimStep()
-        # print(Simulationparameter.currentSimStep)
-
-        # with patch("src.simulationparameter.Simulationparameter.incrementCurrentSimStep", wraps=self.fake_func) as mock_func:
-        #
-        #     Simulationparameter.incrementCurrentSimStep()
-        #     print(Simulationparameter.currentSimStep)
-        #     Simulationparameter.incrementCurrentSimStep()
-        #     print(Simulationparameter.currentSimStep)
-        # passedTime =(Simulationparameter.currentSimStep * Simulationparameter.stepLength)
-
-    # print(sp_obj.polygon_file_path )
-    # todo write test case for collision_action
 
 
-def fake_func(self):
-    Simulationparameter.currentSimStep += 2
 
 
-def getStepLength(self):
-    return TestAirmobisim.stepLength
+
+
+
 
 
 if __name__ == '__main__':
