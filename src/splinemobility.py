@@ -34,8 +34,8 @@ class Splinemobility(Basemobility):
         # self._totalFlightTime = self._waypointTime[-1]
         self._totalFlightTime = self.computeTotalFlightTime(0.0, speed, 0)
 
-        logWrapper.debug("speed: %s; total flightTime: %s", str(speed), str(self._totalFlightTime))
-        logWrapper.debug("startpos: %s", self._startpos)
+        logWrapper.debug(f"speed: {str(speed)}; total flightTime: {str(self._totalFlightTime)}" )
+        logWrapper.debug(f"startpos: {self._startpos}" )
 
 
     def makeMove(self):
@@ -97,7 +97,7 @@ class Splinemobility(Basemobility):
 
         distance_of_segments = Splinemobility.computeSplineDistance(self._waypointX, self._waypointY, self._waypointZ)
         total_spline_distance = np.sum(distance_of_segments)
-        total_flight_time = total_spline_distance / self._speed
+        total_flight_time = total_spline_distance / self._speed if self._speed != 0 else -1
 
 
         waypointTime = []

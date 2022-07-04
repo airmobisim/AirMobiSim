@@ -200,7 +200,7 @@ def initializeSimulation(config, directory, linearMobilityFlag, splineMobilityFl
 
         logWrapper.debug("Launch linear mobility")
         #simulation = Simulation.from_config_linmob(config, linearMobilityFlag, splineMobilityFlag, directory)
-        polygon_file = config['files']['polygon']
+        polygon_file = config['obstacle_detection']['polygon_file']
 
         homePath = os.environ['AIRMOBISIMHOME']
 
