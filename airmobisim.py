@@ -86,8 +86,11 @@ def validateConfiguration(config):
     splineUavs = config['uavsp']
     linearUavs = config['uav']
     polygon_file = config['obstacle_detection']['polygon_file']
+
     if polygon_file is None:
+        logWrapper.critical('polygon file path is not provided')
         sys.exit('polygon file path is not provided')
+
     homePath = os.environ['AIRMOBISIMHOME']
     polygon_file_path = homePath + '/' + polygon_file
 
@@ -129,14 +132,13 @@ def validateConfiguration(config):
     if config['simulation']['simTimeLimit'] < 0:
         print("Please select a positive simulation time limit")
         logWrapper.critical("Please select a positive simulation time limit")
-
         sys.exit()
 
     if config['simulation']['stepLength'] < 0:
         print("Please select a positive step length")
         logWrapper.critical("Please select a positive step length")
-
         sys.exit()
+
     if config['simulation']['playgroundSizeX'] < 0 or config['simulation']['playgroundSizeY'] < 0 or config['simulation'][
         'playgroundSizeZ'] < 0:
         print("Please select a positive playground size")
@@ -144,47 +146,61 @@ def validateConfiguration(config):
         sys.exit()
 
     if not (collision_action == 1 or collision_action == 2 or collision_action == 3):
+        logWrapper.critical("The value of collision_action can either be 1, 2 or 3")
         sys.exit('The value of collision_action can either be 1, 2 or 3')
 
     if linearMobilityFlag == 1 and linearUavs is None:
+        logWrapper.critical("No uav is present in the config file to use linear mobility")
         sys.exit('No uav is present in the config file to use linear mobility')
 
     if splineMobilityFlag == 1 and splineUavs is None:
+        logWrapper.critical('No uavsp is present in the config file to use spline mobility')
         sys.exit('No uavsp is present in the config file to use spline mobility')
 
     if linearMobilityFlag == 1 and any(uav['speed'] < 0 for uav in linearUavs):
+        logWrapper.critical('Speed can not be negative for uav. check config file.')
         sys.exit('Speed can not be negative for uav. check config file.')
 
     if splineMobilityFlag == 1 and any(uavsp['speed'] < 0 for uavsp in splineUavs):
+        logWrapper.critical('Speed can not be negative for uavsp. check config file.')
         sys.exit('Speed can not be negative for uavsp. check config file.')
 
 
     if splineMobilityFlag:
         if not (len(waypointX) == len(waypointY) == len(waypointZ)):
+            logWrapper.critical('input waypoint length for x,y and z should be same for spline uav')
             sys.exit('input waypoint length for x,y and z should be same for spline uav')
 
         for i, v in enumerate(waypointX):
 
             if not (len(waypointX[i]) == len(waypointY[i]) == len(waypointZ[i])):
+                logWrapper.critical(f'for uav {i} waypoint x,y,z should be same for each uav')
                 sys.exit(f'for uav {i} waypoint x,y,z should be same for each uav')
             if not (all(0 <= item <= config['simulation']['playgroundSizeX'] for item in waypointX[i])):
+                logWrapper.critical(f'for uav {i} waypoint x should be within playgroundX.check playground size in config file')
                 sys.exit(f'for uav {i} waypoint x should be within playgroundX.check playground size in config file')
             if not (all(0 <= item <= config['simulation']['playgroundSizeY'] for item in waypointY[i])):
+                logWrapper.critical(f'for uav {i} waypoint y should be within playgroundY.check playground size in config file')
                 sys.exit(f'for uav {i} waypoint y should be within playgroundY.check playground size in config file')
             if not (all(0 <= item <= config['simulation']['playgroundSizeZ'] for item in waypointZ[i])):
+                logWrapper.critical(f'for uav {i} waypoint z should be within playgroundZ. check playground size in config file')
                 sys.exit(f'for uav {i} waypoint z should be within playgroundZ. check playground size in config file')
 
     if linearMobilityFlag:
         for startpos, endpos in zip(startPos, endPos):
 
             if not (0 <= (startpos.x and endpos.x) <= config['simulation']['playgroundSizeX']):
+                logWrapper.critical('waypoint x should be within playgroundX. Please check config file.')
                 sys.exit('waypoint x should be within playgroundX. Please check config file.')
             if not (0 <= (startpos.y and endpos.y) <= config['simulation']['playgroundSizeY']):
+                logWrapper.critical('waypoint y should be within playgroundY. Please check config file.')
                 sys.exit('waypoint y should be within playgroundY. Please check config file.')
             if not (0 <= (startpos.z and endpos.z) <= config['simulation']['playgroundSizeZ']):
+                logWrapper.critical('waypoint z should be within playgroundZ. Please check config file.')
                 sys.exit('waypoint z should be within playgroundZ. Please check config file.')
 
     if not(os.path.exists(polygon_file_path)):
+        logWrapper.critical('no polygon file is found in the path')
         sys.exit('no polygon file is found in the path')
 
 
