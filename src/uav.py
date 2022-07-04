@@ -13,7 +13,6 @@ class Uav:
         self._angle = self.calculateAngle(startPos, endPos) 
         self._mobility  =  Linearmobility(uid, startPos, endPos, self._angle, speed, polygon_file_path)
 
-
     def getMobility(self):
         return self._mobility
 

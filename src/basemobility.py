@@ -38,32 +38,14 @@ class Basemobility(ABC):
         else:
             currentDirection = self.getMove().getCurrentDirection()
 
-        #if self.getMove().getLinearMobilitySpFlag():
-            #currentDirection = self.getMove().getCurrentDirection()
-            #if self.getMove().getLinearMobilitySpFlag():
-
-                # currentPos = self.getMove().getNextCoordinate()
-                # if (self.getMove().getFinalFlag()):
-                #     currentPos = self.getMove().getNextCoordinate()
-
-                #return currentPos
-
-            #elif self.getMove().getFinalFlag():
-                # currentPos=Point(self.getMove().getTempStartPos().x, self.getMove().getTempStartPos().y, 0.0)
-                #currentPos=Point(self.getMove().getNextCoordinate().x, self.getMove().getNextCoordinate().y, 0.0)
-                # currentPos = self.getMove().getNextCoordinate()
-
             previousPos = self.getMove().getTempStartPos()
 
             if self.getMove().getFinalFlag():
-                # return Point(previousPos.x,previousPos.y,0.0)
                 return previousPos
 
             x = previousPos.x + (currentDirection.x*self.getMove().getSpeed()*Simulationparameter.stepLength)
             y = previousPos.y + (currentDirection.y*self.getMove().getSpeed()*Simulationparameter.stepLength)
             z = previousPos.z + (currentDirection.z*self.getMove().getSpeed()*Simulationparameter.stepLength)
-            # print(x, flush=True)
-            # print(y, flush=True)
             currentPos = Point(x,y,z)
             self.getMove().setTempStartPos(currentPos)
         
@@ -74,13 +56,12 @@ class Basemobility(ABC):
         passedTime = (Simulationparameter.currentSimStep * Simulationparameter.stepLength) - self.getMove().getStartTime()
         if passedTime==0:
             return self._startPos
-        # currenPos = Point(0, 0, 0)
+        
         if not self.getMove().getFinalFlag():
             currentPos = self.getMove().getNextCoordinate()
             return currentPos
 
         elif self.getMove().getFinalFlag():
-            # currentPos=Point(self.getMove().getNextCoordinate().x, self.getMove().getNextCoordinate().y, self.getMove().getNextCoordinate().z)
             currentPos = self.getMove().getNextCoordinate()
 
         return currentPos
@@ -110,13 +91,10 @@ class Basemobility(ABC):
         for polygon in polygons:
             shape_of_polygon = polygon.attributes['shape'].value
             vertex_corordinates= shape_of_polygon.split(' ')       #coordinates are of string type
-            # print("hello")
-            # print(vertex_corordinates)
             list_of_coordinates=[]
             for single_vertex in vertex_corordinates:
                 list_of_coordinates.append([float(single_vertex.split(',')[0]),float(single_vertex.split(',')[1])]) # x and y coordinates are seperated and converted to float
 
-            # print(list_of_coordinates)
             buildings.append(mplPath.Path(np.array(list_of_coordinates)))     # forming shape of polygon by joining the polygon coordinates and appended to building list
 
         return buildings

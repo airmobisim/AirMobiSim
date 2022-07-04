@@ -17,7 +17,6 @@ class Linearmobility(Basemobility):
         self._uid = uid
         self._stepTarget = ""
         self._totalFlightTime= self.computeTotalFlightTime()
-        # print('speed is',speed)
 
     def makeMove(self):
         move = self.getMove()
@@ -25,17 +24,8 @@ class Linearmobility(Basemobility):
 
         move.setDirectionByTarget()
         newSpeed = move.getSpeed() + self._acceleration * Simulationparameter.stepLength
-        # print(newSpeed)
-        if passedTime>= self._totalFlightTime:
-            
-        # if 0.0 <= passedTime < self._totalFlightTime:
-        #     move.setDirectionByTarget()
-        #     newSpeed = move.getSpeed() + self._acceleration * Simulationparameter.stepLength
-        #
-        #
-        #
-        # elif passedTime>= self._totalFlightTime:
 
+        if passedTime>= self._totalFlightTime:
             newSpeed=0.0
             self._acceleration=0.0
             self.getMove().setFinalFlag(True) 
@@ -52,7 +42,6 @@ class Linearmobility(Basemobility):
 
 
     def computeTotalFlightTime(self):
-        # print()
         move = self.getMove()
         if self._acceleration==0 and move.getSpeed()==0.0:
             return  0.0
@@ -73,12 +62,9 @@ class Linearmobility(Basemobility):
         previousPos = self.getMove().getTempStartPos()
         x = previousPos.x + (currentDirection.x * self.getMove().getSpeed() * Simulationparameter.stepLength)
         y = previousPos.y + (currentDirection.y * self.getMove().getSpeed() * Simulationparameter.stepLength)
-        # z = previousPos.z + (currentDirection.z * self.getMove().getSpeed() * Simulationparameter.stepLength) # no need since building height not given
 
         futureCoordinate = (x, y)
 
-        # self._obstacleDetector_flag = self._obstacles[0].contains_point(futureCoordinate)
-        # warnings.filterwarnings('once')
         detectObstacle = self._obstacle[0].contains_point(futureCoordinate)
         if not self._obstacleDetector_flag and detectObstacle and self._collisionAction==1:
             # warnings.warn('uav is going to collide in collide')
