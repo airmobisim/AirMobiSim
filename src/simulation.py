@@ -9,8 +9,11 @@ from .simulationparameter import Simulationparameter
 from .repeatedtimer import Repeatedtimer
 from .uavsp import UavSp
 
+import src.logWrapper as logWrapper
 
 class Simulation:
+
+
     _currentTime = 0
     _isRunnig = False
     _managedNodes = []
@@ -21,7 +24,7 @@ class Simulation:
                  linearMobilityFlag, splineMobilityFlag, uavs, polygon_file_path=None, speed=None, waypointX=None, waypointY=None,
                  waypointZ=None):
 
-        print("Initializing...")
+        logWrapper.debug("Initializing...")
         Simulationparameter.stepLength = stepLength
         Simulationparameter.directory = directory
         Simulationparameter.simStartTime = Simulationparameter.current_milli_time()
@@ -41,7 +44,7 @@ class Simulation:
         
     def startSimulation(self):
         if self._isRunnig == True or Simulationparameter.currentSimStep != -1:
-            print("Simulation is already running")
+            logWrapper.critical("Simulation is already running")
             sys.exit()
 
         self._isRunnig = True
@@ -54,8 +57,8 @@ class Simulation:
 
         elapsed = (Simulationparameter.current_milli_time() - Simulationparameter.simStartTime) / 1000
         p = 100 / Simulationparameter.simTimeLimit * t
-        print("t=" + str(t) + "   Elapsed: " + str(elapsed) + "  " + str(p) + "% completed\n" +
-              "Speed: simsec/sec=72.8271")
+        logWrapper.debug("t= %s   Elapsed: %s   %s percent completed; Speed: simsec/sec=72.8271", str(t), str(elapsed), str(p))
+
 
     def manageSimulation(self):
         rt = Repeatedtimer(1, self.printStatus, "World")
@@ -66,7 +69,6 @@ class Simulation:
 
     def initializeNodes(self):
         for uav in self._startUavs:
-            # print(type(self.getNextUid()))
             nextUid = self.getNextUid()
             # for spline mobility
             if self._splineMobilityFlag:
@@ -86,19 +88,19 @@ class Simulation:
             for node in self._managedNodes:
                 removeNode = node._mobility.makeMove()   # building ahead
                 if removeNode:
-                    print('removing uav', node._uid)
+                    logWrapper.debug('removing uav %s', str(node._uid))
                     self._managedNodes.remove(node)      # obstacle so remove
 
         else:
             for node in self._managedNodes:
                 removeNode = node._mobility.makeMove()
                 if removeNode:
-                    print('removing uav', node._uid, flush=True)
+                    logWrapper.debug("removing uav %s", str(node._uid))
                     self._managedNodes.remove(node)
 
     def finishSimulation(self):
-        print(
-            "exiting -- at t=" + str(Simulationparameter.currentSimStep * Simulationparameter.stepLength) + ", event ?")
+        logWrapper.debug(
+            "exiting -- at t=%s, event?", str(Simulationparameter.currentSimStep * Simulationparameter.stepLength))
 
     def getNextUid(self):
         self._highestUid += 1
@@ -125,8 +127,6 @@ class Simulation:
 
         polygon_file= config['files']['polygon']
         polygon_file_path= str(pathlib.Path().resolve())+'/'+polygon_file
-        # print(poly_file_path)
-        # print(pathlib.Path().resolve().parent)
 
         stepLength, simTimeLimit, playgroundSizeX, playgroundSizeY, playgroundSizeZ = Simulation.load_common_parameters_from_config(
             config)

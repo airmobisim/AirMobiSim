@@ -3,6 +3,7 @@ import math
 from .basemobility import Basemobility
 from .simulationparameter import Simulationparameter
 
+import src.logWrapper as logWrapper
 
 class Linearmobility(Basemobility):
 
@@ -50,7 +51,7 @@ class Linearmobility(Basemobility):
                     self._endPos.z - self._startPos.z) ** 2)
         final_velocity = math.sqrt(self.getMove().getSpeed()**2 + 2*self._acceleration*distance) # v^2=u^2+2as
         average_velocity= (self.getMove().getSpeed()+final_velocity)/2
-        assert average_velocity !=0, 'avarage velocity can not be 0'
+        assert average_velocity != 0, 'average velocity can not be 0'
         return distance/average_velocity
 
     def manageObstacles(self, passedTime):
@@ -68,8 +69,8 @@ class Linearmobility(Basemobility):
         detectObstacle = self._obstacle[0].contains_point(futureCoordinate)
         if not self._obstacleDetector_flag and detectObstacle and self._collisionAction==1:
             # warnings.warn('uav is going to collide in collide')
-            print('WARNING!!!!')
-            print('currentTime:',passedTime,'uav is going to collide at ', futureTime)
+            logWrapper.debug('WARNING!!!!')
+            logWrapper.debug('currentTime: %s, uav is going to collide at %s', str(passedTime), str(futureTime))
 
         self._obstacleDetector_flag = True if detectObstacle == True else self._obstacleDetector_flag
 

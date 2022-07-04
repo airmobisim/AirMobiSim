@@ -8,6 +8,7 @@ from shapely.geometry import Point
 from .basemobility import Basemobility
 from .simulationparameter import Simulationparameter
 
+import src.logWrapper as logWrapper
 
 class Splinemobility(Basemobility):
     def __init__(self, uid, waypointX, waypointY, waypointZ, speed, polygon_file_path=None):
@@ -34,8 +35,8 @@ class Splinemobility(Basemobility):
         self._waypointTime = self.insertWaypointTime()
         # self._totalFlightTime = self._waypointTime[-1]
         self._totalFlightTime = self.computeTotalFlightTime(0.0, speed, 0)
-        print('speed: ', speed, 'total flightTime:', self._totalFlightTime)
-        print('startpos: ', self._startpos)
+        logWrapper.debug("speed: %s; total flightTime: %s", str(speed), str(self._totalFlightTime))
+        logWrapper.debug("startpos: %s", self._startpos)
 
     def makeMove(self):
         #object of Movement
@@ -98,14 +99,12 @@ class Splinemobility(Basemobility):
             self._waypointX = x
             self._waypointY = y
             self._waypointZ = z
-            print('waypoint inserted')
+            logWrapper.debug('waypoint inserted')
 
     def insertWaypointTime(self):
         distance_of_segments= Splinemobility.computeSplineDistance(self._waypointX, self._waypointY, self._waypointZ)
         total_spline_distance=np.sum(distance_of_segments)
         total_flight_time= total_spline_distance/self._speed
-        # print(' func insertWaypointTime total flight time')
-        # print(total_flight_time)
 
         waypointTime=[]
         # now put time stamp for each waypoint
@@ -119,10 +118,9 @@ class Splinemobility(Basemobility):
                 time_needed_for_this_segment= (distance_of_segments[i-1]/total_spline_distance)*total_flight_time
                 waypointTime.append(waypointTime[-1]+time_needed_for_this_segment)
 
-
         return waypointTime
 
-    @staticmethod         # this functions returns area of segments for each waypoint segments
+    @staticmethod         # this functions returns an area of segments for each waypoint segments
     def computeSplineDistance(waypointX,waypointY,waypointZ):
         waypointCount=len(waypointX)
         waypointIndex=np.linspace(0,waypointCount-1,num=waypointCount)
@@ -131,7 +129,7 @@ class Splinemobility(Basemobility):
         spl_y = CubicSpline(waypointIndex, waypointY)
         spl_z = CubicSpline(waypointIndex, waypointZ)
 
-        distance_of_segments=[]   # 1 less thank number of points
+        distance_of_segments=[]
         for i in range(waypointCount-1):
             number_of_small_segment=100
 
@@ -160,8 +158,8 @@ class Splinemobility(Basemobility):
         detectObstacle = self._obstacle[0].contains_point(futureCoordinate)
         if not self._obstacleDetector_flag and detectObstacle and self._collisionAction==1:
             # warnings.warn('uav is going to collide in collide')
-            print('WARNING!!!!')
-            print('currentTime:', passedTime, 'uav is going to collide at ', futureTime)
+            logWrapper.debug('WARNING!!!!')
+            logWrapper.debug("currentTime: %s; uav is going to collide at %s", str(passedTime), str(futureTime))
 
 
         self._obstacleDetector_flag= True if detectObstacle == True else self._obstacleDetector_flag

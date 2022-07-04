@@ -1,6 +1,5 @@
 from .singleton import Singleton
 
-import threading
 import time
 
 class Simulationparameter( metaclass=Singleton):
