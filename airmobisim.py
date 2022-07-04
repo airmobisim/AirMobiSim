@@ -5,6 +5,8 @@ import os
 import sys
 from os.path import exists
 import pathlib
+import src.logWrapper as logWrapper
+import logging
 
 from proto.DroCIBridge import startServer
 from src.plotting import make_plot
@@ -33,15 +35,23 @@ def main():
     try:
         homePath = os.environ['AIRMOBISIMHOME']
     except KeyError:
-        print("AIRMOBISIMHOME-Variable missing. Please do run 'export AIRMOBISIMHOME=" + str(
-            pathlib.Path().resolve()) + "' or copy the statement to your .bashrc, .profile, or .zshrc")
+
+        print("AIRMOBISIMHOME-Variable missing. Please do run 'export AIRMOBISIMHOME=" + str(pathlib.Path().resolve()) + "' or copy the statement to your .bashrc, .profile, or .zshrc")
+        logWrapper.critical("AIRMOBISIMHOME-Variable missing. Please do run 'export AIRMOBISIMHOME=" + str(pathlib.Path().resolve()) + "' or copy the statement to your .bashrc, .profile, or .zshrc")
+
+
         sys.exit()
 
     configPath = homePath + "/" + args.configuration
     if not exists(configPath):
-        print(
-            "The configuration file " + configPath + " does not exist. Please check the path or run AirMobiSim with the --help option ")
-        sys.exit()
+
+        print("The configuration file " + configPath + " does not exist. Please check the path or run AirMobiSim with the --help option ")
+        logWrapper.critical("The configuration file " + configPath + " does not exist. Please check the path or run AirMobiSim with the --help option ")
+
+        sys.exit()    
+    
+    logWrapper.basicConfig(filename=os.path.dirname(args.configuration) + '/logfile.log', encoding='utf-8', level=logging.DEBUG)
+
     p = Yamlparser(configPath)
     config = p.readConfig()
 
@@ -60,11 +70,11 @@ def main():
         result.showEnergy()
     else:
         if args.omnetpp:
-            print("Start the AirMobiSim Server.....", flush=True)
+            logWrapper.info("Start the AirMobiSim Server.....", True)
             startServer(simulation)
         else:
             simulation.startSimulation()
-            print('FINISH')
+            logWrapper.info('FINISH', True)
         if args.plot:
             make_plot()
 
@@ -112,17 +122,26 @@ def validateConfiguration(config):
         sys.exit('Please only use value 0 or 1 for selecting kinetic model')
 
     if linearMobilityFlag == splineMobilityFlag:
-        sys.exit('Please select either linear or spline mobility')
 
+        print("Please select either linear or spline mobility")
+        logWrapper.critical("Please select either linear or spline mobility")
+        sys.exit()
     if config['simulation']['simTimeLimit'] < 0:
-        sys.exit('Please select a positive simulation time limit')
+        print("Please select a positive simulation time limit")
+        logWrapper.critical("Please select a positive simulation time limit")
+
+        sys.exit()
 
     if config['simulation']['stepLength'] < 0:
-        sys.exit('Please select a positive step length')
+        print("Please select a positive step length")
+        logWrapper.critical("Please select a positive step length")
 
-    if config['simulation']['playgroundSizeX'] < 0 or config['simulation']['playgroundSizeY'] < 0 or \
-            config['simulation']['playgroundSizeZ'] < 0:
-        sys.exit("Please select a positive playground size")
+        sys.exit()
+    if config['simulation']['playgroundSizeX'] < 0 or config['simulation']['playgroundSizeY'] < 0 or config['simulation'][
+        'playgroundSizeZ'] < 0:
+        print("Please select a positive playground size")
+        logWrapper.critical("Please select a positive playground size")
+        sys.exit()
 
     if not (collision_action == 1 or collision_action == 2 or collision_action == 3):
         sys.exit('The value of collision_action can either be 1, 2 or 3')
@@ -170,16 +189,19 @@ def validateConfiguration(config):
 
 
 
+
 def initializeSimulation(config, directory, linearMobilityFlag, splineMobilityFlag):
     global simulation
     if splineMobilityFlag:
-        print("Launch spline mobility")
+        logWrapper.debug("Launch spline mobility")
         simulation = Simulation.from_config_spmob(config, linearMobilityFlag, splineMobilityFlag, directory)
 
     else:
-        print("Launch linear mobility")
-        # simulation = Simulation.from_config_linmob(config, linearMobilityFlag, splineMobilityFlag, directory)
-        polygon_file = config['obstacle_detection']['polygon_file']
+
+        logWrapper.debug("Launch linear mobility")
+        #simulation = Simulation.from_config_linmob(config, linearMobilityFlag, splineMobilityFlag, directory)
+        polygon_file = config['files']['polygon']
+
         homePath = os.environ['AIRMOBISIMHOME']
 
         polygon_file_path = homePath + '/' + polygon_file

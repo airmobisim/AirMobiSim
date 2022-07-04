@@ -3,6 +3,7 @@ import math
 from .basemobility import Basemobility
 from .simulationparameter import Simulationparameter
 
+import src.logWrapper as logWrapper
 
 class Linearmobility(Basemobility):
 
@@ -15,8 +16,10 @@ class Linearmobility(Basemobility):
         self._move.setTempStartPos(startPos)
         self._move.setSpeed(speed)
         self._uid = uid
+
         self._move.setTotalDistance(self.computeTotalDistance())
         self._totalFlightTime = self.computeTotalFlightTime(0.0,speed,self._acceleration)
+
 
     def makeMove(self):
         move = self.getMove()
@@ -24,11 +27,12 @@ class Linearmobility(Basemobility):
 
         move.setDirectionByTarget()
         newSpeed = move.getSpeed() + self._acceleration * Simulationparameter.stepLength
-        # print(newSpeed)
+
         if passedTime >= self._totalFlightTime:
             newSpeed = 0.0
             self._acceleration = 0.0
             self.getMove().setFinalFlag(True)
+
 
         move.setSpeed(newSpeed)
         move.setPassedTime(passedTime)
@@ -44,7 +48,6 @@ class Linearmobility(Basemobility):
 
         return True if self._obstacleDetector_flag and self._collisionAction == 3 else False  # obstacle->remove/not remove node indicator
 
-
     def computeTotalDistance(self):
         return math.sqrt((self._endPos.x - self._startPos.x) ** 2 + (self._endPos.y - self._startPos.y) ** 2 + (
                 self._endPos.z - self._startPos.z) ** 2)
@@ -55,9 +58,11 @@ class Linearmobility(Basemobility):
         previousPos = self.getMove().getTempStartPos()
         x = previousPos.x + (currentDirection.x * self.getMove().getSpeed() * Simulationparameter.stepLength)
         y = previousPos.y + (currentDirection.y * self.getMove().getSpeed() * Simulationparameter.stepLength)
+
         futureCoordinate = (x, y)
 
         self.getMove().setFutureCoordinate(futureCoordinate)
+
 
 
 

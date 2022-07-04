@@ -11,6 +11,7 @@ from .movement import Movement
 from .resultcollection import Resultcollection
 from .simulationparameter import Simulationparameter
 import matplotlib.path as mplPath
+import src.logWrapper as logWrapper
 
 
 class Basemobility(ABC):
@@ -38,10 +39,10 @@ class Basemobility(ABC):
             return self._startPos
         else:
             currentDirection = self.getMove().getCurrentDirection()
+
             previousPos = self.getMove().getTempStartPos()
 
             if self.getMove().getFinalFlag():
-                # return Point(previousPos.x,previousPos.y,0.0)
                 return previousPos
 
             x = previousPos.x + (currentDirection.x*self.getMove().getSpeed()*Simulationparameter.stepLength)
@@ -58,13 +59,12 @@ class Basemobility(ABC):
         passedTime = (Simulationparameter.currentSimStep * Simulationparameter.stepLength) - self.getMove().getStartTime()
         if passedTime==0:
             return self._startPos
-        # currenPos = Point(0, 0, 0)
+        
         if not self.getMove().getFinalFlag():
             currentPos = self.getMove().getNextCoordinate()
             return currentPos
 
         elif self.getMove().getFinalFlag():
-            # currentPos=Point(self.getMove().getNextCoordinate().x, self.getMove().getNextCoordinate().y, self.getMove().getNextCoordinate().z)
             currentPos = self.getMove().getNextCoordinate()
 
         return currentPos
@@ -73,7 +73,6 @@ class Basemobility(ABC):
         self.doLog()
 
     def doLog(self):
-        #print("do log")
         if self.getMove().getLinearMobilitySpFlag():   # log for spline mobility
             self._resultcollection.logCurrentPosition(self._uid, self.getCurrentPosSp(), self.getMove())
 
@@ -87,18 +86,25 @@ class Basemobility(ABC):
     def ParsePolygonFileToObstacles(self):
         if self.polygon_file_path is None or not os.path.exists(self.polygon_file_path):
             return None
+
+        logWrapper.debug(("self.polygon_file_path: %s", str(self.polygon_file_path)))
+
         parsedFile= minidom.parse(self.polygon_file_path)
         polygons = parsedFile.getElementsByTagName('poly')
         buildings=[]
         for polygon in polygons:
             shape_of_polygon = polygon.attributes['shape'].value
+
             vertex_coordinates= shape_of_polygon.split(' ')       # coordinates are of string type
+
             list_of_coordinates=[]
             for single_vertex in vertex_coordinates:       # x and y coordinates are seperated and converted to float
                 list_of_coordinates.append([float(single_vertex.split(',')[0]),float(single_vertex.split(',')[1])])
 
+
             # forming shape of polygon by joining the polygon coordinates and appended to building list
             buildings.append(mplPath.Path(np.array(list_of_coordinates)))
+
 
         return buildings
 
@@ -124,5 +130,7 @@ class Basemobility(ABC):
             # warnings.warn('uav is going to collide in collide')
             print('WARNING!!!!')
             print('currentTime:', passedTime, 'uav is going to collide at ', futureTime)
+            logWrapper.debug('WARNING!!!!')
+            logWrapper.debug(('currentTime: %s, uav is going to collide at %s', str(passedTime), str(futureTime)))
 
         self._obstacleDetector_flag = True if detectObstacle == True else self._obstacleDetector_flag

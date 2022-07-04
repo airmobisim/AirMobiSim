@@ -2,7 +2,6 @@ import math
 from .basemobility import Basemobility
 from .splinemobility import Splinemobility
 
-
 class UavSp:
     _uid = -1
     _mobility = Basemobility
@@ -13,7 +12,6 @@ class UavSp:
         # print('angle: ',self._angle)
         self._mobility = Splinemobility(uid, waypointX, waypointY, waypointZ, speed, polygon_file_path,collision_action)
 
-    # Should not be removed
     def getMobility(self):
         return self._mobility
 

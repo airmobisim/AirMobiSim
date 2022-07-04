@@ -8,6 +8,7 @@ from shapely.geometry import Point
 from .basemobility import Basemobility
 from .simulationparameter import Simulationparameter
 
+import src.logWrapper as logWrapper
 
 class Splinemobility(Basemobility):
     def __init__(self, uid, waypointX, waypointY, waypointZ, speed, polygon_file_path=None, collision_action=None):
@@ -32,6 +33,10 @@ class Splinemobility(Basemobility):
         self._waypointTime = self.insertWaypointTime()
         # self._totalFlightTime = self._waypointTime[-1]
         self._totalFlightTime = self.computeTotalFlightTime(0.0, speed, 0)
+
+        logWrapper.debug("speed: %s; total flightTime: %s", str(speed), str(self._totalFlightTime))
+        logWrapper.debug("startpos: %s", self._startpos)
+
 
     def makeMove(self):
         # object of Movement
@@ -86,12 +91,14 @@ class Splinemobility(Basemobility):
             self._waypointX = x
             self._waypointY = y
             self._waypointZ = z
-            print('waypoint inserted')
+            logWrapper.debug('waypoint inserted')
 
     def insertWaypointTime(self):
+
         distance_of_segments = Splinemobility.computeSplineDistance(self._waypointX, self._waypointY, self._waypointZ)
         total_spline_distance = np.sum(distance_of_segments)
         total_flight_time = total_spline_distance / self._speed
+
 
         waypointTime = []
         # now put time stamp for each waypoint
@@ -112,13 +119,16 @@ class Splinemobility(Basemobility):
         waypointCount = len(waypointX)
         waypointIndex = np.linspace(0, waypointCount - 1, num=waypointCount)
 
+
         spl_x = CubicSpline(waypointIndex, waypointX)
         spl_y = CubicSpline(waypointIndex, waypointY)
         spl_z = CubicSpline(waypointIndex, waypointZ)
 
-        distance_of_segments = []  # 1 less thank number of points
+
+        distance_of_segments = []
         for i in range(waypointCount - 1):
             number_of_small_segment = 100
+
 
             segments_of_index = np.linspace(waypointIndex[i], waypointIndex[i + 1], number_of_small_segment)
             segments_small_x = spl_x(segments_of_index)
@@ -134,4 +144,10 @@ class Splinemobility(Basemobility):
             distance_of_segments.append(segments_distance)
 
         return distance_of_segments
+
+
+
+
+
+
 

@@ -1,4 +1,4 @@
-import geopandas
+
 import math
 from shapely.geometry import Point
 import numpy as np
@@ -7,6 +7,7 @@ from src.simulationparameter import Simulationparameter
 
 
 class Movement:
+
 
     def __init__(self):
         self._startPos = Point(0, 0, 0)
@@ -28,6 +29,7 @@ class Movement:
         self._linear_mobility_sp = False  # spline mobility model in use?
         self._waypointsInsertedFlag = False
         self._totalDistance = 0.0
+
 
     def setFinalFlag(self, flag):
         self._finalFlag = flag
@@ -115,15 +117,14 @@ class Movement:
         self._currentDirection = currentDirection
 
     def setDirectionByTarget(self):
-        direction = Point(self._endPos.x - self._startPos.x, self._endPos.y - self._startPos.y,
-                          self._endPos.z - self._startPos.z)
-        distance = math.sqrt((self._endPos.x - self._startPos.x) ** 2 + (self._endPos.y - self._startPos.y) ** 2 + (
-                    self._endPos.z - self._startPos.z) ** 2)
+
+        direction = Point(self._endPos.x - self._startPos.x, self._endPos.y - self._startPos.y, self._endPos.z - self._startPos.z)
+        distance = math.sqrt((self._endPos.x - self._startPos.x) ** 2 + (self._endPos.y - self._startPos.y) ** 2 + (self._endPos.z - self._startPos.z) ** 2)
 
         direction = np.array([direction.x, direction.y, direction.z])
         distance = np.array([distance, distance, distance])
 
         array = np.divide(direction, distance)
-        # newDirection = Point(round(array[0],2), round(array[1],2), round(array[2],2))
         newDirection = Point(round(array[0], 7), round(array[1], 7), round(array[2], 7))
+
         self.setCurrentDirection(newDirection)
