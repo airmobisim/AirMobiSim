@@ -26,68 +26,6 @@ flight_time_considered = 0.0
 def load_Data():
     global df_position
     global flight_time_considered
-  
-    uavStartPos1=Point(0, math.sqrt(3), 1)
-    uavEndPos1=Point(0, math.sqrt(3), 1)
-    time1 = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
-
-    x1 = np.linspace(1.5, 2.5, num=10 )
-    y1 = np.linspace(1.5, 2.5, num=10 )
-    z1=[1, 1.3, 1, 0.7, 1, 1.3, 1, 0.7, 1, 1.3]
-
-
-    totalFlightTime1 = time1[-1]
-
-    #waypoint for 2nd uav
-    time2=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
-    x2= [-1, 0, 1, 0, -1, 0, 1, 0, -1, 0, 1, 0, -1]      #right ahnd grip shape
-    y2= [0, 1, 0, -1, 0, 1, 0, -1, 0,  1, 0, -1, 0]
-    z2=np.linspace(3, 0.5, num=13)
-    x2=np.add(x2,2)
-    y2=np.add(y2,2)
-
-
-    uavStartPos2 = Point(x2[0], y2[0], z2[0])
-    uavEndPos2 = Point(x2[-1], y2[-1], z2[-1])
-
-    totalFlightTime2=time2[-1]
-
-    ################# usual##############
-    uavStartPos=[uavStartPos1, uavEndPos2]
-    uavEndPos= [uavEndPos1, uavEndPos2]
-    totalFlightTime=[totalFlightTime1, totalFlightTime2]
-
-    speed=[3, 3]
-
-    x=[x1, x2]
-    y=[y1,y2]
-    z=[z1, z2]
-    print('data')
-    print(x)
-    print(y)
-    print(z)
-    print(speed)
-
-
-    time1 = np.linspace(1,12,12)#[0, 15]
-    x1 = np.linspace(1,12,12)#[1500,0]
-    y1 = np.empty(12)#[1500,5]
-    y1.fill(12)
-    z1=np.empty(12)#[3,7]
-    z1.fill(3)
-    uavStartPos1 = Point(x1[0], y1[0], z1[0])
-    uavEndPos1 = Point(x1[-1],y1[-1],z1[-1])
-
-    totalFlightTime1 = time1[-1]
-
-    uavStartPos=[uavStartPos1]
-    uavEndPos= [uavEndPos1]
-    totalFlightTime=[totalFlightTime1]
-    time=[time1]
-    x=[x1]
-    y=[y1]
-    z=[z1]
-    return speed, x,y,z
 
 def make_plot():
     current_file = os.path.abspath(os.path.dirname(__file__))
