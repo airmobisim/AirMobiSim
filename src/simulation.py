@@ -13,7 +13,6 @@ import src.logWrapper as logWrapper
 
 class Simulation:
 
-
     _currentTime = 0
     _isRunnig = False
     _managedNodes = []
@@ -23,8 +22,7 @@ class Simulation:
     def __init__(self, directory, stepLength, simTimeLimit, playgroundSizeX, playgroundSizeY, playgroundSizeZ,
                  linearMobilityFlag, splineMobilityFlag, uavs, polygon_file_path=None, speed=None, waypointX=None, waypointY=None,
                  waypointZ=None):
-
-        logWrapper.debug("Initializing...")
+        logWrapper.debug("Initializing...", True)
         Simulationparameter.stepLength = stepLength
         Simulationparameter.directory = directory
         Simulationparameter.simStartTime = Simulationparameter.current_milli_time()
@@ -55,9 +53,9 @@ class Simulation:
     def printStatus():
         t = Simulationparameter.currentSimStep * Simulationparameter.stepLength
 
-        elapsed = (Simulationparameter.current_milli_time() - Simulationparameter.simStartTime) / 1000
+        elapsed = (Simulationparameter.current_milli_time() - Simulationparameter.simStartTime) / 1000.0
         p = 100 / Simulationparameter.simTimeLimit * t
-        logWrapper.debug("t= %s   Elapsed: %s   %s percent completed; Speed: simsec/sec=72.8271", str(t), str(elapsed), str(p))
+        logWrapper.debug("t = " + str(t) + "   Elapsed: " +str(elapsed) +"   " + str(p) + " percent completed", True)
 
 
     def manageSimulation(self):
@@ -98,8 +96,7 @@ class Simulation:
                     self._managedNodes.remove(node)
 
     def finishSimulation(self):
-        logWrapper.debug(
-            "exiting -- at t=%s, event?", str(Simulationparameter.currentSimStep * Simulationparameter.stepLength))
+        logWrapper.debug("exiting -- at t=%s, event?", str(Simulationparameter.currentSimStep * Simulationparameter.stepLength), True)
 
     def getNextUid(self):
         self._highestUid += 1
@@ -108,9 +105,7 @@ class Simulation:
     def getManagedNodes(self):
         return self._managedNodes
 
-    # alternative constructors:
-
-    @classmethod  # for spline mobility
+    @classmethod  # for spline mobility model
     def from_config_spmob(cls, config, linearMobilityFlag, splineMobilityFlag, directory):
         speed = []
         waypointX = []
@@ -127,8 +122,7 @@ class Simulation:
         polygon_file= config['files']['polygon']
         polygon_file_path= str(pathlib.Path().resolve())+'/'+polygon_file
 
-        stepLength, simTimeLimit, playgroundSizeX, playgroundSizeY, playgroundSizeZ = Simulation.load_common_parameters_from_config(
-            config)
+        stepLength, simTimeLimit, playgroundSizeX, playgroundSizeY, playgroundSizeZ = Simulation.load_common_parameters_from_config(config)
 
         return cls(directory, stepLength, simTimeLimit, playgroundSizeX, playgroundSizeY, playgroundSizeZ,
                    linearMobilityFlag, splineMobilityFlag, uavs, polygon_file_path, speed, waypointX, waypointY, waypointZ)
@@ -146,7 +140,6 @@ class Simulation:
 
     @staticmethod  # load data from config file
     def load_common_parameters_from_config(config):
-
         return config['simulation']['stepLength'], config['simulation']['simTimeLimit'], \
                config['simulation']['playgroundSizeX'], config['simulation']['playgroundSizeY'], \
                config['simulation']['playgroundSizeZ']

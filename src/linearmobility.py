@@ -70,7 +70,7 @@ class Linearmobility(Basemobility):
         if not self._obstacleDetector_flag and detectObstacle and self._collisionAction==1:
             # warnings.warn('uav is going to collide in collide')
             logWrapper.debug('WARNING!!!!')
-            logWrapper.debug('currentTime: %s, uav is going to collide at %s', str(passedTime), str(futureTime))
+            logWrapper.debug(('currentTime: %s, uav is going to collide at %s', str(passedTime), str(futureTime)))
 
         self._obstacleDetector_flag = True if detectObstacle == True else self._obstacleDetector_flag
 

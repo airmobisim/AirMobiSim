@@ -7,7 +7,6 @@ class Yamlparser:
     second = 0
     answer = 0
 
-    # parameterized constructor
     def __init__(self, filename):
         self._filename = filename
 

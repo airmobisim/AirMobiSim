@@ -17,9 +17,6 @@ from src.yamlparser import Yamlparser
 simulation: Simulation
 
 def main():
-
-
-    logWrapper.basicConfig(filename='logfile.log', encoding='utf-8', level=logging.DEBUG)
     global simulation
 
     parser = argparse.ArgumentParser(description='Importing configuration-file')
@@ -47,6 +44,8 @@ def main():
         logWrapper.critical("The configuration file " + configPath + " does not exist. Please check the path or run AirMobiSim with the --help option ")
 
         sys.exit()    
+    
+    logWrapper.basicConfig(filename=os.path.dirname(args.configuration) + '/logfile.log', encoding='utf-8', level=logging.DEBUG)
     p = Yamlparser(configPath)
     config = p.readConfig()
 
@@ -68,11 +67,11 @@ def main():
         result.showEnergy()
     else:
         if args.omnetpp:
-            logWrapper.info("Start the AirMobiSim Server.....")
+            logWrapper.info("Start the AirMobiSim Server.....", True)
             startServer(simulation)
         else:
             simulation.startSimulation()
-            logWrapper.info('FINISH')
+            logWrapper.info('FINISH', True)
         if args.plot:
             make_plot()
 
