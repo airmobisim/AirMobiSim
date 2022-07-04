@@ -1,7 +1,6 @@
 from .basemobility import Basemobility
 from .splinemobility import Splinemobility
 
-
 class UavSp:
     _uid = -1
     _mobility = Basemobility
@@ -10,6 +9,5 @@ class UavSp:
         self._uid = uid
         self._mobility = Splinemobility(uid, waypointX, waypointY, waypointZ, speed, polygon_file_path)
 
-    # Should not be removed
     def getMobility(self):
         return self._mobility

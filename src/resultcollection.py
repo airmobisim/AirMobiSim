@@ -61,15 +61,3 @@ class Resultcollection(metaclass=Singleton):
             plt.show()
         else:
             logWrapper.error("There is no such file called 'energyResults.csv'")
-
-
-
-
-        
-        
-
-        
-       
-
-
-

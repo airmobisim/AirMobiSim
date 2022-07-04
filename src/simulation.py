@@ -75,7 +75,6 @@ class Simulation:
                 self._managedNodes.append(
                     UavSp(nextUid, self._waypointX[nextUid],
                         self._waypointY[nextUid], self._waypointZ[nextUid], self._speed[nextUid], self._polygon_file_path))
-
             # for linearmobility
             else:
                 self._managedNodes.append(Uav(nextUid, Point(uav['startPosX'], uav['startPosY'], uav['startPosZ']),

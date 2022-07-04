@@ -144,8 +144,6 @@ class Splinemobility(Basemobility):
 
             distance_of_segments.append(segments_distance)
 
-        # print(np.sum(area_of_segment))
-
         return distance_of_segments
 
     def manageObstacles(self, spl_x, spl_y, spl_z, passedTime):

@@ -71,7 +71,6 @@ class Basemobility(ABC):
         self.doLog()
 
     def doLog(self):
-        #print("do log")
         if self.getMove().getLinearMobilitySpFlag():   # log for spline mobility
             self._resultcollection.logCurrentPosition(self._uid, self.getCurrentPosSp(), self.getMove())
 
