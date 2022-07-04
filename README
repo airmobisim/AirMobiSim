@@ -54,11 +54,12 @@ To run the project use the following command in 'poetry shell':
 poetry run ./airmobisim.py
 ```
 
-The above command will run the simulation and display the simulated plot.
-To run the simulation without plot use :
+The above command will run the simulation in command line without any plot.
+
+To run the simulation with plot use :
 
 ```Bash
-poetry run ./airmobisim.py  --plot 0
+poetry run ./airmobisim.py  --plot 1
 ```
 
 ---
