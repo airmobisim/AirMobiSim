@@ -14,9 +14,13 @@ class Linearmobility(Basemobility):
         self._acceleration = 0  # acceleration not considered yet
         self._totalFlightTime = self.computeTotalFlightTime(0.0,speed,self._acceleration)
 
+    def updateEndPos(self):
+        self._move.setEndPos(self._uav._waypoints[-1])
+        
     def makeMove(self):
         move = self.getMove()
         passedTime = (Simulationparameter.currentSimStep * Simulationparameter.stepLength) - self.getMove().getStartTime()
+        
         move.setDirectionByTarget()
         newSpeed = move.getSpeed() + self._acceleration * Simulationparameter.stepLength
 
@@ -38,8 +42,8 @@ class Linearmobility(Basemobility):
         return True if self._obstacleDetector_flag and self._collisionAction == 3 else False  # obstacle->remove/not remove node indicator
 
     def computeTotalDistance(self):
-        return math.sqrt((self._endPos.x - self._startPos.x) ** 2 + (self._endPos.y - self._startPos.y) ** 2 + (
-                self._endPos.z - self._startPos.z) ** 2)
+            return math.sqrt((self._uav._waypoints[-1].x - self._uav._waypoints[self._currentWaypointIndex].x) ** 2 + (self._uav._waypoints[-1].y - self._uav._waypoints[self._currentWaypointIndex].y) ** 2 + (
+                self._uav._waypoints[-1].z - self._uav._waypoints[self._currentWaypointIndex].z) ** 2)
 
     # set future x,y coordinate for building detection
     def setFutureCoordinate(self):
@@ -51,7 +55,4 @@ class Linearmobility(Basemobility):
         futureCoordinate = (x, y)
 
         self.getMove().setFutureCoordinate(futureCoordinate)
-
-
-
 

@@ -118,8 +118,8 @@ class Movement:
 
     def setDirectionByTarget(self):
 
-        direction = Point(self._endPos.x - self._startPos.x, self._endPos.y - self._startPos.y, self._endPos.z - self._startPos.z)
-        distance = math.sqrt((self._endPos.x - self._startPos.x) ** 2 + (self._endPos.y - self._startPos.y) ** 2 + (self._endPos.z - self._startPos.z) ** 2)
+        direction = Point(self.getNextCoordinate().x - self.getTempStartPos().x, self.getNextCoordinate().y - self.getTempStartPos().y, self.getNextCoordinate().z - self.getTempStartPos().z)
+        distance = math.sqrt((self.getNextCoordinate().x - self.getTempStartPos().x) ** 2 + (self.getNextCoordinate().y - self.getTempStartPos().y) ** 2 + (self.getNextCoordinate().z - self.getTempStartPos().z) ** 2)
 
         direction = np.array([direction.x, direction.y, direction.z])
         distance = np.array([distance, distance, distance])

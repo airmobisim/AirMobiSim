@@ -24,18 +24,20 @@ class Basemobility(ABC):
         self._move = Movement()
         self._resultcollection =  Resultcollection()
         self._baseenergy = Baseenergy()
-        self._startPos = self._uav._waypoints[0]
-        self._endPos =  self._uav._waypoints[-1]
         self._move.setStart(self._uav._waypoints[0], 0)
-        self._move.setEndPos(self._uav._waypoints[-1])
         self._move.setTempStartPos(self._uav._waypoints[0])
+        self._move.setNextCoordinate(self._uav._waypoints[-1])
+        self._move.setEndPos(self._uav._waypoints[-1])
+        
+        self._currentWaypointIndex = 0
+
         self._move.setSpeed(self._speed)
         self._move.setTotalDistance(self.computeTotalDistance())
+        
         self._collisionAction = collision_action  # 1= warn, 2 = no action 3=remove uav; anything else is wrong
         self._obstacleDetector_flag = False
         self.polygon_file_path = polygon_file_path
         self._obstacles = self.ParsePolygonFileToObstacles()
-        
         pass
 
     def getMove(self):
@@ -44,7 +46,7 @@ class Basemobility(ABC):
     def getCurrentPos(self):
         passedTime = (Simulationparameter.currentSimStep * Simulationparameter.stepLength) - self.getMove().getStartTime()
         if passedTime==0.0:
-            return self._startPos
+            return self._uav._waypoints[0]
         else:
             currentDirection = self.getMove().getCurrentDirection()
 
@@ -58,15 +60,27 @@ class Basemobility(ABC):
             z = previousPos.z + (currentDirection.z*self.getMove().getSpeed()*Simulationparameter.stepLength)
 
             currentPos = Point(x,y,z)
+            
+            distancePerstep = self.getMove().getSpeed()*Simulationparameter.stepLength
+            print("Current distance is " + currentPos.distance(self._uav._waypoints[self._currentWaypointIndex+1]).__str__())
+            if currentPos.distance(self._uav._waypoints[self._currentWaypointIndex+1])<distancePerstep:
+                print("Current waypoint index is " + self._currentWaypointIndex.__str__() + " position is " +  self._uav._waypoints[self._currentWaypointIndex].__str__())
+                self._currentWaypointIndex = self._currentWaypointIndex  + 1
+                print("Current waypoint index is " + self._currentWaypointIndex.__str__() + " position is " +  self._uav._waypoints[self._currentWaypointIndex].__str__())
+                if self._currentWaypointIndex == len(self._uav._waypoints)-1: #there are no further waypoints
+                    self.getMove().setFinalFlag(True)
+                    print("No further waypoints!")
+                    return currentPos
+                print("next waypoint position: ", self._uav._waypoints[self._currentWaypointIndex+1])
+                self.getMove().setNextCoordinate(self._uav._waypoints[self._currentWaypointIndex+1])
             self.getMove().setTempStartPos(currentPos)
-        
             return currentPos
 
     # current position function for spline mobility
     def getCurrentPosSp(self):
         passedTime = (Simulationparameter.currentSimStep * Simulationparameter.stepLength) - self.getMove().getStartTime()
         if passedTime==0:
-            return self._startPos
+            return self._uav._waypoints[0]
         
         if not self.getMove().getFinalFlag():
             currentPos = self.getMove().getNextCoordinate()
