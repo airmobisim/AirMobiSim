@@ -241,6 +241,10 @@ else
 	make -j$(nproc)
 fi
 
+cd $AIRMOBISIMDIR
+./buildProto.sh
+
+
 echo "Successfully installed AirMobiSim!"
 
 echo "Please run the following commands or add them to your .bashrc/.zshrc/..."
