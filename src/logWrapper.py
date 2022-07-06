@@ -42,6 +42,6 @@ def error(statement, printToConsole=False, *args, **kwargs):
         print("INFO: " + statement)
 
 
-def critical(statement, printToConsole=False, *args, **kwargs):
+def critical(statement, *args, **kwargs):
     logging.critical(statement, *args, **kwargs)
     print("CRITICAL: " + statement)
