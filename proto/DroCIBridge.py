@@ -3,6 +3,7 @@ import os
 
 from google.protobuf import struct_pb2
 
+import src.logWrapper as logWrapper
 
 #from src.simulation import Simulation
 from concurrent import futures
@@ -39,7 +40,7 @@ class AirMobiSim(airmobisim_pb2_grpc.AirMobiSimServicer):
         self._isRunning = True
 
     def Start(self, request, context):
-        print("Start gets called")
+        logWrapper.debug("Starting GRPC Server", True)
         return struct_pb2.Value()
 
     def ExecuteOneTimeStep(self, request, context):
@@ -64,7 +65,8 @@ class AirMobiSim(airmobisim_pb2_grpc.AirMobiSimServicer):
                 for node in self.simulation_obj._managedNodes:
                     flag = node.getMobility().makeMove()
                     if flag:
-                        print('removing node',node._uid ,flush= True)
+                        
+                        logWrapper.debug('removing node ' +node._uid,  True)
                         self.simulation_obj._managedNodes.remove(node)
 
                     self._isInitialized = True
@@ -77,8 +79,7 @@ class AirMobiSim(airmobisim_pb2_grpc.AirMobiSimServicer):
                 return responseQuery
 
             else:
-                # rt.stop()
-                print("I finished simulation.")
+                logWrapper.debug("Simulation finished", True)
                 self.simulation_obj.finishSimulation()
 
     def Finish(self, request, context):
@@ -90,7 +91,7 @@ class AirMobiSim(airmobisim_pb2_grpc.AirMobiSimServicer):
         if not self._isRunning:
             self.startSimulation() 
 
-        print("GetManagedHosts gets called -> " + str(len(self.simulation_obj._managedNodes)), flush=True)
+        logWrapper.debug("GetManagedHosts gets called -> " + str(len(self.simulation_obj._managedNodes)), True)
         for node in self.simulation_obj._managedNodes:
             if self._isInitialized:
                 node._mobility.makeMove()
@@ -109,9 +110,6 @@ class AirMobiSim(airmobisim_pb2_grpc.AirMobiSimServicer):
             AirMobiSim.z.append(request.waypoints[i].z)
         return struct_pb2.Value()
     
-    def getMaxUavId(self, request, context):
-        return airmobisim_pb2.Response(id=self.simulation_obj.getNextUid()-1)
-
     @staticmethod
     def getWaypointsByIndex():
         if len(AirMobiSim.index)==0:
@@ -135,7 +133,7 @@ class AirMobiSim(airmobisim_pb2_grpc.AirMobiSimServicer):
        """
        Delete UAV with the given Id
        """
-       print("DeleteUAV gets called -> to delete", request.num, flush=True)
+       logWrapper.debug("DeleteUAV called: UAV to delete" + request.num, True)
        for node in range(len(self.simulation_obj._managedNodes)):
            if self.simulation_obj._managedNodes[node]._uid == request.num:
                 self.simulation_obj._managedNodes.pop(node)
@@ -143,13 +141,15 @@ class AirMobiSim(airmobisim_pb2_grpc.AirMobiSimServicer):
 
        return struct_pb2.Value()
 
+    def getMaxUavId(self, request, context):
+        return airmobisim_pb2.Number(num=self.simulation_obj.getNextUid()-1)
+         
+
     def getNumberCurrentUAV(self, request, context):
       """
        Return the number for current UAVs
       """
-     
       currentUav = len(self.simulation_obj._managedNodes) 
-      #print("getNumberCurrentUAV gets called -> " + str(currentUav), flush=True)
 
       return airmobisim_pb2.Number(num=currentUav)
 
@@ -170,7 +170,7 @@ class AirMobiSim(airmobisim_pb2_grpc.AirMobiSimServicer):
         """
         Update waypoints for a given uav
         """
-        print("Update waypoints is working")
+        logWrapper.debug("Update waypoints called")
 
         return struct_pb2.Value()
 
@@ -188,7 +188,7 @@ def startServer(simulation_object):
     server.add_insecure_port('localhost:50051')
     server.start()
 
-    print("AirMobiSim Server started", flush=True) 
+    logWrapper.info("AirMobiSim Server started", True) 
     ppid = os.getppid()
     omnetpp_pid_valid = False
     grandparent_pid = psutil.Process(os.getppid()).ppid()
@@ -196,7 +196,7 @@ def startServer(simulation_object):
     try:
         while True:
             time.sleep(1) 
-            #Check whether the Omnetpp-process is running
+            #Check whether the OMNeT-process is running
             if psutil.Process(os.getppid()).ppid() != grandparent_pid:
                 server.stop(0)
                 sys.exit(1)
