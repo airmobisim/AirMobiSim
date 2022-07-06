@@ -79,8 +79,6 @@ class Simulation:
                 self._managedNodes.append(Uav(nextUid, Point(uav['startPosX'], uav['startPosY'], uav['startPosZ']),
                                               Point(uav['endPosX'], uav['endPosY'], uav['endPosZ']), uav['speed'],
                                               self._polygon_file_path, self._collision_action))
-                nextWaypoint = Point(750,750,3) # Add to the end
-                self.getUavById(nextUid).addWaypoint(nextWaypoint)
 
         logWrapper.debug("Initialized %s UAVs", str(len(self._managedNodes)))
 
