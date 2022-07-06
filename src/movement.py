@@ -7,8 +7,6 @@ from src.simulationparameter import Simulationparameter
 
 
 class Movement:
-
-
     def __init__(self):
         self._startPos = Point(0, 0, 0)
         self._endPos = Point(0, 0, 0)
