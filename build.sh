@@ -194,18 +194,20 @@ export AIRMOBISIMHOME=$AIRMOBISIMDIR
 ################################################################
 
 cd ..
-if [  ! -d "airmobisimVeins" ]; then
-  git clone https://git.cms-labs.org/git/hardes/airmobisimVeins
+if [  ! -d "veins" ]; then
+  git clone https://github.com/sommer/veins.git
+  cd veins
+  git checkout tags/veins-5.2
 fi
-cd airmobisimVeins
-AIRMOBISIMVEINS_PATH="$(pwd)/subprojects/veins_libairmobisim"
-
 ./configure
 if [[  "$OSTYPE" == "darwin"* ]]; then
 	make -j$(sysctl -n hw.ncpu)
 else
 	make -j$(nproc)
 fi
+cd ..
+
+
 
 cd $AIRMOBISIMDIR
 
@@ -225,14 +227,12 @@ fi
 
 echo "Starting installation of conan dependencies"
 
-#poetry run bash -c "cd $AIRMOBISIMVEINS_PATH && conan install . --build missing --profile=default"
+cd ..
 
-
-#cd
-#cd .conan/data
-#basePath=$(pwd)
-
-cd $AIRMOBISIMVEINS_PATH
+if [  ! -d "airmobisimVeins" ]; then
+  git clone https://git.cms-labs.org/git/hardes/airmobisimVeins
+fi
+cd airmobisimVeins
 
 ./configure
 if [[  "$OSTYPE" == "darwin"* ]]; then
