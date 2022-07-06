@@ -109,6 +109,9 @@ class AirMobiSim(airmobisim_pb2_grpc.AirMobiSimServicer):
             AirMobiSim.z.append(request.waypoints[i].z)
         return struct_pb2.Value()
     
+    def getMaxUavId(self, request, context):
+        return airmobisim_pb2.Response(id=self.simulation_obj.getNextUid()-1)
+
     @staticmethod
     def getWaypointsByIndex():
         if len(AirMobiSim.index)==0:
@@ -195,10 +198,8 @@ def startServer(simulation_object):
             time.sleep(1) 
             #Check whether the Omnetpp-process is running
             if psutil.Process(os.getppid()).ppid() != grandparent_pid:
-                #print("Parent died")
                 server.stop(0)
                 sys.exit(1)
     except:
-        #time.sleep(1)
         server.stop(0)
         sys.exit(1)

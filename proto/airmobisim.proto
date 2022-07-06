@@ -17,6 +17,8 @@ service AirMobiSim{
     rpc InsertWaypoints (WaypointList) returns (google.protobuf.Empty);
 
     rpc InsertUAV (StartUav) returns (google.protobuf.Empty);
+    
+    rpc getMaxUavId (google.protobuf.Empty) returns (Number);
 
     rpc DeleteUAV (Number) returns (google.protobuf.Empty);
 
@@ -26,7 +28,8 @@ service AirMobiSim{
 
     rpc UpdateWaypoints (WaypointList) returns (google.protobuf.Empty);
 
-    rpc DeleteWaypoint (WaypointList) returns (google.protobuf.Empty);          
+    rpc DeleteWaypoint (WaypointList) returns (google.protobuf.Empty);       
+       
 }
 
 message WaypointList{
