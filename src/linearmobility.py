@@ -16,30 +16,45 @@ class Linearmobility(Basemobility):
 
     def updateEndPos(self):
         self._move.setEndPos(self._uav._waypoints[-1])
-        
+
     def makeMove(self):
         move = self.getMove()
         passedTime = (Simulationparameter.currentSimStep * Simulationparameter.stepLength) - self.getMove().getStartTime()
         
+        distancePerstep = self.getMove().getSpeed()*Simulationparameter.stepLength
+        distance = self.getCurrentPos().distance(self._uav._waypoints[self._currentWaypointIndex+1])
+        if self.getCurrentPos().distance(self._uav._waypoints[self._currentWaypointIndex+1])<distancePerstep:
+            logWrapper.info("UAV " + self._uid.__str__() + " reached waypoint " + self._currentWaypointIndex.__str__() + " waypoint position: " + self._uav._waypoints[self._currentWaypointIndex+1].__str__() + " current position: " + self.getCurrentPos().__str__())
+            self._currentWaypointIndex = self._currentWaypointIndex  + 1
+            if self._currentWaypointIndex == len(self._uav._waypoints)-1: #there are no further waypoints
+                logWrapper.info("UAV " + self._uid.__str__() + " reached all configured waypoints")
+                self.getMove().setFinalFlag(True)
+            else:
+                logWrapper.info("UAV " + self._uid.__str__() + " starts to move towards the next waypoint " + self._uav._waypoints[self._currentWaypointIndex+1].__str__())
+                self.getMove().setTempStartPos(self.getCurrentPos())
+                self.getMove().setEndPos(self._uav._waypoints[self._currentWaypointIndex+1])
+              
+
         move.setDirectionByTarget()
         newSpeed = move.getSpeed() + self._acceleration * Simulationparameter.stepLength
 
-        if passedTime >= self._totalFlightTime:
-            newSpeed = 0.0
-            self._acceleration = 0.0
-            self.getMove().setFinalFlag(True)
+       # if passedTime >= self._totalFlightTime:
+           # newSpeed = 0.0
+           # self._acceleration = 0.0
+           # print("passedTime >= self._totalFlightTime")
+           # self.getMove().setFinalFlag(True)
 
         move.setSpeed(newSpeed)
         move.setPassedTime(passedTime)
         super().makeMove()
 
-        if passedTime < self._totalFlightTime:
-            if self._collisionAction != 2:
-                future_time = passedTime + Simulationparameter.stepLength
-                self.setFutureCoordinate()
-                self.manageObstacles(passedTime, future_time)
+        #if passedTime < self._totalFlightTime:
+        #    if self._collisionAction != 2:
+        #        future_time = passedTime + Simulationparameter.stepLength
+        #        self.setFutureCoordinate()
+        #        self.manageObstacles(passedTime, future_time)
 
-        return True if self._obstacleDetector_flag and self._collisionAction == 3 else False  # obstacle->remove/not remove node indicator
+        return True if (self._obstacleDetector_flag and self._collisionAction == 3) or self.getMove().getFinalFlag() else False  # obstacle->remove/not remove node indicator
 
     def computeTotalDistance(self):
             return math.sqrt((self._uav._waypoints[-1].x - self._uav._waypoints[self._currentWaypointIndex].x) ** 2 + (self._uav._waypoints[-1].y - self._uav._waypoints[self._currentWaypointIndex].y) ** 2 + (

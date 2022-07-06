@@ -29,7 +29,6 @@ class Uav():
         if isinstance(waypoint, Point):
             if index == -1:
                 self._waypoints.append(waypoint)
-                
             elif index > -1:
                 self._waypoints.insert(index, waypoint)
         else:

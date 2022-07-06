@@ -51,7 +51,7 @@ class Basemobility(ABC):
             currentDirection = self.getMove().getCurrentDirection()
 
             previousPos = self.getMove().getTempStartPos()
-
+            
             if self.getMove().getFinalFlag():
                 return previousPos
 
@@ -60,19 +60,7 @@ class Basemobility(ABC):
             z = previousPos.z + (currentDirection.z*self.getMove().getSpeed()*Simulationparameter.stepLength)
 
             currentPos = Point(x,y,z)
-            
-            distancePerstep = self.getMove().getSpeed()*Simulationparameter.stepLength
-            print("Current distance is " + currentPos.distance(self._uav._waypoints[self._currentWaypointIndex+1]).__str__())
-            if currentPos.distance(self._uav._waypoints[self._currentWaypointIndex+1])<distancePerstep:
-                print("Current waypoint index is " + self._currentWaypointIndex.__str__() + " position is " +  self._uav._waypoints[self._currentWaypointIndex].__str__())
-                self._currentWaypointIndex = self._currentWaypointIndex  + 1
-                print("Current waypoint index is " + self._currentWaypointIndex.__str__() + " position is " +  self._uav._waypoints[self._currentWaypointIndex].__str__())
-                if self._currentWaypointIndex == len(self._uav._waypoints)-1: #there are no further waypoints
-                    self.getMove().setFinalFlag(True)
-                    print("No further waypoints!")
-                    return currentPos
-                print("next waypoint position: ", self._uav._waypoints[self._currentWaypointIndex+1])
-                self.getMove().setNextCoordinate(self._uav._waypoints[self._currentWaypointIndex+1])
+
             self.getMove().setTempStartPos(currentPos)
             return currentPos
 
@@ -97,7 +85,6 @@ class Basemobility(ABC):
     def doLog(self):
         if self.getMove().getLinearMobilitySpFlag():   # log for spline mobility
             self._resultcollection.logCurrentPosition(self._uid, self.getCurrentPosSp(), self.getMove())
-
         else:   # log for linear mobility
             self._resultcollection.logCurrentPosition(self._uid, self.getCurrentPos(), self.getMove())
         currentEnergy = self._baseenergy.getcurrentEnergy(self.getMove().getSpeed(), (Simulationparameter.currentSimStep * Simulationparameter.stepLength) - self.getMove().getStartTime())

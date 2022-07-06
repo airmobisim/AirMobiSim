@@ -153,5 +153,4 @@ class Simulation:
 
     def getUavById(self, uid):
         first_or_default = next((x for x in self._managedNodes if x._uid == uid), None)
-        print("first_or_default: " + str(first_or_default))
         return first_or_default
