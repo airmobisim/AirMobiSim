@@ -40,7 +40,7 @@ message Waypoint
     double x = 2;
     double y = 3;
     double z = 4;
-    int uavId = 5;
+    int32 uavId = 5;
 }
 
 message UavList {
