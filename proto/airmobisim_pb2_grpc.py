@@ -45,6 +45,11 @@ class AirMobiSimStub(object):
                 request_serializer=proto_dot_airmobisim__pb2.StartUav.SerializeToString,
                 response_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
                 )
+        self.getMaxUavId = channel.unary_unary(
+                '/airmobisim.AirMobiSim/getMaxUavId',
+                request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+                response_deserializer=proto_dot_airmobisim__pb2.Number.FromString,
+                )
         self.DeleteUAV = channel.unary_unary(
                 '/airmobisim.AirMobiSim/DeleteUAV',
                 request_serializer=proto_dot_airmobisim__pb2.Number.SerializeToString,
@@ -106,6 +111,12 @@ class AirMobiSimServicer(object):
         raise NotImplementedError('Method not implemented!')
 
     def InsertUAV(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def getMaxUavId(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -173,6 +184,11 @@ def add_AirMobiSimServicer_to_server(servicer, server):
                     servicer.InsertUAV,
                     request_deserializer=proto_dot_airmobisim__pb2.StartUav.FromString,
                     response_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+            ),
+            'getMaxUavId': grpc.unary_unary_rpc_method_handler(
+                    servicer.getMaxUavId,
+                    request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+                    response_serializer=proto_dot_airmobisim__pb2.Number.SerializeToString,
             ),
             'DeleteUAV': grpc.unary_unary_rpc_method_handler(
                     servicer.DeleteUAV,
@@ -308,6 +324,23 @@ class AirMobiSim(object):
         return grpc.experimental.unary_unary(request, target, '/airmobisim.AirMobiSim/InsertUAV',
             proto_dot_airmobisim__pb2.StartUav.SerializeToString,
             google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def getMaxUavId(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/airmobisim.AirMobiSim/getMaxUavId',
+            google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+            proto_dot_airmobisim__pb2.Number.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
