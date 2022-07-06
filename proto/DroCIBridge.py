@@ -12,7 +12,6 @@ from src.uav import Uav
 
 import time
 import sys
-import string
 import psutil
 
 from proto import airmobisim_pb2_grpc
@@ -43,15 +42,10 @@ class AirMobiSim(airmobisim_pb2_grpc.AirMobiSimServicer):
         print("Start gets called")
         return struct_pb2.Value()
 
-        """
-        TODO:  ExecuteOneTimeStep should be an own method with the return GRPC statement 
-        """
-
     def ExecuteOneTimeStep(self, request, context):
         """
             Execute one timestep - Update the values (positions, velocity,...)
         """
-        #print("Executing one Timestep", flush=True)
         responseQuery = airmobisim_pb2.ResponseQuery()
         if not self._isRunning:
             self.startSimulation()
@@ -90,43 +84,29 @@ class AirMobiSim(airmobisim_pb2_grpc.AirMobiSimServicer):
     def Finish(self, request, context):
         ending = True
         return struct_pb2.Value()
+
     def GetManagedHosts(self, request, context):
-        print("GetManagedHosts gets called!", flush=True)
         responseQuery = airmobisim_pb2.ResponseQuery()
-        #print("GetManagedHosts get called")
         if not self._isRunning:
             self.startSimulation() 
+
+        print("GetManagedHosts gets called -> " + str(len(self.simulation_obj._managedNodes)), flush=True)
         for node in self.simulation_obj._managedNodes:
             if self._isInitialized:
                 node._mobility.makeMove()
                 self._isInitialized = True
             currentPos = node._mobility.getCurrentPos()
-            print(currentPos)
             uav = airmobisim_pb2.Response(id=node._uid, x=currentPos.x, y=currentPos.y, z=currentPos.z,
                                           speed=node.getMobility()._move.getSpeed(), angle=node.getMobility()._angle)  # TODO: Make speed a correct parameter
             responseQuery.responses.append(uav)
         return responseQuery
 
     def InsertWaypoints(self, request, context):
-        print("working#####################")
-        print(request)
-        # index=[]
-        # x=[]
-        # y=[]
-        # z=[]
-
         for i in range(0, len(request.waypoints)):
-            # print(request.waypoints[i].index)
-            # print(request.waypoints[i].x)
-            # print(request.waypoints[i].y)
-            # print(request.waypoints[i].z)
             AirMobiSim.index.append(request.waypoints[i].index)
             AirMobiSim.x.append(request.waypoints[i].x)
             AirMobiSim.y.append(request.waypoints[i].y)
             AirMobiSim.z.append(request.waypoints[i].z)
-
-
-
         return struct_pb2.Value()
     
     @staticmethod
@@ -142,7 +122,8 @@ class AirMobiSim(airmobisim_pb2_grpc.AirMobiSimServicer):
         Method inserts an UAV in simulation
         In the next timestep makeMove()
         """
-        print("InsertUAV  gets called", flush=True)
+        print("Insert UAV with ID " + str(request.id), flush=True)
+        # TODO: Check if ID already exists
         self.simulation_obj._managedNodes.append(Uav(request.id, Point(request.coordinates[0].x, request.coordinates[0].y, request.coordinates[0].z), Point(request.coordinates[1].x, request.coordinates[1].y, request.coordinates[1].z), angle=request.angle, speed=request.speed))
         
         return struct_pb2.Value()
@@ -164,10 +145,10 @@ class AirMobiSim(airmobisim_pb2_grpc.AirMobiSimServicer):
        Return the number for current UAVs
       """
      
-      print("getNumberCurrentUAV gets called", flush=True)
-      currentUAV = len(self.simulation_obj._managedNodes) 
+      currentUav = len(self.simulation_obj._managedNodes) 
+      #print("getNumberCurrentUAV gets called -> " + str(currentUav), flush=True)
 
-      return airmobisim_pb2.Number(num=currentUAV)
+      return airmobisim_pb2.Number(num=currentUav)
 
 
     def SetDesiredSpeed(self, request, context):
@@ -204,11 +185,10 @@ def startServer(simulation_object):
     server.add_insecure_port('localhost:50051')
     server.start()
 
-    print("AirMobiSim Server has started", flush=True) 
+    print("AirMobiSim Server started", flush=True) 
     ppid = os.getppid()
     omnetpp_pid_valid = False
     grandparent_pid = psutil.Process(os.getppid()).ppid()
-    #print(grandparent_pid)
 
     try:
         while True:

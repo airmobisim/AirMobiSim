@@ -16,18 +16,26 @@ import src.logWrapper as logWrapper
 
 class Basemobility(ABC):
     polygon_file_path = None
-    def __init__(self, uid,  startPos, endPos, polygon_file_path,collision_action):
+    _uav = None
+    def __init__(self, uav, uid, speed, polygon_file_path,collision_action):
+        self._uav = uav
         self._uid = uid
+        self._speed = speed
         self._move = Movement()
         self._resultcollection =  Resultcollection()
         self._baseenergy = Baseenergy()
-        self._startPos = startPos
-        self._endPos = endPos
-        self._currentPos = Point(0,0,0) 
+        self._startPos = self._uav._waypoints[0]
+        self._endPos =  self._uav._waypoints[-1]
+        self._move.setStart(self._uav._waypoints[0], 0)
+        self._move.setEndPos(self._uav._waypoints[-1])
+        self._move.setTempStartPos(self._uav._waypoints[0])
+        self._move.setSpeed(self._speed)
+        self._move.setTotalDistance(self.computeTotalDistance())
         self._collisionAction = collision_action  # 1= warn, 2 = no action 3=remove uav; anything else is wrong
         self._obstacleDetector_flag = False
         self.polygon_file_path = polygon_file_path
         self._obstacles = self.ParsePolygonFileToObstacles()
+        
         pass
 
     def getMove(self):

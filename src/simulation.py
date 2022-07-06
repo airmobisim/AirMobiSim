@@ -72,9 +72,7 @@ class Simulation:
             nextUid = self.getNextUid()
             # for spline mobility
             if self._splineMobilityFlag:
-                self._managedNodes.append(
-                    UavSp(nextUid, self._waypointX[nextUid], self._waypointY[nextUid], self._waypointZ[nextUid], self._speed[nextUid], self._polygon_file_path, self._collision_action))
-
+                self._managedNodes.append(UavSp(nextUid, self._waypointX[nextUid], self._waypointY[nextUid], self._waypointZ[nextUid], self._speed[nextUid], self._polygon_file_path, self._collision_action))
 
             # for linearmobility
             else:
@@ -88,10 +86,8 @@ class Simulation:
             for node in self._managedNodes:
                 removeNode = node._mobility.makeMove()  # building ahead
                 if removeNode:
-
                     logWrapper.debug('removing uav %s', str(node._uid))
                     self._managedNodes.remove(node)      # obstacle so remove
-
         else:
             for node in self._managedNodes:
                 removeNode = node._mobility.makeMove()
@@ -150,3 +146,8 @@ class Simulation:
         return config['simulation']['stepLength'], config['simulation']['simTimeLimit'], \
                config['simulation']['playgroundSizeX'], config['simulation']['playgroundSizeY'], \
                config['simulation']['playgroundSizeZ']
+
+    def getUavById(self, uid):
+        first_or_default = next((x for x in self._managedNodes if x._uid == uid), None)
+        print("first_or_default: " + str(first_or_default))
+        return first_or_default

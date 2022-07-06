@@ -40,8 +40,8 @@ message Waypoint
     double x = 2;
     double y = 3;
     double z = 4;
+    int uavId = 5;
 }
-
 
 message UavList {
     repeated Uav uavs = 1;
@@ -69,7 +69,6 @@ message ResponseQuery{
     repeated Response responses = 1;
 }
 
-
 message StartUav{
     int32 id = 1;
     repeated Coordinates coordinates = 2;
@@ -83,15 +82,11 @@ message Coordinates{
     double z = 3;
 }
 
-
 message Number{
     int32 num = 1;
 }
-
 
 message UavSetSpeed{
     int32 id = 1;
     double speed = 2;
 }
-
-

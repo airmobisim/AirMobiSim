@@ -23,31 +23,23 @@ def main():
 
     parser = argparse.ArgumentParser(description='Importing configuration-file')
     parser.add_argument('--plot', type=int, required=False, default=0, help='plot vs no plot')
-    parser.add_argument('--configuration', action='store', type=str,
-                        default="examples/simpleSimulation/simulation.config", help='configuration')
+    parser.add_argument('--configuration', action='store', type=str, default="examples/simpleSimulation/simulation.config", help='configuration')
     parser.add_argument('--omnetpp', action='store_true', help='Start the OmNet++ simulator')
     parser.add_argument('--show', action='store_true', help='Show the Energy as Plot')
 
-    print(
-        """AirMobiSim Simulation  (C) 2021 Chair of Networked Systems Modelling TU Dresden.\nVersion: 0.0.1\nSee the license for distribution terms and warranty disclaimer""",
-        flush=True)
+    print("""AirMobiSim Simulation (C) 2021 Chair of Networked Systems Modelling TU Dresden.\nVersion: 0.0.1\nSee the license for distribution terms and warranty disclaimer""", flush=True)
     args = parser.parse_args()
     try:
         homePath = os.environ['AIRMOBISIMHOME']
     except KeyError:
-
         print("AIRMOBISIMHOME-Variable missing. Please do run 'export AIRMOBISIMHOME=" + str(pathlib.Path().resolve()) + "' or copy the statement to your .bashrc, .profile, or .zshrc")
         logWrapper.critical("AIRMOBISIMHOME-Variable missing. Please do run 'export AIRMOBISIMHOME=" + str(pathlib.Path().resolve()) + "' or copy the statement to your .bashrc, .profile, or .zshrc")
-
-
         sys.exit()
 
     configPath = homePath + "/" + args.configuration
     if not exists(configPath):
-
         print("The configuration file " + configPath + " does not exist. Please check the path or run AirMobiSim with the --help option ")
         logWrapper.critical("The configuration file " + configPath + " does not exist. Please check the path or run AirMobiSim with the --help option ")
-
         sys.exit()    
     
     logWrapper.basicConfig(filename=os.path.dirname(args.configuration) + '/logfile.log', encoding='utf-8', level=logging.DEBUG)
@@ -118,8 +110,6 @@ def validateConfiguration(config):
             endPos.append(Point(uavlin['endPosX'], uavlin['endPosY'], uavlin['endPosZ']))
             speed_lin.append(uavlin['speed'])
 
-
-
     if not ((linearMobilityFlag == 0 or linearMobilityFlag == 1) and (
             splineMobilityFlag == 0 or splineMobilityFlag == 1)):
         sys.exit('Please only use value 0 or 1 for selecting kinetic model')
@@ -165,30 +155,27 @@ def validateConfiguration(config):
         logWrapper.critical('Speed can not be negative for uavsp. check config file.')
         sys.exit('Speed can not be negative for uavsp. check config file.')
 
-
     if splineMobilityFlag:
         if not (len(waypointX) == len(waypointY) == len(waypointZ)):
             logWrapper.critical('input waypoint length for x,y and z should be same for spline uav')
             sys.exit('input waypoint length for x,y and z should be same for spline uav')
 
         for i, v in enumerate(waypointX):
-
             if not (len(waypointX[i]) == len(waypointY[i]) == len(waypointZ[i])):
-                logWrapper.critical(f'for uav {i} waypoint x,y,z should be same for each uav')
-                sys.exit(f'for uav {i} waypoint x,y,z should be same for each uav')
+                logWrapper.critical(f'for uav {i} waypoint x,y,z needs to be the same for each uav')
+                sys.exit(f'for uav {i} waypoint x,y,z needs to be the same for each uav')
             if not (all(0 <= item <= config['simulation']['playgroundSizeX'] for item in waypointX[i])):
-                logWrapper.critical(f'for uav {i} waypoint x should be within playgroundX.check playground size in config file')
-                sys.exit(f'for uav {i} waypoint x should be within playgroundX.check playground size in config file')
+                logWrapper.critical(f'for uav {i} waypoint x needs to be within playgroundX.check playground size in config file')
+                sys.exit(f'for uav {i} waypoint x needs to be within playgroundX.check playground size in config file')
             if not (all(0 <= item <= config['simulation']['playgroundSizeY'] for item in waypointY[i])):
-                logWrapper.critical(f'for uav {i} waypoint y should be within playgroundY.check playground size in config file')
-                sys.exit(f'for uav {i} waypoint y should be within playgroundY.check playground size in config file')
+                logWrapper.critical(f'for uav {i} waypoint y needs to be within playgroundY.check playground size in config file')
+                sys.exit(f'for uav {i} waypoint y needs to be within playgroundY.check playground size in config file')
             if not (all(0 <= item <= config['simulation']['playgroundSizeZ'] for item in waypointZ[i])):
-                logWrapper.critical(f'for uav {i} waypoint z should be within playgroundZ. check playground size in config file')
-                sys.exit(f'for uav {i} waypoint z should be within playgroundZ. check playground size in config file')
+                logWrapper.critical(f'for uav {i} waypoint z needs to be within playgroundZ. check playground size in config file')
+                sys.exit(f'for uav {i} waypoint z needs to be within playgroundZ. check playground size in config file')
 
     if linearMobilityFlag:
         for startpos, endpos in zip(startPos, endPos):
-
             if not (0 <= (startpos.x and endpos.x) <= config['simulation']['playgroundSizeX']):
                 logWrapper.critical('waypoint x should be within playgroundX. Please check config file.')
                 sys.exit('waypoint x should be within playgroundX. Please check config file.')
@@ -203,19 +190,13 @@ def validateConfiguration(config):
         logWrapper.critical('no polygon file is found in the path')
         sys.exit('no polygon file is found in the path')
 
-
-
-
 def initializeSimulation(config, directory, linearMobilityFlag, splineMobilityFlag):
     global simulation
     if splineMobilityFlag:
         logWrapper.debug("Launch spline mobility")
         simulation = Simulation.from_config_spmob(config, linearMobilityFlag, splineMobilityFlag, directory)
-
     else:
-
         logWrapper.debug("Launch linear mobility")
-        #simulation = Simulation.from_config_linmob(config, linearMobilityFlag, splineMobilityFlag, directory)
         polygon_file = config['obstacle_detection']['polygon_file']
 
         homePath = os.environ['AIRMOBISIMHOME']
@@ -233,7 +214,6 @@ def initializeSimulation(config, directory, linearMobilityFlag, splineMobilityFl
                                 config['uav'],
                                 polygon_file_path,
                                 config['obstacle_detection']['collision_action'])
-
 
 if __name__ == "__main__":
     main()
