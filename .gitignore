@@ -35,6 +35,8 @@ pip-delete-this-directory.txt
 #auto generated files
 examples/simpleSimulation/results/energyResults.csv
 examples/simpleSimulation/results/positionResults.csv
+proto/aimobisim_pb2.py
+proto/aimobisim_pb2_grpc.py
 
 src/trial.py
 
