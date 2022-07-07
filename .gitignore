@@ -45,3 +45,6 @@ src/trial.py
 
 # Jetbrains
 .idea
+
+# General
+**/*swp
