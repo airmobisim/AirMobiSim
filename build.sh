@@ -86,13 +86,6 @@ if ! which curl >/dev/null ; then
     exit -1 
 fi
 
-
-if ! which pyenv >/dev/null ; then
-    echo ""
-    echo "Please install 'pyenv' to continue"
-    exit -1 
-fi
-
 if ! which conan >/dev/null ; then
     echo ""
     echo "Please install 'conan' to continue"
@@ -121,7 +114,11 @@ export PATH="$PYENV_ROOT/shims:$PATH"
 if ! command -v pyenv &> /dev/null
 then
 	echo "Installing pyenv..."
-	curl https://pyenv.run | bash
+	if [[  "$OSTYPE" == "darwin"* ]]; then
+		brew install pyenv
+	else
+		git clone --branch v2.3.2 https://github.com/pyenv/pyenv.git ~/.pyenv
+	fi
 	export PYENV_ROOT="$HOME/.pyenv"
 	export PATH="$PYENV_ROOT/bin:$PATH"
 	export PATH="$PYENV_ROOT/shims:$PATH"
@@ -155,16 +152,16 @@ then
 	if [[  "$OSTYPE" == "darwin"* ]]; then
 		brew install poetry
 	else
-		curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python -
+		pip install --user poetry
 	fi
-	
-
+	mkdir -p $HOME/.poetry/env
 	source $HOME/.poetry/env
 fi
 echo "Switching to python 3.9.0"
 
 mkdir -p $HOME/.cache/pypoetry/virtualenvs
 poetry env use 3.9.0
+
 ################################################################
 # ____        _   _                   ____       _               
 #|  _ \ _   _| |_| |__   ___  _ __   / ___|  ___| |_ _   _ _ __  
@@ -175,12 +172,13 @@ poetry env use 3.9.0
 ################################################################
 
 echo "Installing required Python packages..."
+poetry run python --version
 
 poetry install
 poetry run python -m grpc_tools.protoc --python_out=. --grpc_python_out=. proto/airmobisim.proto -I .
 export PATH="$HOME/.poetry/bin:$PATH"
 
-pip3 install conan # We need a lokal installation outside poetry, since conan is required for the OMNeT++ part
+pip3 install conan # We need a local installation outside poetry, since conan is required for the OMNeT++ part
 AIRMOBISIMDIR=$(pwd)
 
 export AIRMOBISIMHOME=$AIRMOBISIMDIR
