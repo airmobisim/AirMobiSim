@@ -16,6 +16,8 @@ service AirMobiSim{
 
     rpc InsertWaypoints (WaypointList) returns (google.protobuf.Empty);
 
+    rpc InsertWaypoint (Waypoint) returns (google.protobuf.Empty);
+
     rpc InsertUAV (StartUav) returns (google.protobuf.Empty);
     
     rpc getMaxUavId (google.protobuf.Empty) returns (Number);
@@ -32,18 +34,17 @@ service AirMobiSim{
        
 }
 
-message WaypointList{
+message WaypointList {
     int32 id = 1;
     repeated Waypoint waypoint = 2;
 }
 
-message Waypoint
-{
-    int32 index = 1;
-    double x = 2;
-    double y = 3;
-    double z = 4;
-    int32 uavId = 5;
+message Waypoint {
+    int32 uid = 1;
+    int32 index = 2;
+    double x = 3;
+    double y = 4;
+    double z = 5;
 }
 
 message UavList {
