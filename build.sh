@@ -204,9 +204,9 @@ fi
 
 ./configure
 if [[  "$OSTYPE" == "darwin"* ]]; then
-	make -j$(sysctl -n hw.ncpu)
+	make -j$(( $(sysctl -n hw.ncpu) - 1 ))
 else
-	make -j$(nproc)
+	make -j$(( $(nproc) - 1 ))
 fi
 cd ..
 
@@ -239,9 +239,9 @@ cd AirMobiSim_libveins
 
 ./configure
 if [[  "$OSTYPE" == "darwin"* ]]; then
-	make -j$(sysctl -n hw.ncpu)
+	make -j$(( $(sysctl -n hw.ncpu) - 1 ))
 else
-	make -j$(nproc)
+	make -j$(( $(nproc) - 1 ))
 fi
 
 cd $AIRMOBISIMDIR
