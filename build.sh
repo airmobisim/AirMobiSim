@@ -232,10 +232,10 @@ echo "Starting installation of conan dependencies"
 
 cd ..
 
-if [  ! -d "airmobisimVeins" ]; then
-  git clone https://git.cms-labs.org/git/hardes/airmobisimVeins
+if [  ! -d "AirMobiSim_libveins" ]; then
+  git clone https://git.cms-labs.org/git/hardes/AirMobiSim_libveins
 fi
-cd airmobisimVeins
+cd AirMobiSim_libveins
 
 ./configure
 if [[  "$OSTYPE" == "darwin"* ]]; then
