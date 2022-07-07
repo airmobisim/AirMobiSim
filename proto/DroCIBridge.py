@@ -107,7 +107,7 @@ class AirMobiSim(airmobisim_pb2_grpc.AirMobiSimServicer):
        """
        Delete UAV with the given Id
        """
-       logWrapper.debug("DeleteUAV called: UAV to delete" + request.num, True)
+       logWrapper.debug("DeleteUAV called: UAV to delete" + str(request.num), True)
        for node in range(len(self.simulation_obj._managedNodes)):
            if self.simulation_obj._managedNodes[node]._uid == request.num:
                 self.simulation_obj._managedNodes.pop(node)
