@@ -42,10 +42,30 @@ def main():
         logWrapper.critical("The configuration file " + configPath + " does not exist. Please check the path or run AirMobiSim with the --help option ")
         sys.exit()    
     
-    logWrapper.basicConfig(filename=os.path.dirname(args.configuration) + '/logfile.log', encoding='utf-8', level=logging.DEBUG)
+
 
     p = Yamlparser(configPath)
     config = p.readConfig()
+
+    loglevel = config['logging']['loglevel']
+    if loglevel == "DEBUG":
+        ll = logging.DEBUG
+    elif loglevel == "INFO":
+        ll = logging.INFO
+    elif loglevel == "WARNING":
+        ll = logging.WARNING
+    elif loglevel ==  "ERROR":
+        ll = logging.ERROR
+    elif loglevel == "CRITICAL":
+        ll = logging.CRITICAL
+    else:
+        print("CRITICAL: Invalid loglevel set. Please check the value in the config file!")
+        sys.exit()
+
+    if (exists(os.path.dirname(args.configuration) + '/logfile.log')): # Remove logfile if it already exists
+        os.remove(os.path.dirname(args.configuration) + '/logfile.log')
+
+    logWrapper.basicConfig(filename=os.path.dirname(args.configuration) + '/logfile.log', encoding='utf-8', level=ll)
 
     validateConfiguration(config)
 

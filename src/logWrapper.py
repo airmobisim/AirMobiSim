@@ -14,7 +14,7 @@ CRITICAL
  
 
 def basicConfig(filename='logfile.log', encoding='utf-8', level=logging.DEBUG):
-    print("Writing logs to " + filename)
+    print("Writing logs to " + filename + " using level=" + str(logging.getLevelName(level)))
     logging.basicConfig(filename=filename, encoding=encoding, level=level)
 
 

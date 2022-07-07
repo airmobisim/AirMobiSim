@@ -62,11 +62,20 @@ To run the simulation with plot use :
 poetry run ./airmobisim.py  --plot 1
 ```
 
+To get a list of options to use with AirMobiSim, use:
+
+```Bash
+poetry run ./airmobisim.py  -h
+```
+
 ---
 
 # Configure a simulation
 The input parameters for the simulations are taken from a file named ```simulation.config```.
 An example is located in the ```examples``` directory.
 
+# Logging
+A logfile is written to the project directory (e.g., ```AirMobiSim/examples/simpleSimulation```).
+The loglevel can be set in the according configuration file.
 
 
