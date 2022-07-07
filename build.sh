@@ -198,7 +198,10 @@ if [  ! -d "veins" ]; then
   git clone https://github.com/sommer/veins.git
   cd veins
   git checkout tags/veins-5.2
+else
+  cd veins
 fi
+
 ./configure
 if [[  "$OSTYPE" == "darwin"* ]]; then
 	make -j$(sysctl -n hw.ncpu)
