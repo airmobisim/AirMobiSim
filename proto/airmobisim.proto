@@ -31,7 +31,10 @@ service AirMobiSim{
     rpc UpdateWaypoints (WaypointList) returns (google.protobuf.Empty);
 
     rpc DeleteWaypoint (WaypointList) returns (google.protobuf.Empty);       
-       
+
+    rpc GetMaxSimulationTime(google.protobuf.Empty) returns (Number);
+
+    rpc getMaxSimulationSteps(google.protobuf.Empty) returns (DoubleNumber);
 }
 
 message WaypointList {
@@ -88,6 +91,9 @@ message Coordinates{
 
 message Number{
     int32 num = 1;
+}
+message DoubleNumber{
+    double num = 1;
 }
 
 message UavSetSpeed{

@@ -107,6 +107,12 @@ class Simulation:
     def getManagedNodes(self):
         return self._managedNodes
 
+    def getMaxSimulationTime(self):
+        return Simulationparameter.simTimeLimit
+
+    def getMaxSimulationSteps(self):
+        return Simulationparameter.simTimeLimit/Simulationparameter.stepLength
+
     @classmethod  # for spline mobility model
     def from_config_spmob(cls, config, linearMobilityFlag, splineMobilityFlag, directory):
         speed = []

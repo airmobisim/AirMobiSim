@@ -5,7 +5,6 @@ from google.protobuf import struct_pb2
 
 import src.logWrapper as logWrapper
 
-#from src.simulation import Simulation
 from concurrent import futures
 from src.simulationparameter import Simulationparameter
 from shapely.geometry import Point
@@ -19,14 +18,6 @@ from proto import airmobisim_pb2_grpc
 from proto import airmobisim_pb2
 
 class AirMobiSim(airmobisim_pb2_grpc.AirMobiSimServicer):
-    index=[]
-    x=[]
-    y=[]            # these list are loaded by omnet   organization needed for multiple waypoint values
-    z=[]
-    # index = [0, 1]
-    # x = [6.5, 6.8]      # harcoded onnet values for testing
-    # y = [10, 10]
-    # z = [3, 3]
 
     def __init__(self, simulation_obj):
         self._isRunning = False
@@ -59,7 +50,6 @@ class AirMobiSim(airmobisim_pb2_grpc.AirMobiSimServicer):
 
             return responseQuery
         else:
-            # rt = Repeatedtimer(1, self.printStatus, "World")
             if Simulationparameter.currentSimStep < self.simulation_obj._simulationSteps:
                 self._lastUavReport = []
                 for node in self.simulation_obj._managedNodes:
@@ -134,9 +124,7 @@ class AirMobiSim(airmobisim_pb2_grpc.AirMobiSimServicer):
        Return the number for current UAVs
       """
       currentUav = len(self.simulation_obj._managedNodes) 
-
       return airmobisim_pb2.Number(num=currentUav)
-
 
     def SetDesiredSpeed(self, request, context):
         """
@@ -148,7 +136,6 @@ class AirMobiSim(airmobisim_pb2_grpc.AirMobiSimServicer):
                 break
 
         return struct_pb2.Value()
-
 
     def UpdateWaypoints(self, request, context):
         """
@@ -164,23 +151,8 @@ class AirMobiSim(airmobisim_pb2_grpc.AirMobiSimServicer):
         return struct_pb2.Value() 
 
     def InsertWaypoints(self, request, context):
-        print("Insert Waypoints!!!!!!!")
-        print("request: " + str(request))
-        print("request.waypoint): " + str(request.waypoint))
-        print("request.waypoint.uavid): " + str(request.waypoint.uid))
-        uav = next((x for x in self.simulation_obj._managedNodes if x._uid == request.waypoint.request.waypoint.id), None)
-        return struct_pb2.Value()
-        #print("len(request.waypoints) " + str(len(request.waypointList)), flush=True)
-        #for i in range(0, len(request.waypoint)):
-        #    uav = next((x for x in self.simulation_obj._managedNodes if x._uid == uid), None)
-        #    print("Searched UAV with id " + str(uid), flush=True)
-        #    if uav is not None:
-        #        if request.waypoints[i].index == -1:
-        #            uav.addWaypoint(Point(request.waypoints[i].x, request.waypoints[i].y, request.waypoints[i].z))
-        #        else:
-        #            raise Exception("Not yet implemented")
-        #return struct_pb2.Value()
-
+        raise NotImplementedError()  
+   
     def InsertWaypoint(self, request, context):
         uav = next((x for x in self.simulation_obj._managedNodes if x._uid == request.uid), None)
         if uav is not None:
@@ -191,13 +163,19 @@ class AirMobiSim(airmobisim_pb2_grpc.AirMobiSimServicer):
         else:
             raise Exception("No such UAV")
         return struct_pb2.Value()
+
+    def GetMaxSimulationTime(self, requests, context):
+        return airmobisim_pb2.Number(num=self.simulation_obj.getMaxSimulationTime())
+
+    def getMaxSimulationSteps(self, request, context):
+        return airmobisim_pb2.DoubleNumber(num=self.simulation_obj.getMaxSimulationSteps())
+
     @staticmethod
     def getWaypointsByIndex():
         if len(AirMobiSim.index)==0:
             return None,None, None,None
 
         return AirMobiSim.index, AirMobiSim.x, AirMobiSim.y,AirMobiSim.z
-
 
 def startServer(simulation_object):
     """
