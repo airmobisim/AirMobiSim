@@ -40,6 +40,11 @@ class AirMobiSimStub(object):
                 request_serializer=proto_dot_airmobisim__pb2.WaypointList.SerializeToString,
                 response_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
                 )
+        self.InsertWaypoint = channel.unary_unary(
+                '/airmobisim.AirMobiSim/InsertWaypoint',
+                request_serializer=proto_dot_airmobisim__pb2.Waypoint.SerializeToString,
+                response_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+                )
         self.InsertUAV = channel.unary_unary(
                 '/airmobisim.AirMobiSim/InsertUAV',
                 request_serializer=proto_dot_airmobisim__pb2.StartUav.SerializeToString,
@@ -105,6 +110,12 @@ class AirMobiSimServicer(object):
         raise NotImplementedError('Method not implemented!')
 
     def InsertWaypoints(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def InsertWaypoint(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -178,6 +189,11 @@ def add_AirMobiSimServicer_to_server(servicer, server):
             'InsertWaypoints': grpc.unary_unary_rpc_method_handler(
                     servicer.InsertWaypoints,
                     request_deserializer=proto_dot_airmobisim__pb2.WaypointList.FromString,
+                    response_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+            ),
+            'InsertWaypoint': grpc.unary_unary_rpc_method_handler(
+                    servicer.InsertWaypoint,
+                    request_deserializer=proto_dot_airmobisim__pb2.Waypoint.FromString,
                     response_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
             ),
             'InsertUAV': grpc.unary_unary_rpc_method_handler(
@@ -306,6 +322,23 @@ class AirMobiSim(object):
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/airmobisim.AirMobiSim/InsertWaypoints',
             proto_dot_airmobisim__pb2.WaypointList.SerializeToString,
+            google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def InsertWaypoint(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/airmobisim.AirMobiSim/InsertWaypoint',
+            proto_dot_airmobisim__pb2.Waypoint.SerializeToString,
             google_dot_protobuf_dot_empty__pb2.Empty.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
