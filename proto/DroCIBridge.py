@@ -168,9 +168,8 @@ class AirMobiSim(airmobisim_pb2_grpc.AirMobiSimServicer):
         print("request: " + str(request))
         print("request.waypoint): " + str(request.waypoint))
         print("request.waypoint.uavid): " + str(request.waypoint.uavid))
-
-        
         uav = next((x for x in self.simulation_obj._managedNodes if x._uid == request.waypoint.request.waypoint.id), None)
+        return struct_pb2.Value()
         #print("len(request.waypoints) " + str(len(request.waypointList)), flush=True)
         #for i in range(0, len(request.waypoint)):
         #    uav = next((x for x in self.simulation_obj._managedNodes if x._uid == uid), None)
@@ -181,13 +180,23 @@ class AirMobiSim(airmobisim_pb2_grpc.AirMobiSimServicer):
         #        else:
         #            raise Exception("Not yet implemented")
         #return struct_pb2.Value()
+
     def InsertWaypoint(self, request, context):
         print("Insert Waypoint!!!!!!!")
         print("request: " + str(request))
         print("request.x: " + str(request.x))
         print("request.uid: " + str(request.uid))
-
-        pass
+        uav = next((x for x in self.simulation_obj._managedNodes if x._uid == request.uid), None)
+        if uav is not None:
+            print("found a UAV")
+            if request.index == -1:
+                print("Try to add waypoint")
+                uav.addWaypoint(Point(request.x, request.y, request.z))
+            else:
+                raise Exception("Not yet implemented")
+        else:
+            raise Exception("No such UAV")
+        return struct_pb2.Value()
     @staticmethod
     def getWaypointsByIndex():
         if len(AirMobiSim.index)==0:
