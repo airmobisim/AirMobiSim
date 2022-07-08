@@ -202,16 +202,16 @@ def validateConfiguration(config):
 
         for i, v in enumerate(waypointX):
             if not (len(waypointX[i]) == len(waypointY[i]) == len(waypointZ[i])):
-                logWrapper.critical(f'for uav {i} waypoint x,y,z needs to be the same for each uav')
+                logWrapper.critical(f'for uav ' + str(i) + ' waypoint x,y,z needs to be the same for each uav')
                 sys.exit()
             if not (all(0 <= item <= config['simulation']['playgroundSizeX'] for item in waypointX[i])):
-                logWrapper.critical(f'for uav {i} waypoint x needs to be within playgroundX. Check playground size in config file')
+                logWrapper.critical(f'for uav ' + str(i) + ' waypoint x needs to be within playgroundX. Check playground size in config file')
                 sys.exit()
             if not (all(0 <= item <= config['simulation']['playgroundSizeY'] for item in waypointY[i])):
-                logWrapper.critical(f'for uav {i} waypoint y needs to be within playgroundY. Check playground size in config file')
+                logWrapper.critical(f'for uav ' + str(i) + ' waypoint y needs to be within playgroundY. Check playground size in config file')
                 sys.exit()
             if not (all(0 <= item <= config['simulation']['playgroundSizeZ'] for item in waypointZ[i])):
-                logWrapper.critical(f'for uav {i} waypoint z needs to be within playgroundZ. Check playground size in config file')
+                logWrapper.critical(f'for uav ' + str(i) + ' waypoint z needs to be within playgroundZ. Check playground size in config file')
                 sys.exit()
 
     if linearMobilityFlag:

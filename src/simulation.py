@@ -80,7 +80,7 @@ class Simulation:
                                               Point(uav['endPosX'], uav['endPosY'], uav['endPosZ']), uav['speed'],
                                               self._polygon_file_path, self._collision_action))
 
-        logWrapper.debug("Initialized %s UAVs", str(len(self._managedNodes)))
+        logWrapper.debug("Initialized " + str(len(self._managedNodes)) + " UAVs", True)
 
     def processNextStep(self):
         Simulationparameter.incrementCurrentSimStep()
@@ -88,17 +88,17 @@ class Simulation:
             for node in self._managedNodes:
                 removeNode = node._mobility.makeMove()  # building ahead
                 if removeNode:
-                    logWrapper.debug('removing uav %s', str(node._uid))
+                    logWrapper.debug('removing uav ' + str(node._uid))
                     self._managedNodes.remove(node)      # obstacle so remove
         else:
             for node in self._managedNodes:
                 removeNode = node._mobility.makeMove()
                 if removeNode:
-                    logWrapper.debug("removing uav %s", str(node._uid))
+                    logWrapper.debug("removing uav " + str(node._uid))
                     self._managedNodes.remove(node)
 
     def finishSimulation(self):
-        logWrapper.debug("exiting -- at t=%s, event?", str(Simulationparameter.currentSimStep * Simulationparameter.stepLength), True)
+        logWrapper.debug("exiting -- at t=" +str(Simulationparameter.currentSimStep * Simulationparameter.stepLength), True)
 
     def getNextUid(self):
         self._highestUid += 1

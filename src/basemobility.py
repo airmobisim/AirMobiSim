@@ -96,7 +96,7 @@ class Basemobility(ABC):
         if self.polygon_file_path is None or not os.path.exists(self.polygon_file_path):
             return None
 
-        logWrapper.debug(("self.polygon_file_path: %s", str(self.polygon_file_path)))
+        logWrapper.debug(("self.polygon_file_path: " + str(self.polygon_file_path)))
 
         parsedFile= minidom.parse(self.polygon_file_path)
         polygons = parsedFile.getElementsByTagName('poly')
@@ -136,10 +136,6 @@ class Basemobility(ABC):
 
         detectObstacle = any(obstacle.contains_point(futureCoordinate) for obstacle in self._obstacles)
         if not self._obstacleDetector_flag and detectObstacle and self._collisionAction == 1:
-            # warnings.warn('uav is going to collide in collide')
-            print('WARNING!!!!')
-            print('currentTime:', passedTime, 'uav is going to collide at ', futureTime)
-            logWrapper.debug('WARNING!!!!')
-            logWrapper.debug(('currentTime: %s, uav is going to collide at %s', str(passedTime), str(futureTime)))
+            logWrapper.debug(('currentTime: ' + str(passedTime) + ', uav is going to collide at '+ str(futureTime)))
 
         self._obstacleDetector_flag = True if detectObstacle == True else self._obstacleDetector_flag
