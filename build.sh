@@ -152,14 +152,12 @@ then
 	if [[  "$OSTYPE" == "darwin"* ]]; then
 		brew install poetry
 	else
-		pip install --user poetry
+		curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python -
 	fi
 	mkdir -p $HOME/.poetry/env
-	source $HOME/.poetry/env
 fi
 echo "Switching to python 3.9.0"
 
-mkdir -p $HOME/.cache/pypoetry/virtualenvs
 poetry env use 3.9.0
 
 ################################################################
