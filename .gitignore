@@ -1,0 +1,50 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# AirMobiSim logs
+*.log
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+#auto generated files
+examples/simpleSimulation/results/energyResults.csv
+examples/simpleSimulation/results/positionResults.csv
+proto/airmobisim_pb2.py
+proto/airmobisim_pb2_grpc.py
+**/__init__.py
+src/trial.py
+
+# MAC
+.DS_Store
+
+# Jetbrains
+.idea
+
+# General
+**/*swp
