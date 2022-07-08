@@ -175,7 +175,6 @@ echo "Installing required Python packages..."
 poetry run python --version
 
 poetry install
-poetry run python -m grpc_tools.protoc --python_out=. --grpc_python_out=. proto/airmobisim.proto -I .
 export PATH="$HOME/.poetry/bin:$PATH"
 
 pip3 install conan # We need a local installation outside poetry, since conan is required for the OMNeT++ part
