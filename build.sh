@@ -154,7 +154,6 @@ then
 	else
 		curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python -
 	fi
-	mkdir -p $HOME/.poetry/env
 fi
 echo "Switching to python 3.9.0"
 
