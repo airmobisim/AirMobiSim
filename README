@@ -1,23 +1,24 @@
-# AirmobiSim Project
+# AirmobiSim Project 
 
-# Pre-Installation
+## Pre-Installation 
 
 AirMobiSim requires the following software to be installed 
+
 - OMNeT++ 6
 - conan
 - curl
 - pyenv
 
-## OMNeT 6 installation
+### OMNeT 6 installation
 Please do follow the instructions from the official [OMNeT documentation](https://doc.omnetpp.org/omnetpp/InstallGuide.pdf)
 
 
-## Conan installation
+### Conan installation
 Please do follow the instructions from the official [conan documentation](https://docs.conan.io/en/latest/installation.html)
 
 
 
-## Curl installation
+### Curl installation
 To install curl please do execute:
 
 Linux/Debian
@@ -27,7 +28,7 @@ Linux/Debian
 MacOS
 ```brew install curl```
 
-## Pyenv installation
+### Pyenv installation
 To install Pyenv please do execute:
 
 Linux / Debian: 
@@ -39,7 +40,7 @@ MacOS:
 
 ---
 
-# AirMobiSim-Installation
+## AirMobiSim-Installation
 AirMobiSim requires all installations listed in the section above.
 All additional required dependencies will be locally installed using pyenv and poetry by executing the ```build.sh``` script:
 ```Bash
@@ -48,7 +49,7 @@ All additional required dependencies will be locally installed using pyenv and p
 
 ---
 
-# Run AirmobiSim
+## Run AirmobiSim
 To run the project use the following command in 'poetry shell':
 ```Bash
 poetry run ./airmobisim.py
@@ -70,12 +71,10 @@ poetry run ./airmobisim.py  -h
 
 ---
 
-# Configure a simulation
+## Configure a simulation
 The input parameters for the simulations are taken from a file named ```simulation.config```.
 An example is located in the ```examples``` directory.
 
-# Logging
+## Logging
 A logfile is written to the project directory (e.g., ```AirMobiSim/examples/simpleSimulation```).
 The loglevel can be set in the according configuration file.
-
-
