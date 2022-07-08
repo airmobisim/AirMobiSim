@@ -17,7 +17,6 @@ Please do follow the instructions from the official [OMNeT documentation](https:
 Please do follow the instructions from the official [conan documentation](https://docs.conan.io/en/latest/installation.html)
 
 
-
 ### Curl installation
 To install curl please do execute:
 
@@ -27,16 +26,6 @@ Linux/Debian
 
 MacOS
 ```brew install curl```
-
-### Pyenv installation
-To install Pyenv please do execute:
-
-Linux / Debian: 
-```curl -L https://raw.githubusercontent.com/pyenv/pyenv-installer/master/bin/pyenv-installer | bash```
-
-
-MacOS:
-```brew install pyenv```
 
 ---
 
