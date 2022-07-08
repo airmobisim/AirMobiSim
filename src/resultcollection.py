@@ -1,3 +1,24 @@
+#
+# Copyright (C) 2022 Tobias Hardes <tobias.hardes@uni-paderborn.de>
+#
+# Documentation for these modules is at http://veins.car2x.org/
+#
+# SPDX-License-Identifier: GPL-2.0-or-later
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#
 import os
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -27,14 +48,10 @@ class Resultcollection(metaclass=Singleton):
             logWrapper.info("creating new log")
             with open(logfile, "w") as f:
                 f.write("uid" + self._logDelimiter + "passedTime" + self._logDelimiter + "posX" + self._logDelimiter + "posY" + self._logDelimiter + "posZ"+"\n")
-            # f.close()
-            #self._firstLog = False
 
         with open(logfile, "a") as f:
             f.write(str(uid) + self._logDelimiter + str(movement.getPassedTime()) + self._logDelimiter + str(
                 position.x) + self._logDelimiter + str(position.y) + self._logDelimiter + str(position.z) + "\n")
-            # f.close()
-
 
     def logCurrentEnergy(self,uid,distance, energy):
         """
@@ -48,7 +65,6 @@ class Resultcollection(metaclass=Singleton):
 
         with open(logfile_2, "a") as fl:
             fl.write(str(uid) + self._logDelimiter + str(distance) + self._logDelimiter + str(energy) + "\n")
-            # fl.close()
 
     def showEnergy(self):
         """
