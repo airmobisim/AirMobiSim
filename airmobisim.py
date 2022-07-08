@@ -27,7 +27,7 @@ def main():
     parser.add_argument('--omnetpp', action='store_true', help='Start the OmNet++ simulator')
     parser.add_argument('--show', action='store_true', help='Show the Energy as Plot')
 
-    print("""AirMobiSim Simulation (C) 2021 Chair of Networked Systems Modelling TU Dresden.\nVersion: 0.0.1\nSee the license for distribution terms and warranty disclaimer""", flush=True)
+    print("""AirMobiSim Simulation (C) 2022 Chair of Networked Systems Modelling TU Dresden.\nVersion: 0.0.1\nSee the license for distribution terms and warranty disclaimer""", flush=True)
     args = parser.parse_args()
     try:
         homePath = os.environ['AIRMOBISIMHOME']

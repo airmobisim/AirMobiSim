@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Copyright (C) 2021 Tobias Hardes <tobias.hardes@uni-paderborn.de>
+# Copyright (C) 2022 Tobias Hardes <tobias.hardes@uni-paderborn.de>
 #
 # Documentation for these modules is at http://veins.car2x.org/
 #
