@@ -48,6 +48,7 @@ class Resultcollection(metaclass=Singleton):
             logWrapper.info("creating new log")
             with open(logfile, "w") as f:
                 f.write("uid" + self._logDelimiter + "passedTime" + self._logDelimiter + "posX" + self._logDelimiter + "posY" + self._logDelimiter + "posZ"+"\n")
+            self._firstLog = False
 
         with open(logfile, "a") as f:
             f.write(str(uid) + self._logDelimiter + str(movement.getPassedTime()) + self._logDelimiter + str(
