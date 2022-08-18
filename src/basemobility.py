@@ -61,31 +61,13 @@ class Basemobility(ABC):
         self._obstacleDetector_flag = False
         self.polygon_file_path = polygon_file_path
         self._obstacles = self.ParsePolygonFileToObstacles()
-        pass
+
 
     def getMove(self):
         return self._move
 
     def getCurrentPos(self):
-        passedTime = (Simulationparameter.currentSimStep * Simulationparameter.stepLength) - self.getMove().getStartTime()
-        if passedTime==0.0:
-            return self._uav._waypoints[0]
-        else:
-            currentDirection = self.getMove().getCurrentDirection()
-
-            previousPos = self.getMove().getTempStartPos()
-            
-            if self.getMove().getFinalFlag():
-                return previousPos
-
-            x = previousPos.x + (currentDirection.x*self.getMove().getSpeed()*Simulationparameter.stepLength)
-            y = previousPos.y + (currentDirection.y*self.getMove().getSpeed()*Simulationparameter.stepLength)
-            z = previousPos.z + (currentDirection.z*self.getMove().getSpeed()*Simulationparameter.stepLength)
-
-            currentPos = Point(x,y,z)
-
-            self.getMove().setTempStartPos(currentPos)
-            return currentPos
+        return self._move.getLastPos()
 
     # current position function for spline mobility
     def getCurrentPosSp(self):
@@ -102,8 +84,26 @@ class Basemobility(ABC):
 
         return currentPos
 
+    def calculateNextPosition(self):
+        currentDirection = self.getMove().getCurrentDirection()
+        #logWrapper.debug("stepLength is " + str(Simulationparameter.stepLength))
+
+        lastPos = self.getMove().getLastPos()
+        # previousPos = self.getMove().getTempStartPos()
+
+        if self.getMove().getFinalFlag():
+            return lastPos
+
+        x = lastPos.x + (currentDirection.x * self.getMove().getSpeed() * Simulationparameter.stepLength)
+        y = lastPos.y + (currentDirection.y * self.getMove().getSpeed() * Simulationparameter.stepLength)
+        z = lastPos.z + (currentDirection.z * self.getMove().getSpeed() * Simulationparameter.stepLength)
+
+        self.getMove().setLastPos(Point(x, y, z))
+        #logWrapper.debug("calculateNextPosition: " + str(self.getMove().getLastPos()))
+
     def makeMove(self):
         self.doLog()
+        self.calculateNextPosition()
 
     def doLog(self):
         if self.getMove().getLinearMobilitySpFlag():   # log for spline mobility

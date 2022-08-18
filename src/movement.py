@@ -148,3 +148,9 @@ class Movement:
         newDirection = Point(round(array[0], 7), round(array[1], 7), round(array[2], 7))
 
         self.setCurrentDirection(newDirection)
+
+    def getLastPos(self):
+        return self._lastPos
+
+    def setLastPos(self, newPos):
+        self._lastPos = newPos
