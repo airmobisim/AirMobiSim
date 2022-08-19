@@ -39,6 +39,8 @@ proto/airmobisim_pb2.py
 proto/airmobisim_pb2_grpc.py
 **/__init__.py
 src/trial.py
+*.tmp
+**/.nfs*
 
 # MAC
 .DS_Store
