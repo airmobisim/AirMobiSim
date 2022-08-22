@@ -214,10 +214,13 @@ def startServer(simulation_object):
     logWrapper.info("AirMobiSim Server started", True)
     ppid = os.getppid()
 
-    filename = str(ppid) + ".tmp"
+    filename = str(ppid) + ".tmp2"
     f = open(filename, "a")
     f.write(str(grpcPort))
+    f.flush()
+    os.fsync(f.fileno())
     f.close()
+    os.rename(filename, str(ppid) + ".tmp")
     omnetpp_pid_valid = False
     grandparent_pid = psutil.Process(os.getppid()).ppid()
 
