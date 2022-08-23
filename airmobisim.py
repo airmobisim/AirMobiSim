@@ -88,7 +88,16 @@ def main():
     if (exists(os.path.dirname(args.configuration) + '/logfile.log')): # Remove logfile if it already exists
         os.remove(os.path.dirname(args.configuration) + '/logfile.log')
 
-    logWrapper.basicConfig(filename=os.path.dirname(args.configuration) + '/logfile.log', encoding='utf-8', level=ll)
+    logNumber = 0
+    freeLogNumberFound = False
+    while not freeLogNumberFound:
+        if (exists(os.path.dirname(args.configuration) + '/logfile' + str(logNumber) + '.log')):
+            logNumber += 1
+        else:
+            freeLogNumberFound = True
+
+    logWrapper.basicConfig(filename=os.path.dirname(args.configuration) + '/logfile' + str(logNumber) + '.log',
+                           encoding='utf-8', level=ll)
 
     validateConfiguration(config)
 
