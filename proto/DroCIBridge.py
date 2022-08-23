@@ -207,11 +207,22 @@ def startServer(simulation_object):
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
     airmobisim_object = AirMobiSim(simulation_object)
     airmobisim_pb2_grpc.add_AirMobiSimServicer_to_server(airmobisim_object, server)
-    server.add_insecure_port('localhost:50051')
+
+    grpcPort = server.add_insecure_port('localhost:0')
+    logWrapper.info("Server starts on port " + str(grpcPort))
     server.start()
 
-    logWrapper.info("AirMobiSim Server started", True) 
+    logWrapper.info("AirMobiSim Server started", True)
     ppid = os.getppid()
+
+    filename = str(ppid) + ".tmp2"
+    f = open(filename, "a")
+    f.write(str(grpcPort))
+    f.flush()
+    os.fsync(f.fileno())
+    f.close()
+    os.rename(filename, str(ppid) + ".tmp")
+   
     omnetpp_pid_valid = False
     grandparent_pid = psutil.Process(os.getppid()).ppid()
 
