@@ -47,8 +47,9 @@ def main():
     parser = argparse.ArgumentParser(description='Importing configuration-file')
     parser.add_argument('--plot', type=int, required=False, default=0, help='plot vs no plot')
     parser.add_argument('--configuration', action='store', type=str, default="examples/simpleSimulation/simulation.config", help='configuration')
-    parser.add_argument('--omnetpp', action='store_true', help='Start the OmNet++ simulator')
+    parser.add_argument('--omnetpp', action='store_true', help='Start the OMNeT++ simulator')
     parser.add_argument('--show', action='store_true', help='Show the Energy as Plot')
+    parser.add_argument('--r', type=int, default=0, help='Specifies the runnumber that is used as the seed')
 
     print("""AirMobiSim Simulation (C) 2022 Chair of Networked Systems Modelling TU Dresden.\nVersion: 0.0.1\nSee the license for distribution terms and warranty disclaimer""", flush=True)
     args = parser.parse_args()
@@ -106,7 +107,7 @@ def main():
     splineMobilityFlag = config['kinetic_model']['splineMobility']
 
     directory = pathlib.Path(args.configuration).parent.resolve()
-    initializeSimulation(config, directory, linearMobilityFlag, splineMobilityFlag)
+    initializeSimulation(config, directory, linearMobilityFlag, splineMobilityFlag, args.r)
 
     # Start the DroCI Bridge - Listen to OmNet++ incomes
     if args.show:
@@ -262,7 +263,7 @@ def validateConfiguration(config):
         logWrapper.critical('No polygon file was found in the path')
         sys.exit()
 
-def initializeSimulation(config, directory, linearMobilityFlag, splineMobilityFlag):
+def initializeSimulation(config, directory, linearMobilityFlag, splineMobilityFlag, runnumber):
     global simulation
     if splineMobilityFlag:
         logWrapper.debug("Launch spline mobility")
@@ -274,7 +275,6 @@ def initializeSimulation(config, directory, linearMobilityFlag, splineMobilityFl
         homePath = os.environ['AIRMOBISIMHOME']
 
         polygon_file_path = homePath + '/' + polygon_file
-
         simulation = Simulation(directory,
                                 config['simulation']['stepLength'],
                                 config['simulation']['simTimeLimit'],
@@ -284,6 +284,7 @@ def initializeSimulation(config, directory, linearMobilityFlag, splineMobilityFl
                                 linearMobilityFlag,
                                 splineMobilityFlag,
                                 config['uav'],
+                                runnumber,
                                 polygon_file_path,
                                 config['obstacle_detection']['collision_action'])
 

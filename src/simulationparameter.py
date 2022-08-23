@@ -28,6 +28,7 @@ class Simulationparameter( metaclass=Singleton):
     currentSimStep = -1
     stepLength = -1
     directory = '../examples/simpleSimulation'
+    runnumber = -1
 
     
     def incrementCurrentSimStep():

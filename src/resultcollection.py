@@ -43,7 +43,7 @@ class Resultcollection(metaclass=Singleton):
         """
         Log current position
         """
-        logfile = self._logDir + "positionResults.csv"
+        logfile = self._logDir + "positionResults_" + str(Simulationparameter.runnumber) + ".csv"
         if self._firstLog:
             logWrapper.info("creating new log")
             with open(logfile, "w") as f:
@@ -58,7 +58,7 @@ class Resultcollection(metaclass=Singleton):
         """
         Log current energy
         """
-        logfile_2 = self._logDir + "energyResults.csv"
+        logfile_2 = self._logDir + "energyResults_" + str(Simulationparameter.runnumber) + ".csv"
         if self._firstLog:
             with open(logfile_2, "w") as fl:
                 fl.write("uid" + self._logDelimiter + "travelled distance" + self._logDelimiter + "energy"+ "\n")

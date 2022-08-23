@@ -43,7 +43,7 @@ class Simulation:
     _highestUid = -1
 
     def __init__(self, directory, stepLength, simTimeLimit, playgroundSizeX, playgroundSizeY, playgroundSizeZ,
-                 linearMobilityFlag, splineMobilityFlag, uavs, polygon_file_path=None, collision_action=None,
+                 linearMobilityFlag, splineMobilityFlag, uavs, runnumber, polygon_file_path=None, collision_action=None,
                  speed=None, waypointX=None, waypointY=None,
                  waypointZ=None):
         logWrapper.debug("Initializing...", True)
@@ -51,6 +51,7 @@ class Simulation:
         Simulationparameter.directory = directory
         Simulationparameter.simStartTime = Simulationparameter.current_milli_time()
         Simulationparameter.simTimeLimit = simTimeLimit
+        Simulationparameter.runnumber = runnumber                            
         self._playgroundSizeX = playgroundSizeX
         self._playgroundSizeY = playgroundSizeY
         self._playgroundSizeZ = playgroundSizeZ
