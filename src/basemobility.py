@@ -67,7 +67,7 @@ class Basemobility(ABC):
         return self._move
 
     def getCurrentPos(self):
-        return self._move.getLastPos()
+        return self._move.getTempStartPos()
 
     # current position function for spline mobility
     def getCurrentPosSp(self):
@@ -88,18 +88,18 @@ class Basemobility(ABC):
         currentDirection = self.getMove().getCurrentDirection()
         #logWrapper.debug("stepLength is " + str(Simulationparameter.stepLength))
 
-        lastPos = self.getMove().getLastPos()
+        lastPos = self.getMove().getTempStartPos()
         # previousPos = self.getMove().getTempStartPos()
 
         if self.getMove().getFinalFlag():
-            return lastPos
+            self.getMove().setTempStartPos(lastPos)
+        else:
+            x = lastPos.x + (currentDirection.x * self.getMove().getSpeed() * Simulationparameter.stepLength)
+            y = lastPos.y + (currentDirection.y * self.getMove().getSpeed() * Simulationparameter.stepLength)
+            z = lastPos.z + (currentDirection.z * self.getMove().getSpeed() * Simulationparameter.stepLength)
 
-        x = lastPos.x + (currentDirection.x * self.getMove().getSpeed() * Simulationparameter.stepLength)
-        y = lastPos.y + (currentDirection.y * self.getMove().getSpeed() * Simulationparameter.stepLength)
-        z = lastPos.z + (currentDirection.z * self.getMove().getSpeed() * Simulationparameter.stepLength)
+            self.getMove().setTempStartPos(Point(x, y, z))
 
-        self.getMove().setLastPos(Point(x, y, z))
-        #logWrapper.debug("calculateNextPosition: " + str(self.getMove().getLastPos()))
 
     def makeMove(self):
         self.doLog()

@@ -32,7 +32,6 @@ class Movement:
     def __init__(self):
         self._startPos = Point(0, 0, 0)
         self._endPos = Point(0, 0, 0)
-        self._lastPos = Point(0, 0, 0)
         self._startTime = 0
         self._orientationX = 0
         self._orientationY = 0
@@ -149,8 +148,3 @@ class Movement:
 
         self.setCurrentDirection(newDirection)
 
-    def getLastPos(self):
-        return self._lastPos
-
-    def setLastPos(self, newPos):
-        self._lastPos = newPos
