@@ -90,5 +90,12 @@ class Linearmobility(Basemobility):
 
         futureCoordinate = (x, y)
 
-        self.getMove().setFutureCoordinate(futureCoordinate)
+        # self._obstacleDetector_flag = self._obstacles[0].contains_point(futureCoordinate)
+        # warnings.filterwarnings('once')
+        detectObstacle = self._obstacle[0].contains_point(futureCoordinate)
+        if not self._obstacleDetector_flag and detectObstacle and self._collisionAction==1:
+            # warnings.warn('uav is going to collide in collide')
+            print('WARNING!!!!')
+            print('currentTime:',passedTime,'uav is going to collide at ', futureTime)
 
+        self._obstacleDetector_flag = True if detectObstacle == True else self._obstacleDetector_flag
