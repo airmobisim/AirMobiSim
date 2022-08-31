@@ -41,7 +41,8 @@ class Linearmobility(Basemobility):
     def makeMove(self):
         move = self.getMove()
         passedTime = (Simulationparameter.currentSimStep * Simulationparameter.stepLength) - self.getMove().getStartTime()
-        
+        move.setTempStartPos(move.getLastPos())
+
         distancePerstep = self.getMove().getSpeed()*Simulationparameter.stepLength
         distance = self.getCurrentPos().distance(self._uav._waypoints[self._currentWaypointIndex+1])
         if self.getCurrentPos().distance(self._uav._waypoints[self._currentWaypointIndex+1])<distancePerstep:

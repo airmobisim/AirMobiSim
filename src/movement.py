@@ -42,6 +42,7 @@ class Movement:
         self._futureTime = 0
         self._futureCoordinate = (0.0, 0.0)
         self._tempStartPos = Point(0, 0, 0)
+        self._lastPos = Point(0, 0, 0)
         self._nextCoordinate = Point(0, 0, 0)
         self._startPosCircle = Point(0, 0, 0)
         self._finalFlag = False
@@ -148,3 +149,8 @@ class Movement:
 
         self.setCurrentDirection(newDirection)
 
+    def getLastPos(self):
+        return self._lastPos
+
+    def setLastPos(self, newPos):
+        self._lastPos = newPos
