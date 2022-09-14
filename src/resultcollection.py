@@ -34,6 +34,7 @@ class Resultcollection(metaclass=Singleton):
 
     def __init__(self):
         self._firstLog = True
+        self._firstLog_energy = True
         self._logDelimiter = '\t'
         self._logDir = str(Simulationparameter.directory) + "/results/"
         if not os.path.exists(self._logDir):
@@ -59,10 +60,10 @@ class Resultcollection(metaclass=Singleton):
         Log current energy
         """
         logfile_2 = self._logDir + "energyResults_" + str(Simulationparameter.runnumber) + ".csv"
-        if self._firstLog:
+        if self._firstLog_energy:
             with open(logfile_2, "w") as fl:
                 fl.write("uid" + self._logDelimiter + "travelled distance" + self._logDelimiter + "energy"+ "\n")
-            self._firstLog = False
+            self._firstLog_energy = False
 
         with open(logfile_2, "a") as fl:
             fl.write(str(uid) + self._logDelimiter + str(distance) + self._logDelimiter + str(energy) + "\n")
