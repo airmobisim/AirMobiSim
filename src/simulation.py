@@ -30,7 +30,6 @@ import sys
 from .uav import Uav
 from .simulationparameter import Simulationparameter
 from .repeatedtimer import Repeatedtimer
-from .uavsp import UavSp
 
 import src.logWrapper as logWrapper
 
