@@ -22,7 +22,7 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
 import math
-from abc import ABC
+from abc import ABC, abstractmethod
 import os
 from xml.dom import minidom
 
@@ -85,21 +85,9 @@ class Basemobility(ABC):
 
         return currentPos
 
+    @abstractmethod
     def calculateNextPosition(self):
-        currentDirection = self.getMove().getCurrentDirection()
-        #logWrapper.debug("stepLength is " + str(Simulationparameter.stepLength))
-
-        lastPos = self.getMove().getTempStartPos()
-        # previousPos = self.getMove().getTempStartPos()
-
-        if self.getMove().getFinalFlag():
-            self.getMove().setLastPos(lastPos)
-        else:
-            x = lastPos.x + (currentDirection.x * self.getMove().getSpeed() * Simulationparameter.stepLength)
-            y = lastPos.y + (currentDirection.y * self.getMove().getSpeed() * Simulationparameter.stepLength)
-            z = lastPos.z + (currentDirection.z * self.getMove().getSpeed() * Simulationparameter.stepLength)
-
-            self.getMove().setLastPos(Point(x, y, z))
+        pass
 
 
     def makeMove(self):
@@ -127,13 +115,11 @@ class Basemobility(ABC):
         buildings=[]
         for polygon in polygons:
             shape_of_polygon = polygon.attributes['shape'].value
-
             vertex_coordinates= shape_of_polygon.split(' ')       # coordinates are of string type
 
             list_of_coordinates=[]
             for single_vertex in vertex_coordinates:       # x and y coordinates are seperated and converted to float
                 list_of_coordinates.append([float(single_vertex.split(',')[0]),float(single_vertex.split(',')[1])])
-
 
             # forming shape of polygon by joining the polygon coordinates and appended to building list
             buildings.append(mplPath.Path(np.array(list_of_coordinates)))
