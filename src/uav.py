@@ -21,9 +21,11 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
 import math
+import sys
 
 from .basemobility import Basemobility
 from .linearmobility import Linearmobility
+from .splinemobility import Splinemobility
 
 import src.logWrapper as logWrapper
 from shapely.geometry import Point
@@ -32,14 +34,24 @@ class Uav():
     _uid = -1
     _mobility = None
     _waypoints = []
-    def __init__(self, uid, startPos, endPos, speed, polygon_file_path=None,collision_action=None,angle=0):
+
+    def __init__(self, uid, waypoints: list[Point], speed, polygon_file_path=None, collision_action=None,model_selection=None, angle=0):
+        if model_selection != 1 and model_selection != 2:
+            logWrapper.critical(f'model_selection value can either be 1 or 2 but given {model_selection}. 1 for linear model and 2 for spline model. check uav.py')
+            sys.exit()
+        startPos = waypoints[0]
+        endPos = waypoints[-1]
+        self._waypoints = waypoints
         self._uid = uid
         self._angle = self.calculateAngle(startPos, endPos)
-        self.addWaypoint(Point(startPos.x, startPos.y, startPos.z), 0)
-        self.addWaypoint(Point(endPos.x, endPos.y, endPos.z), 1)
-        self._mobility  =  Linearmobility(self, uid, self._angle, speed, polygon_file_path,collision_action)
-        
-        self._mobility.updateEndPos()
+
+        if model_selection == 1:
+            self._mobility = Linearmobility(self, uid, self._angle, speed, polygon_file_path, collision_action)
+            self._mobility.updateEndPos()
+
+        elif model_selection == 2:
+            waypointX, waypointY, waypointZ = self.splitWaypoints()
+            self._mobility = Splinemobility(self, uid, waypointX, waypointY, waypointZ, speed, polygon_file_path,collision_action)
 
     def getMobility(self):
         return self._mobility
@@ -68,3 +80,15 @@ class Uav():
            result =  360 + result
 
         return result
+
+    def splitWaypoints(self):
+        wpX = []
+        wpY = []
+        wpZ = []
+
+        for wp in self._waypoints:
+            wpX.append(wp.x)
+            wpY.append(wp.y)
+            wpZ.append(wp.z)
+
+        return wpX, wpY, wpZ

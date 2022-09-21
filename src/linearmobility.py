@@ -28,7 +28,7 @@ import src.logWrapper as logWrapper
 
 class Linearmobility(Basemobility):
 
-    def __init__(self, uav, uid, angle, speed=10, polygon_file_path=None,collision_action=None):
+    def __init__(self, uav, uid, angle, speed=0, polygon_file_path=None,collision_action=None):
         super().__init__(uav, uid, speed, polygon_file_path,collision_action)
         self._uid = uid
         self._angle = angle

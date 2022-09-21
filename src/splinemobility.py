@@ -23,7 +23,6 @@
 import math
 
 import numpy as np
-from proto.DroCIBridge import AirMobiSim
 from scipy.interpolate import CubicSpline
 from shapely.geometry import Point
 

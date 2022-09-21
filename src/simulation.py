@@ -30,7 +30,6 @@ import sys
 from .uav import Uav
 from .simulationparameter import Simulationparameter
 from .repeatedtimer import Repeatedtimer
-from .uavsp import UavSp
 
 import src.logWrapper as logWrapper
 
@@ -94,15 +93,15 @@ class Simulation:
     def initializeNodes(self):
         for uav in self._startUavs:
             nextUid = self.getNextUid()
+
             # for spline mobility
             if self._splineMobilityFlag:
-                self._managedNodes.append(UavSp(nextUid, self._waypointX[nextUid], self._waypointY[nextUid], self._waypointZ[nextUid], self._speed[nextUid], self._polygon_file_path, self._collision_action))
+                waypoints = [Point(x, y, z) for x, y, z in zip(self._waypointX[nextUid], self._waypointY[nextUid], self._waypointZ[nextUid])]
+                self._managedNodes.append(Uav(nextUid, waypoints, self._speed[nextUid], self._polygon_file_path, self._collision_action, model_selection=2))
 
             # for linearmobility
             else:
-                self._managedNodes.append(Uav(nextUid, Point(uav['startPosX'], uav['startPosY'], uav['startPosZ']),
-                                              Point(uav['endPosX'], uav['endPosY'], uav['endPosZ']), uav['speed'],
-                                              self._polygon_file_path, self._collision_action))
+                self._managedNodes.append(Uav(nextUid, [Point(uav['startPosX'], uav['startPosY'], uav['startPosZ']), Point(uav['endPosX'], uav['endPosY'], uav['endPosZ'])],uav['speed'],self._polygon_file_path, self._collision_action, model_selection=1))
 
         logWrapper.debug("Initialized " + str(len(self._managedNodes)) + " UAVs", True)
 
