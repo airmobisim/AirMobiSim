@@ -211,15 +211,13 @@ def validateConfiguration(config):
         sys.exit()
 
     if linearMobilityFlag == 1 and linearUavs is None:
-        logWrapper.critical("No uav is present in the config file to use linear mobility")
-        sys.exit()
+        logWrapper.debug("No uav is present in the config file to use linear mobility simulator will start with 0 UAV")
 
     if splineMobilityFlag == 1 and splineUavs is None:
         logWrapper.critical('No uavsp is present in the config file to use spline mobility')
         sys.exit()
 
-    if linearMobilityFlag == 1 and (any(not checkNumeric(uav['speed'], "uavSpeed (linearMobility)") for uav in linearUavs) or \
-                                    any(uav['speed'] < 0 for uav in linearUavs)):
+    if linearUavs is not None and linearMobilityFlag == 1 and (any(not checkNumeric(uav['speed'], "uavSpeed (linearMobility)") for uav in linearUavs) or any(uav['speed'] < 0 for uav in linearUavs)):
         logWrapper.critical('uav speed must not be negative.')
         sys.exit()
 
