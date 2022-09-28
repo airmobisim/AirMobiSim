@@ -42,7 +42,7 @@ class Simulation:
     _highestUid = -1
 
     def __init__(self, directory, stepLength, simTimeLimit, playgroundSizeX, playgroundSizeY, playgroundSizeZ,
-                 linearMobilityFlag, splineMobilityFlag, uavs, runnumber, polygon_file_path=None, collision_action=None,
+                 linearMobilityFlag, splineMobilityFlag, uavs, runnumber=0, polygon_file_path=None, collision_action=None,
                  speed=None, waypointX=None, waypointY=None,
                  waypointZ=None):
         logWrapper.debug("Initializing...", True)
@@ -138,7 +138,7 @@ class Simulation:
         return Simulationparameter.simTimeLimit/Simulationparameter.stepLength
 
     @classmethod  # for spline mobility model
-    def from_config_spmob(cls, config, linearMobilityFlag, splineMobilityFlag, directory):
+    def from_config_spmob(cls, config, linearMobilityFlag, splineMobilityFlag, directory, runnumber):
         speed = []
         waypointX = []
         waypointY = []
@@ -159,8 +159,8 @@ class Simulation:
         stepLength, simTimeLimit, playgroundSizeX, playgroundSizeY, playgroundSizeZ = Simulation.load_common_parameters_from_config(config)
 
         return cls(directory, stepLength, simTimeLimit, playgroundSizeX, playgroundSizeY, playgroundSizeZ,
-                   linearMobilityFlag, splineMobilityFlag, uavs, polygon_file_path, collision_action, speed, waypointX,
-                   waypointY, waypointZ)
+                   linearMobilityFlag, splineMobilityFlag, uavs, runnumber, polygon_file_path=polygon_file_path, collision_action=collision_action, speed=speed, waypointX=waypointX,
+                   waypointY=waypointY, waypointZ=waypointZ)
 
     @classmethod  # for linear mobility
     def from_config_linmob(cls, config, linearMobilityFlag, splineMobilityFlag, directory):

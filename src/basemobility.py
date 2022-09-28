@@ -50,14 +50,12 @@ class Basemobility(ABC):
         self._move.setStart(self._uav._waypoints[0], 0)
         self._move.setTempStartPos(self._uav._waypoints[0])
         self._move.setLastPos(self._uav._waypoints[0])
-        self._move.setNextCoordinate(self._uav._waypoints[-1])
+        self._move.setNextCoordinate(self._uav._waypoints[0])
         self._move.setEndPos(self._uav._waypoints[-1])
         
         self._currentWaypointIndex = 0
 
         self._move.setSpeed(self._speed)
-        self._move.setTotalDistance(self.computeTotalDistance())
-        
         self._collisionAction = collision_action  # 1= warn, 2 = no action 3=remove uav; anything else is wrong
         self._obstacleDetector_flag = False
         self.polygon_file_path = polygon_file_path
