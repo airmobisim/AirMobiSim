@@ -8,7 +8,7 @@ col <- cols(
   posZ = col_double()
 )
 
-df <- read_tsv("../results/positionResults.csv", col_types = col)
+df <- read_tsv("../results/positionResults_0.csv", col_types = col)
 
 summary(df)
 plt.lwd = c(2)
