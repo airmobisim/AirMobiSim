@@ -22,7 +22,7 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
 import math
-from abc import ABC
+from abc import ABC, abstractmethod
 import os
 from xml.dom import minidom
 
@@ -66,38 +66,31 @@ class Basemobility(ABC):
         return self._move
 
     def getCurrentPos(self):
-        return self._move.getTempStartPos()
+        if self.getMove().getLinearMobilitySpFlag():
+            return self.getMove().getNextCoordinate()
+        else:
+            return self._move.getTempStartPos()
+
+
 
     # current position function for spline mobility
-    def getCurrentPosSp(self):
-        passedTime = (Simulationparameter.currentSimStep * Simulationparameter.stepLength) - self.getMove().getStartTime()
-        if passedTime==0:
-            return self._uav._waypoints[0]
-        
-        if not self.getMove().getFinalFlag():
-            currentPos = self.getMove().getNextCoordinate()
-            return currentPos
+    # def getCurrentPosSp(self):
+    #     passedTime = (Simulationparameter.currentSimStep * Simulationparameter.stepLength) - self.getMove().getStartTime()
+    #     if passedTime==0:
+    #         return self._uav._waypoints[0]
+    #
+    #     if not self.getMove().getFinalFlag():
+    #         currentPos = self.getMove().getNextCoordinate()
+    #         return currentPos
+    #
+    #     elif self.getMove().getFinalFlag():
+    #         currentPos = self.getMove().getNextCoordinate()
+    #
+    #     return currentPos
 
-        elif self.getMove().getFinalFlag():
-            currentPos = self.getMove().getNextCoordinate()
-
-        return currentPos
-
+    @abstractmethod
     def calculateNextPosition(self):
-        currentDirection = self.getMove().getCurrentDirection()
-        #logWrapper.debug("stepLength is " + str(Simulationparameter.stepLength))
-
-        lastPos = self.getMove().getTempStartPos()
-        # previousPos = self.getMove().getTempStartPos()
-
-        if self.getMove().getFinalFlag():
-            self.getMove().setLastPos(lastPos)
-        else:
-            x = lastPos.x + (currentDirection.x * self.getMove().getSpeed() * Simulationparameter.stepLength)
-            y = lastPos.y + (currentDirection.y * self.getMove().getSpeed() * Simulationparameter.stepLength)
-            z = lastPos.z + (currentDirection.z * self.getMove().getSpeed() * Simulationparameter.stepLength)
-
-            self.getMove().setLastPos(Point(x, y, z))
+        pass
 
 
     def makeMove(self):

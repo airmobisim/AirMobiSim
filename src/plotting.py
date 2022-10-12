@@ -50,7 +50,7 @@ def load_Data():
 
 def make_plot():
     current_file = os.path.abspath(os.path.dirname(__file__))
-    csv_filename = os.path.join(current_file, '../examples/simpleSimulation/results/positionResults.csv')
+    csv_filename = os.path.join(current_file, '../examples/simpleSimulation/results/positionResults_0.csv')
 
     df_simulation = pd.read_csv(csv_filename, sep=r'\t', skipinitialspace=True, engine='python')
     # copy of df_simulation dataframe without affecting the df_simulation

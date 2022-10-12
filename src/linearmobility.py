@@ -20,7 +20,7 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
 import math
-
+from shapely.geometry import Point
 from .basemobility import Basemobility
 from .simulationparameter import Simulationparameter
 
@@ -100,3 +100,20 @@ class Linearmobility(Basemobility):
             print('currentTime:',passedTime,'uav is going to collide at ', futureTime)
 
         self._obstacleDetector_flag = True if detectObstacle == True else self._obstacleDetector_flag
+
+
+    def calculateNextPosition(self):
+        currentDirection = self.getMove().getCurrentDirection()
+        #logWrapper.debug("stepLength is " + str(Simulationparameter.stepLength))
+
+        lastPos = self.getMove().getTempStartPos()
+        # previousPos = self.getMove().getTempStartPos()
+
+        if self.getMove().getFinalFlag():
+            self.getMove().setLastPos(lastPos)
+        else:
+            x = lastPos.x + (currentDirection.x * self.getMove().getSpeed() * Simulationparameter.stepLength)
+            y = lastPos.y + (currentDirection.y * self.getMove().getSpeed() * Simulationparameter.stepLength)
+            z = lastPos.z + (currentDirection.z * self.getMove().getSpeed() * Simulationparameter.stepLength)
+
+            self.getMove().setLastPos(Point(x, y, z))
