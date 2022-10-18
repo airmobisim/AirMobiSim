@@ -144,7 +144,7 @@ class Basemobility(ABC):
 
         detectObstacle = any(obstacle.intersects_path(mplPath.Path([[self.getCurrentPos().x,self.getCurrentPos().y ],[futureCoordinate[0],futureCoordinate[1]]])) for obstacle in self._obstacles)
         if not self._obstacleDetector_flag and detectObstacle and self._collisionAction == 1:
-            logWrapper.warning('Warning ################################ ', True)
-            logWrapper.debug(('currentTime: ' + str(passedTime) + ', uav is going to collide at '+ str(futureTime)))
+            logWrapper.warning('Warning !!! ', True)
+            logWrapper.warning(('currentTime: ' + str(passedTime) + ', uav is going to collide at '+ str(futureTime)),True)
 
         self._obstacleDetector_flag = True if detectObstacle == True else self._obstacleDetector_flag
