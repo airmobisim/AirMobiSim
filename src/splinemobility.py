@@ -41,11 +41,7 @@ class Splinemobility(Basemobility):
         self._waypointZ = waypointZ
         self._move.setTotalDistance(np.sum(Splinemobility.computeSplineDistance(self._waypointX, self._waypointY, self._waypointZ)))
         self._uid = uid
-        self._move.setStart(self._startpos, 0)
-        self._move.setEndPos(self._endpos)
-        self._move.setNextCoordinate(self._startpos)  # holds intermediate point/ current position
         self._move.setLinearMobilitySpFlag(True)    # spline mobility model in use indicator
-        # self._waypointsInsertedFlag=True     # this decides calling of updateWaypointsByIndex()
         # self.updateWaypointsByIndex()     # uncomment this line when you want to use insertion of waypoints
         self._speed = speed
         self._waypointTime = self.insertWaypointTime()
@@ -158,6 +154,26 @@ class Splinemobility(Basemobility):
             distance_of_segments.append(segments_distance)
 
         return distance_of_segments
+
+    def calculateNextPosition(self):
+        move = self.getMove()
+        lastpos = move.getNextCoordinate()
+
+        spl_x = CubicSpline(self._waypointTime, self._waypointX)
+        spl_y = CubicSpline(self._waypointTime, self._waypointY)
+        spl_z = CubicSpline(self._waypointTime, self._waypointZ)
+
+        nextTime = move.getPassedTime() + Simulationparameter.stepLength
+        nextCoordinate = Point(spl_x(nextTime), spl_y(nextTime), spl_z(nextTime))
+        move.setNextCoordinate(nextCoordinate)
+
+        if self.getMove().getFinalFlag():
+            move.setNextCoordinate(lastpos)
+
+        if self._collisionAction != 2:
+            future_time = move.getPassedTime() + Simulationparameter.stepLength
+            move.setFutureCoordinate((spl_x(future_time), spl_y(future_time)))
+            self.manageObstacles(move.getPassedTime(), future_time)
 
 
 

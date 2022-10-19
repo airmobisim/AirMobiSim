@@ -72,22 +72,6 @@ class Basemobility(ABC):
             return self._move.getTempStartPos()
 
 
-
-    # current position function for spline mobility
-    # def getCurrentPosSp(self):
-    #     passedTime = (Simulationparameter.currentSimStep * Simulationparameter.stepLength) - self.getMove().getStartTime()
-    #     if passedTime==0:
-    #         return self._uav._waypoints[0]
-    #
-    #     if not self.getMove().getFinalFlag():
-    #         currentPos = self.getMove().getNextCoordinate()
-    #         return currentPos
-    #
-    #     elif self.getMove().getFinalFlag():
-    #         currentPos = self.getMove().getNextCoordinate()
-    #
-    #     return currentPos
-
     @abstractmethod
     def calculateNextPosition(self):
         pass
@@ -99,7 +83,7 @@ class Basemobility(ABC):
 
     def doLog(self):
         if self.getMove().getLinearMobilitySpFlag():   # log for spline mobility
-            self._resultcollection.logCurrentPosition(self._uid, self.getCurrentPosSp(), self.getMove())
+            self._resultcollection.logCurrentPosition(self._uid, self.getCurrentPos(), self.getMove())
         else:   # log for linear mobility
             self._resultcollection.logCurrentPosition(self._uid, self.getCurrentPos(), self.getMove())
         currentEnergy = self._baseenergy.getcurrentEnergy(self.getMove().getSpeed(), (Simulationparameter.currentSimStep * Simulationparameter.stepLength) - self.getMove().getStartTime())
