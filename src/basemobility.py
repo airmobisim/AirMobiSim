@@ -72,6 +72,7 @@ class Basemobility(ABC):
             return self._move.getTempStartPos()
 
 
+
     @abstractmethod
     def calculateNextPosition(self):
         pass
@@ -102,13 +103,11 @@ class Basemobility(ABC):
         buildings=[]
         for polygon in polygons:
             shape_of_polygon = polygon.attributes['shape'].value
-
             vertex_coordinates= shape_of_polygon.split(' ')       # coordinates are of string type
 
             list_of_coordinates=[]
             for single_vertex in vertex_coordinates:       # x and y coordinates are seperated and converted to float
                 list_of_coordinates.append([float(single_vertex.split(',')[0]),float(single_vertex.split(',')[1])])
-
 
             # forming shape of polygon by joining the polygon coordinates and appended to building list
             buildings.append(mplPath.Path(np.array(list_of_coordinates)))
@@ -131,8 +130,9 @@ class Basemobility(ABC):
             return
         futureCoordinate = self.getMove().getFutureCoordinate()
 
-        detectObstacle = any(obstacle.contains_point(futureCoordinate) for obstacle in self._obstacles)
+        detectObstacle = any(obstacle.intersects_path(mplPath.Path([[self.getCurrentPos().x,self.getCurrentPos().y ],[futureCoordinate[0],futureCoordinate[1]]])) for obstacle in self._obstacles)
         if not self._obstacleDetector_flag and detectObstacle and self._collisionAction == 1:
-            logWrapper.debug(('currentTime: ' + str(passedTime) + ', uav is going to collide at '+ str(futureTime)))
+            logWrapper.warning('Warning !!! ', True)
+            logWrapper.warning(('currentTime: ' + str(passedTime) + ', uav is going to collide at '+ str(futureTime)),True)
 
         self._obstacleDetector_flag = True if detectObstacle == True else self._obstacleDetector_flag

@@ -23,7 +23,6 @@ import math
 from shapely.geometry import Point
 from .basemobility import Basemobility
 from .simulationparameter import Simulationparameter
-
 import src.logWrapper as logWrapper
 
 class Linearmobility(Basemobility):
@@ -70,11 +69,13 @@ class Linearmobility(Basemobility):
         move.setPassedTime(passedTime)
         super().makeMove()
 
-        #if passedTime < self._totalFlightTime:
-        #    if self._collisionAction != 2:
-        #        future_time = passedTime + Simulationparameter.stepLength
-        #        self.setFutureCoordinate()
-        #        self.manageObstacles(passedTime, future_time)
+        if not self.getMove().getFinalFlag():
+           if self._collisionAction != 2:
+               future_time = passedTime + Simulationparameter.stepLength
+               futureCoordinate = (self.getMove().getLastPos().x, self.getMove().getLastPos().y)
+
+               self.getMove().setFutureCoordinate(futureCoordinate)
+               self.manageObstacles(passedTime, future_time)
 
         return True if (self._obstacleDetector_flag and self._collisionAction == 3) or self.getMove().getFinalFlag() else False  # obstacle->remove/not remove node indicator
 
@@ -82,38 +83,18 @@ class Linearmobility(Basemobility):
             return math.sqrt((self._uav._waypoints[-1].x - self._uav._waypoints[self._currentWaypointIndex].x) ** 2 + (self._uav._waypoints[-1].y - self._uav._waypoints[self._currentWaypointIndex].y) ** 2 + (
                 self._uav._waypoints[-1].z - self._uav._waypoints[self._currentWaypointIndex].z) ** 2)
 
-    # set future x,y coordinate for building detection
-    def setFutureCoordinate(self):
-        currentDirection = self.getMove().getCurrentDirection()
-        previousPos = self.getMove().getTempStartPos()
-        x = previousPos.x + (currentDirection.x * self.getMove().getSpeed() * Simulationparameter.stepLength)
-        y = previousPos.y + (currentDirection.y * self.getMove().getSpeed() * Simulationparameter.stepLength)
-
-        futureCoordinate = (x, y)
-
-        # self._obstacleDetector_flag = self._obstacles[0].contains_point(futureCoordinate)
-        # warnings.filterwarnings('once')
-        detectObstacle = self._obstacle[0].contains_point(futureCoordinate)
-        if not self._obstacleDetector_flag and detectObstacle and self._collisionAction==1:
-            # warnings.warn('uav is going to collide in collide')
-            print('WARNING!!!!')
-            print('currentTime:',passedTime,'uav is going to collide at ', futureTime)
-
-        self._obstacleDetector_flag = True if detectObstacle == True else self._obstacleDetector_flag
-
 
     def calculateNextPosition(self):
         currentDirection = self.getMove().getCurrentDirection()
-        #logWrapper.debug("stepLength is " + str(Simulationparameter.stepLength))
-
         lastPos = self.getMove().getTempStartPos()
-        # previousPos = self.getMove().getTempStartPos()
 
         if self.getMove().getFinalFlag():
             self.getMove().setLastPos(lastPos)
+
         else:
             x = lastPos.x + (currentDirection.x * self.getMove().getSpeed() * Simulationparameter.stepLength)
             y = lastPos.y + (currentDirection.y * self.getMove().getSpeed() * Simulationparameter.stepLength)
             z = lastPos.z + (currentDirection.z * self.getMove().getSpeed() * Simulationparameter.stepLength)
 
             self.getMove().setLastPos(Point(x, y, z))
+
