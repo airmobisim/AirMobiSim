@@ -222,8 +222,8 @@ class TestDroCIBridge(unittest.TestCase):
         startuav_obj.id = uid
         startuav_obj.speed = 10
         startuav_obj.angle = 2
-        startuav_obj.mobilityModel=1
-        startuav_obj.removeUav=1
+        # startuav_obj.mobilityModel=1
+        # startuav_obj.removeUav=1
         c1 = startuav_obj.coordinates.add()
         c2 = startuav_obj.coordinates.add()
         c1.x = 0

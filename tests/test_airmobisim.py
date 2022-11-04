@@ -564,7 +564,7 @@ class TestAirmobisim(unittest.TestCase):
         resultCollection_obj.logCurrentPosition(10, Point(1000, 2000, 3000),movemoent_obj)
 
         # result_file_path = resultCollection_obj._logDir + "/examples/simpleSimulation/results/positionResults.csv"
-        result_file_path= os.environ['AIRMOBISIMHOME']+ "/examples/simpleSimulation/results/positionResults_-1.csv"
+        result_file_path= os.environ['AIRMOBISIMHOME']+ "/examples/simpleSimulation/results/positionResults_0.csv"
         df_data = pd.read_csv(result_file_path, sep='\t')
 
         self.assertTrue(df_data.columns[0] == 'uid', 'first column name is not \'uid\'')
@@ -608,7 +608,7 @@ class TestAirmobisim(unittest.TestCase):
 
         resultCollection_obj.logCurrentEnergy(10, 100.0, 1001.1)
 
-        result_file_path = resultCollection_obj._logDir + "energyResults_-1.csv"
+        result_file_path = resultCollection_obj._logDir + "energyResults_0.csv"
         df_data = pd.read_csv(result_file_path, sep='\t')
 
         self.assertTrue(df_data.columns[0] == 'uid', 'first column name is not \'uid\'')
