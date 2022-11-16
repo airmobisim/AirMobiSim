@@ -73,8 +73,9 @@ def make_plot():
             color.append('#%06X' % randint(0, 0xFFFFFF))
 
     fig = make_subplots(
-        rows=3, cols=2,
-        specs=[[{'type': 'scene', 'rowspan': 3}, {'type': 'xy'}],
+        rows=4, cols=2,
+        specs=[[{'type': 'scene', 'rowspan': 4}, {'type': 'xy'}],
+               [None, {'type': 'xy'}],
                [None, {'type': 'xy'}],
                [None, {'type': 'xy'}]
                ]
@@ -113,6 +114,34 @@ def make_plot():
         )
         fig.update_xaxes(title='t(s)', row=3, col=2)
         fig.update_yaxes(title='z(m)', row=3, col=2)
+
+        # for acceleration
+        time, x, y, z = df_uav['passedTime'].to_numpy(), df_uav['posX'].to_numpy(), df_uav['posY'].to_numpy(), df_uav[
+            'posZ'].to_numpy()
+        # coordinates=[[]]
+        coordinates = [[xi, yi, zi] for xi, yi, zi in zip(x, y, z)]
+
+        avg_speed = []
+        time_mid = []
+        for i in range(len(time)):
+            if i < len(time) - 1 and time[i] < 30:
+                distance_between_points = math.sqrt((coordinates[i][0] - coordinates[i + 1][0]) ** 2 + (
+                            coordinates[i][1] - coordinates[i + 1][1]) ** 2 + (coordinates[i][2] - coordinates[i + 1][
+                    2]) ** 2)  # for item in spline_aftertrial
+                time_diff = time[i + 1] - time[i]
+                time_mid_point = (time[i + 1] + time[i]) / 2
+                average_speed = distance_between_points / time_diff
+                avg_speed.append(average_speed)
+                time_mid.append(time_mid_point)
+
+        fig.add_trace(
+            go.Scatter(x=time_mid, y=avg_speed,
+                       mode="lines",
+                       line={"color": color[index]}, name='simulation uav0', showlegend=False), row=4, col=2
+        )
+
+        fig.update_xaxes(title='t(s)', row=4, col=2)
+        fig.update_yaxes(title=' avg v(m/s)', row=4, col=2)
 
     fig.update_layout(scene=dict(
         xaxis_title='X (m)',
