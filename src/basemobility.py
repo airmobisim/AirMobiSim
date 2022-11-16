@@ -123,6 +123,7 @@ class Basemobility(ABC):
         average_velocity = (speed + final_velocity) / 2
         assert average_velocity != 0, 'avarage velocity can not be 0'
         flightTime = distance / average_velocity + currentTime
+        self._totalDistance = distance
         return flightTime
 
     def manageObstacles(self, passedTime,futureTime):

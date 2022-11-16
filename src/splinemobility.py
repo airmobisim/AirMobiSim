@@ -25,7 +25,6 @@ import math
 import numpy as np
 from scipy.interpolate import CubicSpline
 from shapely.geometry import Point
-
 from .basemobility import Basemobility
 from .simulationparameter import Simulationparameter
 
@@ -33,6 +32,9 @@ import src.logWrapper as logWrapper
 
 class Splinemobility(Basemobility):
     def __init__(self, uav, uid, waypointX, waypointY, waypointZ, speed, polygon_file_path=None, collision_action=None):
+
+        self._totalDistance = 0.0
+        self._acceleration = 10.0
         self._startpos = Point(waypointX[0], waypointY[0], waypointZ[0])
         self._endpos = Point(waypointX[-1], waypointY[-1], waypointZ[-1])
         super().__init__(uav, uid, speed, polygon_file_path, collision_action)
@@ -43,37 +45,24 @@ class Splinemobility(Basemobility):
         self._uid = uid
         self._move.setLinearMobilitySpFlag(True)    # spline mobility model in use indicator
         # self.updateWaypointsByIndex()     # uncomment this line when you want to use insertion of waypoints
-        self._speed = speed
         self._waypointTime = self.insertWaypointTime()
         # self._totalFlightTime = self._waypointTime[-1]
-        self._totalFlightTime = self.computeTotalFlightTime(0.0, speed, 0)
+        self._totalFlightTime = self.computeTotalFlightTime(0.0, speed, self._acceleration)
+        self._waypointIndex = self.insertWaypointIndex()
+        self._current_index = 0
+        self._distanceTravelledSoFar = 0.0
 
         logWrapper.debug(f"speed: {str(speed)}; total flightTime: {str(self._totalFlightTime)}" )
         logWrapper.debug(f"startpos: {self._startpos}" )
 
 
     def makeMove(self):
-        # object of Movement
         move = self.getMove()
 
         # calculate the time elapsed
         passedTime = (Simulationparameter.currentSimStep * Simulationparameter.stepLength) - self.getMove().getStartTime()
 
-        if 0.0 <= passedTime < self._totalFlightTime:
-
-            if passedTime != 0.0:
-                spl_x = CubicSpline(self._waypointTime, self._waypointX)
-                spl_y = CubicSpline(self._waypointTime, self._waypointY)
-                spl_z = CubicSpline(self._waypointTime, self._waypointZ)
-
-                nextCoordinate = Point(spl_x(passedTime), spl_y(passedTime), spl_z(passedTime))
-                move.setNextCoordinate(nextCoordinate)
-                if self._collisionAction != 2:
-                    future_time = passedTime + Simulationparameter.stepLength
-                    move.setFutureCoordinate((spl_x(future_time), spl_y(future_time)))
-                    self.manageObstacles(passedTime, future_time)
-
-        elif passedTime >= self._totalFlightTime:
+        if passedTime >= self._totalFlightTime:
             move.setFinalFlag(True)
             # move.setSpeed(0.0)
 
@@ -129,16 +118,13 @@ class Splinemobility(Basemobility):
         waypointCount = len(waypointX)
         waypointIndex = np.linspace(0, waypointCount - 1, num=waypointCount)
 
-
         spl_x = CubicSpline(waypointIndex, waypointX)
         spl_y = CubicSpline(waypointIndex, waypointY)
         spl_z = CubicSpline(waypointIndex, waypointZ)
 
-
         distance_of_segments = []
         for i in range(waypointCount - 1):
-            number_of_small_segment = 100
-
+            number_of_small_segment = 10000
 
             segments_of_index = np.linspace(waypointIndex[i], waypointIndex[i + 1], number_of_small_segment)
             segments_small_x = spl_x(segments_of_index)
@@ -159,12 +145,20 @@ class Splinemobility(Basemobility):
         move = self.getMove()
         lastpos = move.getNextCoordinate()
 
-        spl_x = CubicSpline(self._waypointTime, self._waypointX)
-        spl_y = CubicSpline(self._waypointTime, self._waypointY)
-        spl_z = CubicSpline(self._waypointTime, self._waypointZ)
+        spl_x = CubicSpline(self._waypointIndex, self._waypointX)
+        spl_y = CubicSpline(self._waypointIndex, self._waypointY)
+        spl_z = CubicSpline(self._waypointIndex, self._waypointZ)
+        
+        if self._acceleration != 0:
+            newVelocity = move.getSpeed() + self._acceleration * Simulationparameter.stepLength
+            move.setSpeed(newVelocity)
 
-        nextTime = move.getPassedTime() + Simulationparameter.stepLength
-        nextCoordinate = Point(spl_x(nextTime), spl_y(nextTime), spl_z(nextTime))
+        distance_to_travel = move.getSpeed() * Simulationparameter.stepLength + 0.5 * self._acceleration * (
+            Simulationparameter.stepLength) ** 2
+
+        self.computeIndexForDistance(distance_to_travel)
+
+        nextCoordinate = Point(spl_x(self._current_index), spl_y(self._current_index), spl_z(self._current_index))
         move.setNextCoordinate(nextCoordinate)
 
         if self.getMove().getFinalFlag():
@@ -172,12 +166,57 @@ class Splinemobility(Basemobility):
 
         if self._collisionAction != 2:
             future_time = move.getPassedTime() + Simulationparameter.stepLength
-            move.setFutureCoordinate((spl_x(future_time), spl_y(future_time)))
+            move.setFutureCoordinate((spl_x(self._current_index), spl_y(self._current_index)))
             self.manageObstacles(move.getPassedTime(), future_time)
 
+    def insertWaypointIndex(self):
+        segment_distance = Splinemobility.computeSplineDistance(self._waypointX, self._waypointY, self._waypointZ)
+        waypointIndex = []
+        max_index_value = 1000
+        for i in range(len(self._waypointX)):
+            if i == 0:
+                waypointIndex.append(0)
+            elif i == len(self._waypointX) - 1:
+                waypointIndex.append(max_index_value)
 
+            else:
+                indexValue_needed_for_this_segment = (segment_distance[i - 1] / self._totalDistance) * max_index_value
+                waypointIndex.append(waypointIndex[-1] + indexValue_needed_for_this_segment)
 
+        return waypointIndex
 
+    def computeIndexForDistance(self, distance_to_travel):
+        # print(distance_to_travel)
+        spl_x = CubicSpline(self._waypointIndex, self._waypointX)
+        spl_y = CubicSpline(self._waypointIndex, self._waypointY)
+        spl_z = CubicSpline(self._waypointIndex, self._waypointZ)
 
+        spl_xd = spl_x(self._waypointIndex, 1)
+        spl_yd = spl_y(self._waypointIndex, 1)
+        spl_zd = spl_z(self._waypointIndex, 1)
 
+        spl_x = CubicSpline(self._waypointIndex, spl_xd)
+        spl_y = CubicSpline(self._waypointIndex, spl_yd)
+        spl_z = CubicSpline(self._waypointIndex, spl_zd)
 
+        if self._totalDistance - self._distanceTravelledSoFar >= distance_to_travel:
+            check_index = self._current_index + 0.00001
+            index_found = False
+            while check_index <= 1000:
+                integralx = spl_x.integrate(self._current_index, check_index)
+                intergraly = spl_y.integrate(self._current_index, check_index)
+                intergralz = spl_z.integrate(self._current_index, check_index)
+
+                dis_per_interval = math.sqrt(integralx ** 2 + intergraly ** 2 + intergralz ** 2)
+                if dis_per_interval == distance_to_travel or dis_per_interval > distance_to_travel:
+                    index_found = True
+                    break;
+                else:
+                    check_index = check_index + 0.001
+
+            if index_found:
+                self._current_index = check_index
+                self._distanceTravelledSoFar += distance_to_travel
+
+            else:
+                self.getMove().setFinalFlag(True)
