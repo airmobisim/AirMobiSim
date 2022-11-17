@@ -180,6 +180,7 @@ class AirMobiSim(airmobisim_pb2_grpc.AirMobiSimServicer):
         if uav is not None:
             if request.index == -1:
                 uav.addWaypoint(Point(request.x, request.y, request.z))
+                uav.setWaypointInsertedFlag(True)
             else:
                 raise Exception("Not yet implemented")
         else:

@@ -34,7 +34,7 @@ class Splinemobility(Basemobility):
     def __init__(self, uav, uid, waypointX, waypointY, waypointZ, speed, polygon_file_path=None, collision_action=None):
 
         self._totalDistance = 0.0
-        self._acceleration = 10.0
+        self._acceleration = 2.0
         self._startpos = Point(waypointX[0], waypointY[0], waypointZ[0])
         self._endpos = Point(waypointX[-1], waypointY[-1], waypointZ[-1])
         super().__init__(uav, uid, speed, polygon_file_path, collision_action)
@@ -45,12 +45,17 @@ class Splinemobility(Basemobility):
         self._uid = uid
         self._move.setLinearMobilitySpFlag(True)    # spline mobility model in use indicator
         # self.updateWaypointsByIndex()     # uncomment this line when you want to use insertion of waypoints
-        self._waypointTime = self.insertWaypointTime()
+        # self._waypointTime = self.insertWaypointTime()
         # self._totalFlightTime = self._waypointTime[-1]
         self._totalFlightTime = self.computeTotalFlightTime(0.0, speed, self._acceleration)
+        self._indexPerUnitDistance = 50
+        self._max_index_value = None
         self._waypointIndex = self.insertWaypointIndex()
         self._current_index = 0
         self._distanceTravelledSoFar = 0.0
+
+
+
 
         logWrapper.debug(f"speed: {str(speed)}; total flightTime: {str(self._totalFlightTime)}" )
         logWrapper.debug(f"startpos: {self._startpos}" )
@@ -58,6 +63,9 @@ class Splinemobility(Basemobility):
 
     def makeMove(self):
         move = self.getMove()
+
+        if self._uav.getWaypointInsertedFlag():
+            self.insertWaypoint()
 
         # calculate the time elapsed
         passedTime = (Simulationparameter.currentSimStep * Simulationparameter.stepLength) - self.getMove().getStartTime()
@@ -70,27 +78,18 @@ class Splinemobility(Basemobility):
         super().makeMove()
         return True if self._obstacleDetector_flag and self._collisionAction == 3 else False
 
-    def updateWaypointsByIndex(self):
 
-        waypointsIndex, waypointsX, waypointsY, waypointsZ = AirMobiSim.getWaypointsByIndex()
+    def insertWaypoint(self):
+        self._uav.setWaypointInsertedFlag(False)
 
-        if waypointsIndex != None:
-            x = self._waypointX.copy()
-            y = self._waypointY.copy()
-            z = self._waypointZ.copy()
-            x = [float(i) for i in x]  # type cast to float required by np.insert()
-            y = [float(i) for i in y]
-            z = [float(i) for i in z]
+        newWaypointsX, newWaypointsY, newWaypointsZ = self._uav.splitWaypoints()
 
-            for idx_new, x_new, y_new, z_new in zip(waypointsIndex, waypointsX, waypointsY, waypointsZ):
-                x = np.insert(x, idx_new, x_new)
-                y = np.insert(y, idx_new, y_new)
-                z = np.insert(z, idx_new, z_new)
+        self._waypointX, self._waypointY, self._waypointZ = newWaypointsX, newWaypointsY, newWaypointsZ
+        self._move.setTotalDistance(np.sum(Splinemobility.computeSplineDistance(self._waypointX, self._waypointY, self._waypointZ)))
+        self._totalFlightTime = self.computeTotalFlightTime(0.0, self._speed, self._acceleration)
+        self._waypointIndex = self.insertWaypointIndex()
 
-            self._waypointX = x
-            self._waypointY = y
-            self._waypointZ = z
-            logWrapper.debug('waypoint inserted')
+        logWrapper.debug('waypoint inserted')
 
     def insertWaypointTime(self):
 
@@ -153,8 +152,7 @@ class Splinemobility(Basemobility):
             newVelocity = move.getSpeed() + self._acceleration * Simulationparameter.stepLength
             move.setSpeed(newVelocity)
 
-        distance_to_travel = move.getSpeed() * Simulationparameter.stepLength + 0.5 * self._acceleration * (
-            Simulationparameter.stepLength) ** 2
+        distance_to_travel = move.getSpeed() * Simulationparameter.stepLength + 0.5 * self._acceleration * (Simulationparameter.stepLength) ** 2
 
         self.computeIndexForDistance(distance_to_travel)
 
@@ -172,16 +170,19 @@ class Splinemobility(Basemobility):
     def insertWaypointIndex(self):
         segment_distance = Splinemobility.computeSplineDistance(self._waypointX, self._waypointY, self._waypointZ)
         waypointIndex = []
-        max_index_value = 1000
+        # max_index_value = 1000
+        self._max_index_value = np.sum(segment_distance) * self._indexPerUnitDistance
         for i in range(len(self._waypointX)):
             if i == 0:
                 waypointIndex.append(0)
             elif i == len(self._waypointX) - 1:
-                waypointIndex.append(max_index_value)
+                waypointIndex.append(self._max_index_value)
 
             else:
-                indexValue_needed_for_this_segment = (segment_distance[i - 1] / self._totalDistance) * max_index_value
+                # indexValue_needed_for_this_segment = (segment_distance[i - 1] / self._totalDistance) * self._max_index_value
+                indexValue_needed_for_this_segment = segment_distance[i - 1] * self._indexPerUnitDistance
                 waypointIndex.append(waypointIndex[-1] + indexValue_needed_for_this_segment)
+
 
         return waypointIndex
 
@@ -202,7 +203,8 @@ class Splinemobility(Basemobility):
         if self._totalDistance - self._distanceTravelledSoFar >= distance_to_travel:
             check_index = self._current_index + 0.00001
             index_found = False
-            while check_index <= 1000:
+            # while check_index <= 1000:
+            while check_index <= self._max_index_value:
                 integralx = spl_x.integrate(self._current_index, check_index)
                 intergraly = spl_y.integrate(self._current_index, check_index)
                 intergralz = spl_z.integrate(self._current_index, check_index)

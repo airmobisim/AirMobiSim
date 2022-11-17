@@ -44,6 +44,7 @@ class Uav():
         self._waypoints = waypoints
         self._uid = uid
         self._angle = self.calculateAngle(startPos, endPos)
+        self._waypointInserted = False
 
         if model_selection == 1:
             self._mobility = Linearmobility(self, uid, self._angle, speed, polygon_file_path, collision_action)
@@ -92,3 +93,9 @@ class Uav():
             wpZ.append(wp.z)
 
         return wpX, wpY, wpZ
+
+    def setWaypointInsertedFlag(self, flag):
+        self._waypointInserted = flag
+
+    def getWaypointInsertedFlag(self):
+        return self._waypointInserted
