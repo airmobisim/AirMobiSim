@@ -53,6 +53,7 @@ class Splinemobility(Basemobility):
         self._waypointIndex = self.insertWaypointIndex()
         self._current_index = 0
         self._distanceTravelledSoFar = 0.0
+        self._angle = 0.0
 
 
 
