@@ -68,7 +68,6 @@ class Linearmobility(Basemobility):
     def computeDistance(self, c1, c2):
         return math.sqrt((c2.x - c1.x) ** 2 + (c2.y - c1.y) ** 2 + (c2.z - c1.z) ** 2)
 
-
     def calculateNextPosition(self):
         currentDirection = self.getMove().getCurrentDirection()
         lastPos = self.getMove().getTempStartPos()

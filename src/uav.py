@@ -47,7 +47,7 @@ class Uav():
         self._waypointInserted = False
 
         if model_selection == 1:
-            self._mobility = Linearmobility(self, uid, self._angle, speed, polygon_file_path, collision_action,removeNode)
+            self._mobility = Linearmobility(self, uid, self._angle, speed, polygon_file_path, collision_action,removeNode=False)
             self._mobility.updateEndPos()
 
         elif model_selection == 2:
