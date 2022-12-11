@@ -27,12 +27,13 @@ import src.logWrapper as logWrapper
 
 class Linearmobility(Basemobility):
 
-    def __init__(self, uav, uid, angle, speed=0, polygon_file_path=None,collision_action=None):
+    def __init__(self, uav, uid, angle, speed=0, polygon_file_path=None,collision_action=None,removeNode=False):
         super().__init__(uav, uid, speed, polygon_file_path,collision_action)
         self._uid = uid
         self._angle = angle
         self._acceleration = 0  # acceleration not considered yet
         self._totalFlightTime = self.computeTotalFlightTime(0.0,speed,self._acceleration)
+        self._removeNode = removeNode
 
     def updateEndPos(self):
         self._move.setEndPos(self._uav._waypoints[-1])
@@ -71,7 +72,7 @@ class Linearmobility(Basemobility):
                self.getMove().setFutureCoordinate(futureCoordinate)
                self.manageObstacles(passedTime, future_time)
 
-        return True if (self._obstacleDetector_flag and self._collisionAction == 3) or self.getMove().getFinalFlag() else False  # obstacle->remove/not remove node indicator
+        return True if (self._obstacleDetector_flag and self._collisionAction == 3) or (self.getMove().getFinalFlag() and self._removeNode)  else False  # obstacle->remove/not remove node indicator
 
     def computeTotalDistance(self):
             return math.sqrt((self._uav._waypoints[-1].x - self._uav._waypoints[self._currentWaypointIndex].x) ** 2 + (self._uav._waypoints[-1].y - self._uav._waypoints[self._currentWaypointIndex].y) ** 2 + (
