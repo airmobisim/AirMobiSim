@@ -79,7 +79,7 @@ class AirMobiSim(airmobisim_pb2_grpc.AirMobiSimServicer):
                     flag = node.getMobility().makeMove()
                     if flag:
                         
-                        logWrapper.debug('removing node ' +node._uid,  True)
+                        logWrapper.debug('removing node ' + str(node._uid),  True)
                         self.simulation_obj._managedNodes.remove(node)
 
                     self._isInitialized = True

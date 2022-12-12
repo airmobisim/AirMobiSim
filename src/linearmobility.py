@@ -44,8 +44,7 @@ class Linearmobility(Basemobility):
         move.setTempStartPos(move.getLastPos())
 
         distancePerstep = self.getMove().getSpeed()*Simulationparameter.stepLength
-        distance = self.getCurrentPos().distance(self._uav._waypoints[self._currentWaypointIndex+1])
-        if self.getCurrentPos().distance(self._uav._waypoints[self._currentWaypointIndex+1])<distancePerstep:
+        if not self.getMove().getFinalFlag() and self.computeDistance(self.getCurrentPos(),self._uav._waypoints[self._currentWaypointIndex+1])<distancePerstep: 
             logWrapper.info("UAV " + self._uid.__str__() + " reached waypoint " + self._currentWaypointIndex.__str__() + " waypoint position: " + self._uav._waypoints[self._currentWaypointIndex+1].__str__() + " current position: " + self.getCurrentPos().__str__())
             self._currentWaypointIndex = self._currentWaypointIndex  + 1
             if self._currentWaypointIndex == len(self._uav._waypoints)-1: #there are no further waypoints
@@ -64,19 +63,10 @@ class Linearmobility(Basemobility):
         move.setPassedTime(passedTime)
         super().makeMove()
 
-        if not self.getMove().getFinalFlag():
-           if self._collisionAction != 2:
-               future_time = passedTime + Simulationparameter.stepLength
-               futureCoordinate = (self.getMove().getLastPos().x, self.getMove().getLastPos().y)
-
-               self.getMove().setFutureCoordinate(futureCoordinate)
-               self.manageObstacles(passedTime, future_time)
-
         return True if (self._obstacleDetector_flag and self._collisionAction == 3) or (self.getMove().getFinalFlag() and self._removeNode)  else False  # obstacle->remove/not remove node indicator
 
-    def computeTotalDistance(self):
-            return math.sqrt((self._uav._waypoints[-1].x - self._uav._waypoints[self._currentWaypointIndex].x) ** 2 + (self._uav._waypoints[-1].y - self._uav._waypoints[self._currentWaypointIndex].y) ** 2 + (
-                self._uav._waypoints[-1].z - self._uav._waypoints[self._currentWaypointIndex].z) ** 2)
+    def computeDistance(self, c1, c2):
+        return math.sqrt((c2.x - c1.x) ** 2 + (c2.y - c1.y) ** 2 + (c2.z - c1.z) ** 2)
 
 
     def calculateNextPosition(self):
