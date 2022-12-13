@@ -80,7 +80,7 @@ class Simulation:
 
         elapsed = (Simulationparameter.current_milli_time() - Simulationparameter.simStartTime) / 1000.0
         p = 100 / Simulationparameter.simTimeLimit * t
-        logWrapper.debug("t = " + str(t) + "   Elapsed: " +str(elapsed) +"   " + str(p) + " percent completed", True)
+        logWrapper.debug("t = " + str(round(t, 2)) + "   Elapsed: " +str(round(elapsed, 2)) +"   " + str(round(p, 2)) + " percent completed", True)
 
 
     def manageSimulation(self):
