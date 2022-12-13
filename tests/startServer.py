@@ -1,5 +1,6 @@
+#!/usr/bin/env python3
 #
-# Copyright (C) 2022 Tobias Hardes <tobias.hardes@uni-paderborn.de>
+# Copyright (C) 2022 Touhid Hossain Pritom <pritom@campus.uni-paderborn.de>
 #
 # Documentation for these modules is at http://veins.car2x.org/
 #
@@ -19,14 +20,6 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
+from tests.test_DroCIBridge import startGrpcServer
 
-class Singleton(type):
-    _instances = {}
-    def __call__(cls, *args, **kwargs):
-        if cls not in cls._instances:
-            cls._instances[cls] = super(Singleton, cls).__call__(*args, **kwargs)
-        return cls._instances[cls]
-
-    @classmethod
-    def destroy(cls):
-        cls._instances = {}
+startGrpcServer()

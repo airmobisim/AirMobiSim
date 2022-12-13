@@ -50,14 +50,12 @@ class Basemobility(ABC):
         self._move.setStart(self._uav._waypoints[0], 0)
         self._move.setTempStartPos(self._uav._waypoints[0])
         self._move.setLastPos(self._uav._waypoints[0])
-        self._move.setNextCoordinate(self._uav._waypoints[-1])
+        self._move.setNextCoordinate(self._uav._waypoints[0])
         self._move.setEndPos(self._uav._waypoints[-1])
         
         self._currentWaypointIndex = 0
 
         self._move.setSpeed(self._speed)
-        self._move.setTotalDistance(self.computeTotalDistance())
-        
         self._collisionAction = collision_action  # 1= warn, 2 = no action 3=remove uav; anything else is wrong
         self._obstacleDetector_flag = False
         self.polygon_file_path = polygon_file_path
@@ -68,22 +66,12 @@ class Basemobility(ABC):
         return self._move
 
     def getCurrentPos(self):
-        return self._move.getTempStartPos()
+        if self.getMove().getLinearMobilitySpFlag():
+            return self.getMove().getNextCoordinate()
+        else:
+            return self._move.getTempStartPos()
 
-    # current position function for spline mobility
-    def getCurrentPosSp(self):
-        passedTime = (Simulationparameter.currentSimStep * Simulationparameter.stepLength) - self.getMove().getStartTime()
-        if passedTime==0:
-            return self._uav._waypoints[0]
-        
-        if not self.getMove().getFinalFlag():
-            currentPos = self.getMove().getNextCoordinate()
-            return currentPos
 
-        elif self.getMove().getFinalFlag():
-            currentPos = self.getMove().getNextCoordinate()
-
-        return currentPos
 
     @abstractmethod
     def calculateNextPosition(self):
@@ -96,7 +84,7 @@ class Basemobility(ABC):
 
     def doLog(self):
         if self.getMove().getLinearMobilitySpFlag():   # log for spline mobility
-            self._resultcollection.logCurrentPosition(self._uid, self.getCurrentPosSp(), self.getMove())
+            self._resultcollection.logCurrentPosition(self._uid, self.getCurrentPos(), self.getMove())
         else:   # log for linear mobility
             self._resultcollection.logCurrentPosition(self._uid, self.getCurrentPos(), self.getMove())
         currentEnergy = self._baseenergy.getcurrentEnergy(self.getMove().getSpeed(), (Simulationparameter.currentSimStep * Simulationparameter.stepLength) - self.getMove().getStartTime())
@@ -135,6 +123,7 @@ class Basemobility(ABC):
         average_velocity = (speed + final_velocity) / 2
         assert average_velocity != 0, 'avarage velocity can not be 0'
         flightTime = distance / average_velocity + currentTime
+        self._totalDistance = distance
         return flightTime
 
     def manageObstacles(self, passedTime,futureTime):

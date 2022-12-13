@@ -59,12 +59,6 @@ class Linearmobility(Basemobility):
         move.setDirectionByTarget()
         newSpeed = move.getSpeed() + self._acceleration * Simulationparameter.stepLength
 
-       # if passedTime >= self._totalFlightTime:
-           # newSpeed = 0.0
-           # self._acceleration = 0.0
-           # print("passedTime >= self._totalFlightTime")
-           # self.getMove().setFinalFlag(True)
-
         move.setSpeed(newSpeed)
         move.setPassedTime(passedTime)
         super().makeMove()
@@ -97,3 +91,4 @@ class Linearmobility(Basemobility):
             z = lastPos.z + (currentDirection.z * self.getMove().getSpeed() * Simulationparameter.stepLength)
 
             self.getMove().setLastPos(Point(x, y, z))
+

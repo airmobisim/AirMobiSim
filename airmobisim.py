@@ -265,7 +265,7 @@ def initializeSimulation(config, directory, linearMobilityFlag, splineMobilityFl
     global simulation
     if splineMobilityFlag:
         logWrapper.debug("Launch spline mobility")
-        simulation = Simulation.from_config_spmob(config, linearMobilityFlag, splineMobilityFlag, directory)
+        simulation = Simulation.from_config_spmob(config, linearMobilityFlag, splineMobilityFlag, directory, runnumber)
     else:
         logWrapper.debug("Launch linear mobility")
         polygon_file = config['obstacle_detection']['polygon_file']
