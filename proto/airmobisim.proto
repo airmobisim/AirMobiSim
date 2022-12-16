@@ -84,7 +84,6 @@ message StartUav{
     int32 mobilityModel = 5;
     bool removeNode = 6;
 }
-}
 
 message Coordinates{
     double x = 1;
