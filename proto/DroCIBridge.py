@@ -122,7 +122,7 @@ class AirMobiSim(airmobisim_pb2_grpc.AirMobiSimServicer):
         """
         print("Insert UAV with ID " + str(request.id), flush=True)
         # TODO: Check if ID already exists
-        self.simulation_obj._managedNodes.append(Uav(request.id, [Point(request.coordinates[0].x, request.coordinates[0].y, request.coordinates[0].z), Point(request.coordinates[1].x, request.coordinates[1].y, request.coordinates[1].z)], speed=request.speed, angle=request.angle, model_selection=1, removeNode=request.removeNode))
+        self.simulation_obj._managedNodes.append(Uav(request.id, [Point(request.coordinates[0].x, request.coordinates[0].y, request.coordinates[0].z), Point(request.coordinates[1].x, request.coordinates[1].y, request.coordinates[1].z)], speed=request.speed, angle=request.angle, model_selection=request.mobilityModel, removeNode=request.removeNode))
         return struct_pb2.Value()
 
     def DeleteUAV(self, request, context):
