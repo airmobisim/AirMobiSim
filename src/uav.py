@@ -35,7 +35,7 @@ class Uav():
     _mobility = None
     _waypoints = []
 
-    def __init__(self, uid, waypoints: list[Point], speed, polygon_file_path=None, collision_action=None,model_selection=None, removeNode=False):
+    def __init__(self, uid, waypoints: list[Point], speed, polygon_file_path=None, collision_action=None, angle=0.0, model_selection=None, removeNode=False):
         if model_selection != 1 and model_selection != 2:
             logWrapper.critical(f'model_selection value can either be 1 or 2 but given {model_selection}. 1 for linear model and 2 for spline model. check uav.py')
             sys.exit()
