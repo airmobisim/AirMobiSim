@@ -152,8 +152,7 @@ then
 	if [[  "$OSTYPE" == "darwin"* ]]; then
 		brew install poetry
 	else
-		curl -sSL https://install.python-poetry.org | python3
-		export PATH="$HOME/.local/share/pypoetry/venv/bin:$PATH"
+		curl -sSL https://install.python-poetry.org | python3 - --version 1.2.0
 	fi
 fi
 echo "Switching to python 3.9.0"
@@ -228,7 +227,7 @@ echo "Starting installation of conan dependencies"
 cd ..
 
 if [  ! -d "AirMobiSim_libveins" ]; then
-  git clone https://git.cms-labs.org/git/hardes/AirMobiSim_libveins
+  git clone https://github.com/airmobisim/AirMobiSim_libveins
 fi
 cd AirMobiSim_libveins
 
@@ -248,8 +247,8 @@ echo "Successfully installed AirMobiSim!"
 echo "Please run the following commands or add them to your .bashrc/.zshrc/..."
 
 echo "-"
-echo "'export PATH="\$HOME/.poetry/bin:\$PATH"'"
-echo "'export AIRMOBISIMHOME=$AIRMOBISIMDIR'"
+echo "export PATH="\$HOME/.poetry/bin:\$PATH""
+echo "export AIRMOBISIMHOME=$AIRMOBISIMDIR"
 echo "-"
 
 echo "You can run AirMobiSim with the command 'poetry run ./airmobisim.py'"
