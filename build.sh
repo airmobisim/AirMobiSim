@@ -173,6 +173,7 @@ poetry run python --version
 
 poetry install
 export PATH="$HOME/.poetry/bin:$PATH"
+export PATH="$HOME/.local/bin:$PATH"
 
 pip3 install conan==1.44.1 # We need a local installation outside poetry, since conan is required for the OMNeT++ part
 AIRMOBISIMDIR=$(pwd)
@@ -247,7 +248,7 @@ echo "Successfully installed AirMobiSim!"
 echo "Please run the following commands or add them to your .bashrc/.zshrc/..."
 
 echo "-"
-echo "export PATH="\$HOME/.poetry/bin:\$PATH""
+echo "export PATH="\$HOME/.local/bin:\$PATH""
 echo "export AIRMOBISIMHOME=$AIRMOBISIMDIR"
 echo "-"
 
