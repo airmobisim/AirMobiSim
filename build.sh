@@ -174,7 +174,7 @@ poetry run python --version
 poetry install
 export PATH="$HOME/.poetry/bin:$PATH"
 
-pip3 install conan # We need a local installation outside poetry, since conan is required for the OMNeT++ part
+pip3 install conan==1.44.1 # We need a local installation outside poetry, since conan is required for the OMNeT++ part
 AIRMOBISIMDIR=$(pwd)
 
 export AIRMOBISIMHOME=$AIRMOBISIMDIR
