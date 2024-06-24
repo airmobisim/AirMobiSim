@@ -94,15 +94,23 @@ class Simulation:
         if self._startUavs is not None:
             for uav in self._startUavs:
                 nextUid = self.getNextUid()
+                
+                if "remove_NodeAtDestination" in uav:
+                    remove_NodeAtDestination = uav["remove_NodeAtDestination"]
+                else:
+                    remove_NodeAtDestination = False
 
+                angle =0.0 # example hard coded varible pass
                 # for spline mobility
                 if self._splineMobilityFlag:
+                    model_spline = 2
                     waypoints = [Point(x, y, z) for x, y, z in zip(self._waypointX[nextUid], self._waypointY[nextUid], self._waypointZ[nextUid])]
-                    self._managedNodes.append(Uav(nextUid, waypoints, self._speed[nextUid], self._polygon_file_path, self._collision_action, model_selection=2))
+                    self._managedNodes.append(Uav(nextUid, waypoints, self._speed[nextUid], self._polygon_file_path, self._collision_action,angle, model_spline, remove_NodeAtDestination))
 
                 # for linearmobility
                 else:
-                    self._managedNodes.append(Uav(nextUid, [Point(uav['startPosX'], uav['startPosY'], uav['startPosZ']), Point(uav['endPosX'], uav['endPosY'], uav['endPosZ'])],uav['speed'],self._polygon_file_path, self._collision_action, model_selection=1))
+                    model_linear = 1
+                    self._managedNodes.append(Uav(nextUid, [Point(uav['startPosX'], uav['startPosY'], uav['startPosZ']), Point(uav['endPosX'], uav['endPosY'], uav['endPosZ'])],uav['speed'],self._polygon_file_path, self._collision_action, angle, model_linear, remove_NodeAtDestination))
 
         logWrapper.debug("Initialized " + str(len(self._managedNodes)) + " UAVs", True)
 

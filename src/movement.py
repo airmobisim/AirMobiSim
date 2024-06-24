@@ -49,6 +49,7 @@ class Movement:
         self._linear_mobility_sp = False  # spline mobility model in use?
         self._waypointsInsertedFlag = False
         self._totalDistance = 0.0
+        self._prevDistance = None
 
 
     def setFinalFlag(self, flag):
@@ -129,6 +130,12 @@ class Movement:
 
     def getTotalDistance(self):
         return self._totalDistance
+    
+    def setPrevDistance(self, prevDistance):
+        self._prevDistance = prevDistance
+
+    def getPrevDistance(self):
+        return self._prevDistance
 
     def getCurrentDirection(self):
         return self._currentDirection
@@ -140,6 +147,15 @@ class Movement:
 
         direction = Point(self.getEndPos().x - self.getTempStartPos().x, self.getEndPos().y - self.getTempStartPos().y, self.getEndPos().z - self.getTempStartPos().z)
         distance = math.sqrt((self.getEndPos().x - self.getTempStartPos().x) ** 2 + (self.getEndPos().y - self.getTempStartPos().y) ** 2 + (self.getEndPos().z - self.getTempStartPos().z) ** 2)
+        
+        if self.getPrevDistance() is None:
+            self.setPrevDistance(distance)
+
+        if not self.getFinalFlag():
+            if (distance > self.getPrevDistance()):
+                self.setFinalFlag(True)
+            else:
+                self.setPrevDistance(distance)
 
         direction = np.array([direction.x, direction.y, direction.z])
         distance = np.array([distance, distance, distance])

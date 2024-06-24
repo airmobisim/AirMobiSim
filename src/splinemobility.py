@@ -54,6 +54,10 @@ class Splinemobility(Basemobility):
         self._current_index = 0
         self._distanceTravelledSoFar = 0.0
         self._angle = 0.0
+        self._need_to_generate_spline= True
+        self._d_spl_x = None
+        self._d_spl_y = None
+        self._d_spl_z = None
 
 
 
@@ -67,6 +71,7 @@ class Splinemobility(Basemobility):
 
         if self._uav.getWaypointInsertedFlag():
             self.insertWaypoint()
+            self._need_to_generate_spline= True
 
         # calculate the time elapsed
         passedTime = (Simulationparameter.currentSimStep * Simulationparameter.stepLength) - self.getMove().getStartTime()
@@ -188,19 +193,12 @@ class Splinemobility(Basemobility):
         return waypointIndex
 
     def computeIndexForDistance(self, distance_to_travel):
-        # print(distance_to_travel)
-        spl_x = CubicSpline(self._waypointIndex, self._waypointX)
-        spl_y = CubicSpline(self._waypointIndex, self._waypointY)
-        spl_z = CubicSpline(self._waypointIndex, self._waypointZ)
-
-        spl_xd = spl_x(self._waypointIndex, 1)
-        spl_yd = spl_y(self._waypointIndex, 1)
-        spl_zd = spl_z(self._waypointIndex, 1)
-
-        spl_x = CubicSpline(self._waypointIndex, spl_xd)
-        spl_y = CubicSpline(self._waypointIndex, spl_yd)
-        spl_z = CubicSpline(self._waypointIndex, spl_zd)
-
+        if self._need_to_generate_spline:
+            self.generateDifferentiatedSpline()
+            self._need_to_generate_spline=False  
+        
+        spl_x, spl_y, spl_z= self.getDifferentiatedSpline()
+        
         if self._totalDistance - self._distanceTravelledSoFar >= distance_to_travel:
             check_index = self._current_index + 0.00001
             index_found = False
@@ -215,7 +213,7 @@ class Splinemobility(Basemobility):
                     index_found = True
                     break;
                 else:
-                    check_index = check_index + 0.001
+                    check_index = check_index + 0.01
 
             if index_found:
                 self._current_index = check_index
@@ -223,3 +221,26 @@ class Splinemobility(Basemobility):
 
             else:
                 self.getMove().setFinalFlag(True)
+
+    def generateDifferentiatedSpline(self):
+        spl_x = CubicSpline(self._waypointIndex, self._waypointX)
+        spl_y = CubicSpline(self._waypointIndex, self._waypointY)
+        spl_z = CubicSpline(self._waypointIndex, self._waypointZ)
+
+        spl_xd = spl_x(self._waypointIndex, 1)
+        spl_yd = spl_y(self._waypointIndex, 1)
+        spl_zd = spl_z(self._waypointIndex, 1)
+
+        spl_x = CubicSpline(self._waypointIndex, spl_xd)
+        spl_y = CubicSpline(self._waypointIndex, spl_yd)
+        spl_z = CubicSpline(self._waypointIndex, spl_zd)
+
+        self.setDifferentiatedSpline(spl_x,spl_y,spl_z)
+
+    def setDifferentiatedSpline(self, dspl_x,dspl_y,dspl_z):
+        self._d_spl_x=dspl_x
+        self._d_spl_y=dspl_y
+        self._d_spl_z=dspl_z
+
+    def getDifferentiatedSpline(self):
+        return self._d_spl_x, self._d_spl_y, self._d_spl_z

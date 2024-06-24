@@ -81,6 +81,8 @@ message StartUav{
     repeated Coordinates coordinates = 2;
     double speed = 3;
     double angle = 4;
+    int32 mobilityModel = 5;
+    bool removeNode = 6;
 }
 
 message Coordinates{
