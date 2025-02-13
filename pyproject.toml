@@ -2,24 +2,23 @@
 name = "airmobisim"
 version = "0.1"
 description = ""
-authors = []
+authors = ["Tobias Hardes", "Dalisha Logan", "Touhid Hossain Pritom"]
 
 [tool.poetry.dependencies]
-python = "3.9.0"
-numpy = "==1.19.5"
+python = "3.11.2"
+numpy = ">=1.24.0"  
 docutils = ">=0.3"
-grpcio = "==1.38.1"
-grpcio-tools = "==1.38.1"
-geopandas = "==0.9.0"
-pyproj = "==3.1.0"
-Shapely = "==1.7.1"
-Fiona = "==1.8.20"
+grpcio = "==1.51.1"  
+grpcio-tools = "==1.51.1"
+geopandas = "==0.12.2"  
+pyproj = "==3.4.1"
+Shapely = "==1.8.5"
+Fiona = "==1.9.5"
 matplotlib = "*"
 plotly = "*"
-spicy = "*"
+scipy = "*"  
 pyyaml = "*"
 google-api-python-client = "==2.21.0"
-conan = "==1.43.0"
 psutil = "^5.9.0"
 
 [tool.poetry.dev-dependencies]

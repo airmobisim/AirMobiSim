@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Copyright (C) 2022 Tobias Hardes <tobias.hardes@uni-paderborn.de>
+# Copyright (C) 2022-2025 Tobias Hardes <info@thardes.net>
 #
 # Documentation for these modules is at http://veins.car2x.org/
 #
@@ -39,7 +39,7 @@ done
 set -e 
 
 
-GRPC_VERSION=1.38.1
+GRPC_VERSION=1.48.4
 PROTOC_VERSION=3.17.1
 
 
@@ -54,8 +54,8 @@ echo -e "\n=====================================================================
 The open-source unmanned aerial vehicle simulation framework
 ====================================================================="
 echo "AirMobiSim requires the following software to be installed:"
-echo "OMNeT++ 6"
-echo "conan.io - version: 1.44.1"
+echo "OMNeT++ 6.1"
+echo "conan.io - version: 2.12.1"
 echo "curl"
 echo "pyenv"
 
@@ -99,66 +99,6 @@ if ! which opp_run >/dev/null ; then
     exit -1 
 fi
 
-###################################
-#                           
-# _ __  _   _  ___ _ ____   __
-#| '_ \| | | |/ _ \ '_ \ \ / /
-#| |_) | |_| |  __/ | | \ V / 
-#| .__/ \__, |\___|_| |_|\_/  
-#|_|    |___/                 
-#
-##################################
-export PYENV_ROOT="$HOME/.pyenv"
-export PATH="$PYENV_ROOT/bin:$PATH"
-export PATH="$PYENV_ROOT/shims:$PATH"
-if ! command -v pyenv &> /dev/null
-then
-	echo "Installing pyenv..."
-	if [[  "$OSTYPE" == "darwin"* ]]; then
-		brew install pyenv
-	else
-		git clone --branch v2.3.2 https://github.com/pyenv/pyenv.git ~/.pyenv
-	fi
-	export PYENV_ROOT="$HOME/.pyenv"
-	export PATH="$PYENV_ROOT/bin:$PATH"
-	export PATH="$PYENV_ROOT/shims:$PATH"
-	eval "$(pyenv virtualenv-init -)"
-fi
-
-if $accept_all
-then
-    pyenv install 3.9.0 -f
-fi
-
-if ! $accept_all
-then
-    if !(pyenv install 3.9.0); then
-        echo "Python 3.9.0 will not be installed by this setup. Proceed with the setup.."
-    fi
-fi
-eval "$(pyenv init -)"
-pyenv global 3.9.0
-##################################
-#                  _              
-# _ __   ___   ___| |_ _ __ _   _ 
-#| '_ \ / _ \ / _ \ __| '__| | | |
-#| |_) | (_) |  __/ |_| |  | |_| |
-#| .__/ \___/ \___|\__|_|   \__, |
-#|_|                        |___/ 
-##################################
-if ! command -v poetry &> /dev/null
-then
-    echo "Installing poetry"
-	if [[  "$OSTYPE" == "darwin"* ]]; then
-		brew install poetry
-	else
-		curl -sSL https://install.python-poetry.org | python3 - --version 1.2.0
-	fi
-fi
-echo "Switching to python 3.9.0"
-
-poetry env use 3.9.0
-
 ################################################################
 # ____        _   _                   ____       _               
 #|  _ \ _   _| |_| |__   ___  _ __   / ___|  ___| |_ _   _ _ __  
@@ -169,13 +109,11 @@ poetry env use 3.9.0
 ################################################################
 
 echo "Installing required Python packages..."
-poetry run python --version
 
 poetry install
 export PATH="$HOME/.poetry/bin:$PATH"
 export PATH="$HOME/.local/bin:$PATH"
 
-pip3 install conan==1.44.1 # We need a local installation outside poetry, since conan is required for the OMNeT++ part
 AIRMOBISIMDIR=$(pwd)
 
 export AIRMOBISIMHOME=$AIRMOBISIMDIR
@@ -209,15 +147,36 @@ cd ..
 
 cd $AIRMOBISIMDIR
 
-if [  ! -f "$HOME/.conan/profiles/default" ]; then 
+if [  ! -f "$HOME/.conan2/profiles/default" ]; then 
 	echo "Create new default conan profile"
-	mkdir -p "$HOME/.conan/profiles/"
-	poetry run conan profile new default --detect 
+	conan profile detect
 fi
 
 if [[ "$OSTYPE" == "linux-gnu"* ]]; then
-    echo "This is a Linux"
-	poetry run bash -c "conan profile update settings.compiler.libcxx=libstdc++11 default"
+        echo "We need to adapt your local conan profile."
+	profilePath=$(conan profile path default)
+
+	while true; do
+		read -p "Should the script overwrite the $profilePath file to apply required changes [Y/n]?" choice
+
+
+		choice=${choice:-Y}
+		
+		case "${choice,,}" in
+		    y|yes)
+			cp "./assets/default" "/home/carla/.conan2/profiles/default"
+			echo "Replaced $profilePath"
+			break
+			;;
+		    n|no)
+			echo "Skipping action on conan profile"
+			break
+			;;
+		    *)
+			echo "Invalid input"
+			;;
+		esac
+	done
 else
     echo "This is a Mac"
 	poetry run bash -c "conan profile update settings.compiler.version=13.0 default"
