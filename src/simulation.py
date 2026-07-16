@@ -116,18 +116,11 @@ class Simulation:
 
     def processNextStep(self):
         Simulationparameter.incrementCurrentSimStep()
-        if self._splineMobilityFlag:
-            for node in self._managedNodes:
-                removeNode = node._mobility.makeMove()  # building ahead
-                if removeNode:
-                    logWrapper.debug('removing uav ' + str(node._uid))
-                    self._managedNodes.remove(node)      # obstacle so remove
-        else:
-            for node in self._managedNodes:
-                removeNode = node._mobility.makeMove()
-                if removeNode:
-                    logWrapper.debug("removing uav " + str(node._uid))
-                    self._managedNodes.remove(node)
+        for node in list(self._managedNodes):  # iterate over a copy since nodes may remove themselves below
+            removeNode = node._mobility.makeMove()
+            if removeNode:
+                logWrapper.debug("removing uav " + str(node._uid))
+                self._managedNodes.remove(node)
 
     def finishSimulation(self):
         logWrapper.debug("exiting -- at t=" +str(Simulationparameter.currentSimStep * Simulationparameter.stepLength), True)
