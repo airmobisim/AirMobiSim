@@ -55,9 +55,11 @@ class Splinemobility(Basemobility):
         self._distanceTravelledSoFar = 0.0
         self._angle = 0.0
         self._need_to_generate_spline= True
-        self._d_spl_x = None
-        self._d_spl_y = None
-        self._d_spl_z = None
+        self._spl_x = None
+        self._spl_y = None
+        self._spl_z = None
+        self._arclength_samples = None
+        self._arclength_cumdist = None
 
 
 
@@ -150,19 +152,15 @@ class Splinemobility(Basemobility):
         move = self.getMove()
         lastpos = move.getNextCoordinate()
 
-        spl_x = CubicSpline(self._waypointIndex, self._waypointX)
-        spl_y = CubicSpline(self._waypointIndex, self._waypointY)
-        spl_z = CubicSpline(self._waypointIndex, self._waypointZ)
-        
         if self._acceleration != 0:
             newVelocity = move.getSpeed() + self._acceleration * Simulationparameter.stepLength
             move.setSpeed(newVelocity)
 
         distance_to_travel = move.getSpeed() * Simulationparameter.stepLength + 0.5 * self._acceleration * (Simulationparameter.stepLength) ** 2
 
-        self.computeIndexForDistance(distance_to_travel)
+        self.computeIndexForDistance(distance_to_travel)  # also (re)builds the cached splines/arclength table if needed
 
-        nextCoordinate = Point(spl_x(self._current_index), spl_y(self._current_index), spl_z(self._current_index))
+        nextCoordinate = Point(self._spl_x(self._current_index), self._spl_y(self._current_index), self._spl_z(self._current_index))
         move.setNextCoordinate(nextCoordinate)
 
         if self.getMove().getFinalFlag():
@@ -170,7 +168,7 @@ class Splinemobility(Basemobility):
 
         if self._collisionAction != 2:
             future_time = move.getPassedTime() + Simulationparameter.stepLength
-            move.setFutureCoordinate((spl_x(self._current_index), spl_y(self._current_index)))
+            move.setFutureCoordinate((self._spl_x(self._current_index), self._spl_y(self._current_index)))
             self.manageObstacles(move.getPassedTime(), future_time)
 
     def insertWaypointIndex(self):
@@ -194,53 +192,31 @@ class Splinemobility(Basemobility):
 
     def computeIndexForDistance(self, distance_to_travel):
         if self._need_to_generate_spline:
-            self.generateDifferentiatedSpline()
-            self._need_to_generate_spline=False  
-        
-        spl_x, spl_y, spl_z= self.getDifferentiatedSpline()
-        
+            self.generateArclengthTable()
+            self._need_to_generate_spline = False
+
         if self._totalDistance - self._distanceTravelledSoFar >= distance_to_travel:
-            check_index = self._current_index + 0.00001
-            index_found = False
-            # while check_index <= 1000:
-            while check_index <= self._max_index_value:
-                integralx = spl_x.integrate(self._current_index, check_index)
-                intergraly = spl_y.integrate(self._current_index, check_index)
-                intergralz = spl_z.integrate(self._current_index, check_index)
-
-                dis_per_interval = math.sqrt(integralx ** 2 + intergraly ** 2 + intergralz ** 2)
-                if dis_per_interval == distance_to_travel or dis_per_interval > distance_to_travel:
-                    index_found = True
-                    break;
-                else:
-                    check_index = check_index + 0.01
-
-            if index_found:
-                self._current_index = check_index
-                self._distanceTravelledSoFar += distance_to_travel
-
+            targetDistance = self._distanceTravelledSoFar + distance_to_travel
+            if targetDistance <= self._arclength_cumdist[-1]:
+                # invert the (monotonic) arclength-to-index table via interpolation
+                # instead of a per-step linear search over the index domain
+                self._current_index = float(np.interp(targetDistance, self._arclength_cumdist, self._arclength_samples))
+                self._distanceTravelledSoFar = targetDistance
             else:
                 self.getMove().setFinalFlag(True)
 
-    def generateDifferentiatedSpline(self):
-        spl_x = CubicSpline(self._waypointIndex, self._waypointX)
-        spl_y = CubicSpline(self._waypointIndex, self._waypointY)
-        spl_z = CubicSpline(self._waypointIndex, self._waypointZ)
+    def generateArclengthTable(self):
+        # lookup table mapping travelled arclength -> spline index, built once per waypoint set
+        self._spl_x = CubicSpline(self._waypointIndex, self._waypointX)
+        self._spl_y = CubicSpline(self._waypointIndex, self._waypointY)
+        self._spl_z = CubicSpline(self._waypointIndex, self._waypointZ)
 
-        spl_xd = spl_x(self._waypointIndex, 1)
-        spl_yd = spl_y(self._waypointIndex, 1)
-        spl_zd = spl_z(self._waypointIndex, 1)
+        num_samples = int(min(200000, max(2000, self._max_index_value * 4)))
+        samples = np.linspace(0, self._max_index_value, num_samples)
+        sx = self._spl_x(samples)
+        sy = self._spl_y(samples)
+        sz = self._spl_z(samples)
+        segment_lengths = np.sqrt(np.diff(sx) ** 2 + np.diff(sy) ** 2 + np.diff(sz) ** 2)
 
-        spl_x = CubicSpline(self._waypointIndex, spl_xd)
-        spl_y = CubicSpline(self._waypointIndex, spl_yd)
-        spl_z = CubicSpline(self._waypointIndex, spl_zd)
-
-        self.setDifferentiatedSpline(spl_x,spl_y,spl_z)
-
-    def setDifferentiatedSpline(self, dspl_x,dspl_y,dspl_z):
-        self._d_spl_x=dspl_x
-        self._d_spl_y=dspl_y
-        self._d_spl_z=dspl_z
-
-    def getDifferentiatedSpline(self):
-        return self._d_spl_x, self._d_spl_y, self._d_spl_z
+        self._arclength_samples = samples
+        self._arclength_cumdist = np.concatenate(([0.0], np.cumsum(segment_lengths)))
