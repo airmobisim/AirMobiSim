@@ -51,6 +51,17 @@ Without `-y`/`--non-interactive`, the script will also ask interactively whether
 up the OMNeT++ coupling. Conan's state (profiles, package cache) is kept scoped to the
 project directory (`.conan_home/`) rather than touching your global `~/.conan2`.
 
+**Note:** if you have OMNeT++'s own `setenv` script sourced in your shell (needed to get
+`opp_run` etc. on `PATH`), it may also put OMNeT++'s bundled Python distribution ahead in
+`PATH` and export `PYTHONHOME`/`PYTHONPATH`. `build.sh` clears these for its own run, but
+if you run `poetry install` or `poetry run ./airmobisim.py` manually afterwards in a shell
+where OMNeT++'s `setenv` is sourced, unset them first:
+```Bash
+unset PYTHONHOME PYTHONPATH
+```
+Otherwise poetry/pyenv may end up targeting OMNeT++'s bundled Python instead of this
+project's own environment, which can silently break either one.
+
 ---
 
 ## Run AirmobiSim

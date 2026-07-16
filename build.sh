@@ -52,7 +52,22 @@ while [ "$1" != "" ]; do
     shift
 done
 
-set -e 
+set -e
+
+# OMNeT++'s own setenv script bundles its own Python distribution and may put
+# it ahead in PATH and/or export PYTHONHOME/PYTHONPATH/VIRTUAL_ENV. If those
+# are inherited here, poetry/pyenv can end up installing into (or being
+# confused by) OMNeT's bundled Python instead of this project's own
+# pyenv-managed environment - even picking the right interpreter by absolute
+# path does not help once PYTHONHOME points elsewhere. Clear them for the
+# rest of this script (this only affects this script's own process tree, not
+# your interactive shell).
+if [ -n "$PYTHONHOME$PYTHONPATH$VIRTUAL_ENV" ]; then
+    echo "Clearing inherited PYTHONHOME/PYTHONPATH/VIRTUAL_ENV for this script (e.g. from a sourced OMNeT++ setenv) to avoid it shadowing this project's Python setup."
+fi
+unset PYTHONHOME
+unset PYTHONPATH
+unset VIRTUAL_ENV
 
 
 GRPC_VERSION=1.48.4
