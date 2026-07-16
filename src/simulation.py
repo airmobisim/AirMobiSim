@@ -35,12 +35,6 @@ import src.logWrapper as logWrapper
 
 class Simulation:
 
-    _currentTime = 0
-    _isRunnig = False
-    _managedNodes = []
-    _startUavs = []
-    _highestUid = -1
-
     def __init__(self, directory, stepLength, simTimeLimit, playgroundSizeX, playgroundSizeY, playgroundSizeZ,
                  linearMobilityFlag, splineMobilityFlag, uavs, runnumber=0, polygon_file_path=None, collision_action=None,
                  speed=None, waypointX=None, waypointY=None,
@@ -50,7 +44,11 @@ class Simulation:
         Simulationparameter.directory = directory
         Simulationparameter.simStartTime = Simulationparameter.current_milli_time()
         Simulationparameter.simTimeLimit = simTimeLimit
-        Simulationparameter.runnumber = runnumber                            
+        Simulationparameter.runnumber = runnumber
+        self._currentTime = 0
+        self._isRunnig = False
+        self._managedNodes = []
+        self._highestUid = -1
         self._playgroundSizeX = playgroundSizeX
         self._playgroundSizeY = playgroundSizeY
         self._playgroundSizeZ = playgroundSizeZ

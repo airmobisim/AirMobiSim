@@ -31,9 +31,6 @@ import src.logWrapper as logWrapper
 from shapely.geometry import Point
 
 class Uav():
-    _uid = -1
-    _mobility = None
-    _waypoints = []
 
     def __init__(self, uid, waypoints: list[Point], speed, polygon_file_path=None, collision_action=None, angle=0.0, model_selection=None, removeNode=False):
         if model_selection != 1 and model_selection != 2:
