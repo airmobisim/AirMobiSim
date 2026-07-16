@@ -21,6 +21,13 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
 
+usage() {
+    echo "Usage: $(basename "$0") [-y|--non-interactive] [-h|--help]"
+    echo ""
+    echo "  -y, --non-interactive   Skip the confirmation prompt and proceed automatically"
+    echo "  -h, --help              Show this help message and exit"
+}
+
 accept_all=false
 while [ "$1" != "" ]; do
     case $1 in
@@ -83,20 +90,26 @@ fi
 if ! which curl >/dev/null ; then
     echo ""
     echo "Please install 'curl' to continue"
-    exit -1 
+    exit 1
 fi
 
 if ! which conan >/dev/null ; then
     echo ""
     echo "Please install 'conan' to continue"
-    exit -1 
+    exit 1
 fi
 
 
 if ! which opp_run >/dev/null ; then
     echo ""
     echo "Please install 'OMNeT++ ' to continue"
-    exit -1 
+    exit 1
+fi
+
+if ! which pyenv >/dev/null ; then
+    echo ""
+    echo "Please install 'pyenv' to continue"
+    exit 1
 fi
 
 ################################################################
@@ -110,13 +123,23 @@ fi
 
 echo "Installing required Python packages..."
 
-poetry install
-export PATH="$HOME/.poetry/bin:$PATH"
+# needed before the first poetry/pyenv invocation below, not just for later steps
 export PATH="$HOME/.local/bin:$PATH"
+
+REQUIRED_PYTHON_VERSION=$(grep -m1 '^python = ' pyproject.toml | sed -E 's/python = "([0-9.]+)".*/\1/')
+echo "Ensuring pyenv has Python $REQUIRED_PYTHON_VERSION available..."
+pyenv install -s "$REQUIRED_PYTHON_VERSION"
+poetry env use "$(pyenv root)/versions/$REQUIRED_PYTHON_VERSION/bin/python3"
+
+poetry install
 
 AIRMOBISIMDIR=$(pwd)
 
 export AIRMOBISIMHOME=$AIRMOBISIMDIR
+
+# Keep Conan's state (profiles, package cache, config) scoped to this project
+# instead of touching the user's global ~/.conan2.
+export CONAN_HOME="$AIRMOBISIMDIR/.conan_home"
 ################################################################
 #__     __   _             ____       _               
 #\ \   / /__(_)_ __  ___  / ___|  ___| |_ _   _ _ __  
@@ -125,6 +148,21 @@ export AIRMOBISIMHOME=$AIRMOBISIMDIR
 #   \_/ \___|_|_| |_|___/ |____/ \___|\__|\__,_| .__/ 
 #                                              |_|    
 ################################################################
+
+# number of parallel make jobs, leaving one core free but never going below 1
+build_jobs() {
+	local ncpu
+	if [[ "$OSTYPE" == "darwin"* ]]; then
+		ncpu=$(sysctl -n hw.ncpu)
+	else
+		ncpu=$(nproc)
+	fi
+	if [ "$ncpu" -gt 1 ]; then
+		echo $(( ncpu - 1 ))
+	else
+		echo 1
+	fi
+}
 
 cd ..
 if [  ! -d "veins" ]; then
@@ -136,39 +174,36 @@ else
 fi
 
 ./configure
-if [[  "$OSTYPE" == "darwin"* ]]; then
-	make -j$(( $(sysctl -n hw.ncpu) - 1 ))
-else
-	make -j$(( $(nproc) - 1 ))
-fi
+make -j"$(build_jobs)"
 cd ..
 
 
 
 cd $AIRMOBISIMDIR
 
-if [  ! -f "$HOME/.conan2/profiles/default" ]; then 
-	echo "Create new default conan profile"
+if [  ! -f "$CONAN_HOME/profiles/default" ]; then
+	echo "Create new default conan profile (scoped to $CONAN_HOME)"
 	conan profile detect
 fi
 
+profilePath=$(conan profile path default)
+
 if [[ "$OSTYPE" == "linux-gnu"* ]]; then
-        echo "We need to adapt your local conan profile."
-	profilePath=$(conan profile path default)
+        echo "We need to adapt the conan profile at $profilePath."
 
 	while true; do
 		read -p "Should the script overwrite the $profilePath file to apply required changes [Y/n]?" choice
 
 
 		choice=${choice:-Y}
-		
-		case "${choice,,}" in
-		    y|yes)
-			cp "./assets/default" "/home/carla/.conan2/profiles/default"
+
+		case "$choice" in
+		    [Yy]|[Yy][Ee][Ss])
+			cp "./assets/default" "$profilePath"
 			echo "Replaced $profilePath"
 			break
 			;;
-		    n|no)
+		    [Nn]|[Nn][Oo])
 			echo "Skipping action on conan profile"
 			break
 			;;
@@ -178,8 +213,8 @@ if [[ "$OSTYPE" == "linux-gnu"* ]]; then
 		esac
 	done
 else
-    echo "This is a Mac"
-	poetry run bash -c "conan profile update settings.compiler.version=13.0 default"
+    echo "This is a Mac. Adapting the conan profile at $profilePath."
+	sed -i '' 's/^compiler\.version=.*/compiler.version=13.0/' "$profilePath"
 fi
 
 echo "Starting installation of conan dependencies"
@@ -192,11 +227,7 @@ fi
 cd AirMobiSim_libveins
 
 ./configure
-if [[  "$OSTYPE" == "darwin"* ]]; then
-	make -j$(( $(sysctl -n hw.ncpu) - 1 ))
-else
-	make -j$(( $(nproc) - 1 ))
-fi
+make -j"$(build_jobs)"
 
 cd $AIRMOBISIMDIR
 ./buildProto.sh
@@ -210,5 +241,9 @@ echo "-"
 echo "export PATH="\$HOME/.local/bin:\$PATH""
 echo "export AIRMOBISIMHOME=$AIRMOBISIMDIR"
 echo "-"
+
+echo "If you need to re-run conan or the native build steps manually later, also export:"
+echo "export CONAN_HOME=$CONAN_HOME"
+echo "(this keeps conan's profiles/cache scoped to this project instead of ~/.conan2)"
 
 echo "You can run AirMobiSim with the command 'poetry run ./airmobisim.py'"

@@ -42,6 +42,9 @@ src/trial.py
 *.tmp
 **/.nfs*
 
+# Conan state scoped to this project by build.sh (see CONAN_HOME)
+.conan_home/
+
 # MAC
 .DS_Store
 

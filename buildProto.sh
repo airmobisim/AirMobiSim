@@ -1,4 +1,4 @@
-#!/bin/zsh
+#!/usr/bin/env bash
 #
 # Copyright (C) 2022 Tobias Hardes <tobias.hardes@uni-paderborn.de>
 #
