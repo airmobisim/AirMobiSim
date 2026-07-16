@@ -75,7 +75,7 @@ class AirMobiSim(airmobisim_pb2_grpc.AirMobiSimServicer):
         else:
             if Simulationparameter.currentSimStep < self.simulation_obj._simulationSteps:
                 self._lastUavReport = []
-                for node in self.simulation_obj._managedNodes:
+                for node in list(self.simulation_obj._managedNodes):  # iterate over a copy since nodes may remove themselves below
                     flag = node.getMobility().makeMove()
                     if flag:
                         
@@ -215,24 +215,27 @@ def startServer(simulation_object):
     logWrapper.info("AirMobiSim Server started", True)
     ppid = os.getppid()
 
-    filename = str(ppid) + ".tmp2"
-    f = open(filename, "a")
+    tmpFilename = str(ppid) + ".tmp2"
+    portFilename = str(ppid) + ".tmp"
+    f = open(tmpFilename, "w")  # "w" (not "a"): a stale leftover file must not corrupt the port with old content
     f.write(str(grpcPort))
     f.flush()
     os.fsync(f.fileno())
     f.close()
-    os.rename(filename, str(ppid) + ".tmp")
-   
-    omnetpp_pid_valid = False
+    os.rename(tmpFilename, portFilename)
+
     grandparent_pid = psutil.Process(os.getppid()).ppid()
 
     try:
         while True:
-            time.sleep(1) 
+            time.sleep(1)
             #Check whether the OMNeT-process is running
             if psutil.Process(os.getppid()).ppid() != grandparent_pid:
                 server.stop(0)
                 sys.exit(1)
-    except:
+    except (Exception, KeyboardInterrupt):
         server.stop(0)
         sys.exit(1)
+    finally:
+        if os.path.exists(portFilename):
+            os.remove(portFilename)
