@@ -22,17 +22,26 @@
 #
 
 usage() {
-    echo "Usage: $(basename "$0") [-y|--non-interactive] [-h|--help]"
+    echo "Usage: $(basename "$0") [-y|--non-interactive] [--with-omnet] [-h|--help]"
     echo ""
-    echo "  -y, --non-interactive   Skip the confirmation prompt and proceed automatically"
+    echo "  -y, --non-interactive   Skip confirmation prompts and proceed automatically"
+    echo "                          (implies no OMNeT++ setup unless --with-omnet is also given)"
+    echo "  --with-omnet            Also set up the OMNeT++/veins coupling: clones and"
+    echo "                          compiles veins and AirMobiSim_libveins, needs OMNeT++"
+    echo "                          and conan installed. Without this flag, only the"
+    echo "                          standalone Python kinematic simulator is installed."
     echo "  -h, --help              Show this help message and exit"
 }
 
 accept_all=false
+with_omnet=false
 while [ "$1" != "" ]; do
     case $1 in
-        -y | --non-interactive )          shift
+        -y | --non-interactive )
                                 accept_all=true
+                                ;;
+        --with-omnet )
+                                with_omnet=true
                                 ;;
         -h | --help )           usage
                                 exit
@@ -61,17 +70,25 @@ echo -e "\n=====================================================================
 The open-source unmanned aerial vehicle simulation framework
 ====================================================================="
 echo "AirMobiSim requires the following software to be installed:"
-echo "OMNeT++ 6.1"
-echo "conan.io - version: 2.12.1"
 echo "curl"
 echo "pyenv"
+echo "(OMNeT++ 6.1 and conan.io - version: 2.12.1 - are only needed if you also want the optional OMNeT++/veins coupling, see --with-omnet)"
 
-echo "This setup installs all required Python packages (and poetry), loads the AirMobiSim extension from Veins, installs native binaries and libs from GRPC (version $GRPC_VERSION) and Protobuf ($PROTOC_VERSION) using conan.io.
+echo "This setup installs all required Python packages (and poetry) and generates the gRPC/protobuf Python bindings.
 
-The complete source code is compiled afterwards."
+Optionally (only with --with-omnet), it also loads the AirMobiSim extension from Veins and installs native binaries and libs from GRPC (version $GRPC_VERSION) and Protobuf ($PROTOC_VERSION) using conan.io, then compiles that native code."
 if ! $accept_all
 then
-    read -p "Continue?" 
+    read -p "Continue?"
+fi
+
+if ! $with_omnet && ! $accept_all
+then
+    read -p "Also set up the OMNeT++/veins coupling? Needs OMNeT++ and conan installed, and clones+compiles veins and AirMobiSim_libveins. [y/N] " omnet_choice
+    case "$omnet_choice" in
+        [Yy]|[Yy][Ee][Ss]) with_omnet=true ;;
+        *) with_omnet=false ;;
+    esac
 fi
 
 
@@ -93,17 +110,18 @@ if ! which curl >/dev/null ; then
     exit 1
 fi
 
-if ! which conan >/dev/null ; then
-    echo ""
-    echo "Please install 'conan' to continue"
-    exit 1
-fi
+if $with_omnet; then
+    if ! which conan >/dev/null ; then
+        echo ""
+        echo "Please install 'conan' to continue, or drop --with-omnet for a standalone install"
+        exit 1
+    fi
 
-
-if ! which opp_run >/dev/null ; then
-    echo ""
-    echo "Please install 'OMNeT++ ' to continue"
-    exit 1
+    if ! which opp_run >/dev/null ; then
+        echo ""
+        echo "Please install 'OMNeT++ ' to continue, or drop --with-omnet for a standalone install"
+        exit 1
+    fi
 fi
 
 if ! which pyenv >/dev/null ; then
@@ -137,16 +155,18 @@ AIRMOBISIMDIR=$(pwd)
 
 export AIRMOBISIMHOME=$AIRMOBISIMDIR
 
+if $with_omnet; then
+
 # Keep Conan's state (profiles, package cache, config) scoped to this project
 # instead of touching the user's global ~/.conan2.
 export CONAN_HOME="$AIRMOBISIMDIR/.conan_home"
 ################################################################
-#__     __   _             ____       _               
-#\ \   / /__(_)_ __  ___  / ___|  ___| |_ _   _ _ __  
-# \ \ / / _ \ | '_ \/ __| \___ \ / _ \ __| | | | '_ \ 
+#__     __   _             ____       _
+#\ \   / /__(_)_ __  ___  / ___|  ___| |_ _   _ _ __
+# \ \ / / _ \ | '_ \/ __| \___ \ / _ \ __| | | | '_ \
 #  \ V /  __/ | | | \__ \  ___) |  __/ |_| |_| | |_) |
-#   \_/ \___|_|_| |_|___/ |____/ \___|\__|\__,_| .__/ 
-#                                              |_|    
+#   \_/ \___|_|_| |_|___/ |____/ \___|\__|\__,_| .__/
+#                                              |_|
 ################################################################
 
 # number of parallel make jobs, leaving one core free but never going below 1
@@ -230,10 +250,20 @@ cd AirMobiSim_libveins
 make -j"$(build_jobs)"
 
 cd $AIRMOBISIMDIR
+
+else
+    echo "Skipping OMNeT++/veins setup (pass --with-omnet to enable it)."
+fi
+
 ./buildProto.sh
 
 
-echo "Successfully installed AirMobiSim!"
+if $with_omnet; then
+    echo "Successfully installed AirMobiSim, including the OMNeT++/veins coupling!"
+else
+    echo "Successfully installed AirMobiSim (standalone, without the OMNeT++/veins coupling)!"
+    echo "Re-run with --with-omnet later if you also want the OMNeT++ coupling."
+fi
 
 echo "Please run the following commands or add them to your .bashrc/.zshrc/..."
 
@@ -242,8 +272,10 @@ echo "export PATH="\$HOME/.local/bin:\$PATH""
 echo "export AIRMOBISIMHOME=$AIRMOBISIMDIR"
 echo "-"
 
-echo "If you need to re-run conan or the native build steps manually later, also export:"
-echo "export CONAN_HOME=$CONAN_HOME"
-echo "(this keeps conan's profiles/cache scoped to this project instead of ~/.conan2)"
+if $with_omnet; then
+    echo "If you need to re-run conan or the native build steps manually later, also export:"
+    echo "export CONAN_HOME=$CONAN_HOME"
+    echo "(this keeps conan's profiles/cache scoped to this project instead of ~/.conan2)"
+fi
 
 echo "You can run AirMobiSim with the command 'poetry run ./airmobisim.py'"

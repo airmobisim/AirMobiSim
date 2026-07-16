@@ -2,18 +2,24 @@
 
 ## Pre-Installation 
 
-AirMobiSim requires the following software to be installed 
+AirMobiSim can be used standalone (pure Python kinematic simulation) or coupled with
+OMNeT++/veins for wireless communication simulation. The OMNeT++ coupling is optional.
 
-- OMNeT++ 6
-- conan
+For the standalone simulator, you only need:
+
 - curl
 - pyenv
 
-### OMNeT 6 installation
+If you also want the OMNeT++/veins coupling, you additionally need:
+
+- OMNeT++ 6
+- conan
+
+### OMNeT 6 installation (only needed for the OMNeT++ coupling)
 Please do follow the instructions from the official [OMNeT documentation](https://doc.omnetpp.org/omnetpp/InstallGuide.pdf)
 
 
-### Conan installation
+### Conan installation (only needed for the OMNeT++ coupling)
 Please do follow the instructions from the official [conan documentation](https://docs.conan.io/en/latest/installation.html)
 
 
@@ -30,11 +36,20 @@ MacOS
 ---
 
 ## AirMobiSim-Installation
-AirMobiSim requires all installations listed in the section above.
-All additional required dependencies will be locally installed using pyenv and poetry by executing the ```build.sh``` script:
+All required dependencies are locally installed using pyenv and poetry by executing the ```build.sh``` script:
 ```Bash
 ./build.sh
 ```
+This installs the standalone Python simulator only (no OMNeT++/conan required).
+
+To also set up the OMNeT++/veins coupling (clones and compiles veins and
+AirMobiSim_libveins; requires OMNeT++ and conan to be installed), run instead:
+```Bash
+./build.sh --with-omnet
+```
+Without `-y`/`--non-interactive`, the script will also ask interactively whether to set
+up the OMNeT++ coupling. Conan's state (profiles, package cache) is kept scoped to the
+project directory (`.conan_home/`) rather than touching your global `~/.conan2`.
 
 ---
 
