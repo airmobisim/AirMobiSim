@@ -69,6 +69,9 @@ unset PYTHONHOME
 unset PYTHONPATH
 unset VIRTUAL_ENV
 
+# needed already for the dependency checks below (e.g. poetry/pyenv installed
+# via the official installers usually end up here), not just for later steps
+export PATH="$HOME/.local/bin:$PATH"
 
 GRPC_VERSION=1.48.4
 PROTOC_VERSION=3.17.1
@@ -145,6 +148,13 @@ if ! which pyenv >/dev/null ; then
     exit 1
 fi
 
+if ! which poetry >/dev/null ; then
+    echo ""
+    echo "Please install 'poetry' to continue, e.g.:"
+    echo "  curl -sSL https://install.python-poetry.org | python3 -"
+    exit 1
+fi
+
 ################################################################
 # ____        _   _                   ____       _               
 #|  _ \ _   _| |_| |__   ___  _ __   / ___|  ___| |_ _   _ _ __  
@@ -155,9 +165,6 @@ fi
 ################################################################
 
 echo "Installing required Python packages..."
-
-# needed before the first poetry/pyenv invocation below, not just for later steps
-export PATH="$HOME/.local/bin:$PATH"
 
 REQUIRED_PYTHON_VERSION=$(grep -m1 '^python = ' pyproject.toml | sed -E 's/python = "([0-9.]+)".*/\1/')
 echo "Ensuring pyenv has Python $REQUIRED_PYTHON_VERSION available..."

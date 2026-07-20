@@ -9,6 +9,7 @@ For the standalone simulator, you only need:
 
 - curl
 - pyenv
+- poetry
 
 If you also want the OMNeT++/veins coupling, you additionally need:
 
@@ -32,6 +33,16 @@ Linux/Debian
 
 MacOS
 ```brew install curl```
+
+### Poetry installation
+Please do follow the instructions from the official [poetry documentation](https://python-poetry.org/docs/#installation), e.g.:
+```Bash
+curl -sSL https://install.python-poetry.org | python3 -
+```
+This installs poetry to `~/.local/bin`, which most Linux distributions (Debian/Ubuntu
+included) already add to `PATH` automatically for login shells - open a new shell (or
+re-source your `.bashrc`/`.zshrc`) after installing so `poetry` is picked up before
+running `build.sh`.
 
 ---
 
