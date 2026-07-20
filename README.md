@@ -50,6 +50,11 @@ already sets `PYTHON_KEYRING_BACKEND=keyring.backends.null.Keyring` to avoid thi
 run `poetry` commands manually outside of `build.sh` and they seem to hang, export the
 same variable first.
 
+**Note:** if you already had a working environment from before a dependency was removed
+from `pyproject.toml`, plain `poetry install` will *not* remove the now-unneeded package
+from your existing virtualenv (it only adds what's missing). Use `poetry install --sync`
+instead to also remove packages that are no longer listed.
+
 ---
 
 ## AirMobiSim-Installation

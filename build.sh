@@ -177,7 +177,9 @@ echo "Ensuring pyenv has Python $REQUIRED_PYTHON_VERSION available..."
 pyenv install -s "$REQUIRED_PYTHON_VERSION"
 poetry env use "$(pyenv root)/versions/$REQUIRED_PYTHON_VERSION/bin/python3"
 
-poetry install
+# --sync also removes packages no longer listed in pyproject.toml from an
+# existing virtualenv (plain 'poetry install' only adds what's missing)
+poetry install --sync
 
 AIRMOBISIMDIR=$(pwd)
 
