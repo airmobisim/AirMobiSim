@@ -44,6 +44,12 @@ included) already add to `PATH` automatically for login shells - open a new shel
 re-source your `.bashrc`/`.zshrc`) after installing so `poetry` is picked up before
 running `build.sh`.
 
+**Note:** on a headless Linux server (no desktop session / D-Bus), `poetry install` can
+hang indefinitely while trying to look up credentials via the `keyring` library. `build.sh`
+already sets `PYTHON_KEYRING_BACKEND=keyring.backends.null.Keyring` to avoid this; if you
+run `poetry` commands manually outside of `build.sh` and they seem to hang, export the
+same variable first.
+
 ---
 
 ## AirMobiSim-Installation

@@ -73,6 +73,12 @@ unset VIRTUAL_ENV
 # via the official installers usually end up here), not just for later steps
 export PATH="$HOME/.local/bin:$PATH"
 
+# poetry uses the 'keyring' library to look up stored credentials. On a
+# headless Linux box without a D-Bus session/Secret Service (e.g. a plain
+# Debian server), that lookup can hang indefinitely instead of failing fast.
+# Force the null backend so poetry never even tries to talk to a keyring.
+export PYTHON_KEYRING_BACKEND=keyring.backends.null.Keyring
+
 GRPC_VERSION=1.48.4
 PROTOC_VERSION=3.17.1
 
