@@ -83,8 +83,17 @@ class Splinemobility(Basemobility):
             # move.setSpeed(0.0)
 
         move.setPassedTime(passedTime)
+
+        # Call manageObstacles and check if node should be removed
+        futureTime = passedTime + Simulationparameter.stepLength
+        shouldRemove = self.manageObstacles(passedTime, futureTime)
+
+        # If we should remove due to obstacle, return True immediately
+        if shouldRemove:
+            return (True,)
+
         super().makeMove()
-        return True if self._obstacleDetector_flag and self._collisionAction == 3 else False
+        return (True,) if self._obstacleDetector_flag and self._collisionAction == 3 else (False,)
 
 
     def insertWaypoint(self):

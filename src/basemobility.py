@@ -128,7 +128,7 @@ class Basemobility(ABC):
 
     def manageObstacles(self, passedTime,futureTime):
         if self._obstacles == None:
-            return
+            return False
         futureCoordinate = self.getMove().getFutureCoordinate()
 
         detectObstacle = any(obstacle.intersects_path(mplPath.Path([[self.getCurrentPos().x,self.getCurrentPos().y ],[futureCoordinate[0],futureCoordinate[1]]])) for obstacle in self._obstacles)
@@ -137,3 +137,9 @@ class Basemobility(ABC):
             logWrapper.warning(('currentTime: ' + str(passedTime) + ', uav is going to collide at '+ str(futureTime)),True)
 
         self._obstacleDetector_flag = True if detectObstacle == True else self._obstacleDetector_flag
+
+        # Handle collision action 3 (remove node)
+        if detectObstacle and self._collisionAction == 3:
+            return True  # Return True to indicate UAV should be removed
+
+        return False

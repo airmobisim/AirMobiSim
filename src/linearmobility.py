@@ -61,9 +61,19 @@ class Linearmobility(Basemobility):
 
         move.setSpeed(newSpeed)
         move.setPassedTime(passedTime)
+
+        # Call manageObstacles and check if node should be removed
+        futureTime = passedTime + Simulationparameter.stepLength
+        shouldRemove = self.manageObstacles(passedTime, futureTime)
+
+        # If we should remove due to obstacle, return True immediately
+        if shouldRemove:
+            return (True,)
+
         super().makeMove()
 
-        return True if (self._obstacleDetector_flag and self._collisionAction == 3) or (self.getMove().getFinalFlag() and self._removeNode)  else False  # obstacle->remove/not remove node indicator
+        # Return tuple indicating whether UAV should be removed
+        return (True,) if (self._obstacleDetector_flag and self._collisionAction == 3) or (self.getMove().getFinalFlag() and self._removeNode) else (False,)
 
     def computeDistance(self, c1, c2):
         return math.sqrt((c2.x - c1.x) ** 2 + (c2.y - c1.y) ** 2 + (c2.z - c1.z) ** 2)
